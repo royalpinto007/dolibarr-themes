@@ -3284,3 +3284,13 @@ input.linputsearch:focus, .linputsearch:focus {
 }
 /* 22.x uses fa-question-circle where 24.x moved to a different glyph. */
 span.fa-question-circle, .fa-question-circle { vertical-align: middle; line-height: 1; }
+
+
+/* ---- Treeview plugin background ----
+   jquery.treeview.css hardcodes `background-color: white` on the list. On a
+   light theme that is invisible; on a dark one it punches a white block into
+   the page and drags the muted link colour on top of it down to 2.9:1. The
+   list takes the card's own surface instead. */
+ul.treeview, ul.treeview ul, .treeview { background-color: transparent; }
+ul.treeview a { color: var(--c-ink); }
+ul.treeview .opacitymedium, ul.treeview span.small { color: var(--c-muted); opacity: 1; }

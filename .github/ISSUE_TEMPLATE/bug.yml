@@ -1,0 +1,54 @@
+name: Visual bug
+description: Something renders wrong — spacing, alignment, colour, overflow, a broken control
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A screenshot resolves most reports immediately. Please include one.
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: URL or path where you see it
+      placeholder: /societe/card.php?socid=1&mainmenu=companies
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes:
+      label: What looks wrong
+      description: What you expected vs what you see
+    validations: { required: true }
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag an image in. Mark the area if it is subtle.
+    validations: { required: true }
+  - type: input
+    id: viewport
+    attributes:
+      label: Viewport width
+      placeholder: "1440 (or: mobile, ~390)"
+    validations: { required: true }
+  - type: input
+    id: dolibarr
+    attributes:
+      label: Dolibarr version
+      placeholder: 24.0.0
+    validations: { required: true }
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: This theme needs :has() and color-mix() — Chrome/Edge 111+, Firefox 128+, Safari 16.4+
+      placeholder: Chrome 128
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I did a hard reload (Ctrl/Cmd+Shift+R) — Dolibarr compiles CSS per request and browsers cache it aggressively
+          required: true
+        - label: Command is the saved theme, not previewed with ?theme=command (the shell comes from the saved theme)
+          required: true

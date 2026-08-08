@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Dolibarr core bug
+    url: https://github.com/Dolibarr/dolibarr/issues
+    about: Behaviour, data or module problems belong upstream — this repo is the theme only.
+  - name: Security vulnerability
+    url: https://github.com/royalpinto007/dolibarr-theme-command/security/advisories/new
+    about: Please report privately, not as a public issue.

@@ -306,3 +306,19 @@ table.boxtable, div.div-table-responsive, div.tabBar {
 include __DIR__.'/main_menu_fa_icons.inc.php';
 include __DIR__.'/flags-sprite.inc.php';
 ?>
+
+
+/* ---- Content emitted outside the layout wrapper ----
+   A few Dolibarr list pages render their table as a direct child of <body>
+   rather than inside #id-right. With side chrome that content slides under the
+   navigation and its first column becomes unreachable. Given the same offset
+   as #id-right. */
+body > div.div-table-responsive,
+body > div.div-table-responsive-no-min,
+body > div.fichecenter,
+body > table.liste,
+body > form > div.div-table-responsive {
+	margin-<?php echo $left; ?>: var(--side-w, 268px);
+	max-width: calc(100% - var(--side-w, 268px));
+	box-sizing: border-box;
+}

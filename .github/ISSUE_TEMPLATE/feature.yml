@@ -1,0 +1,29 @@
+name: Improvement
+description: Suggest a change to the design system or a component
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem
+      description: What is hard, inconsistent or unclear today?
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you change
+    validations: { required: true }
+  - type: textarea
+    id: scope
+    attributes:
+      label: Where else does this appear
+      description: |
+        Components here are global. A change to cards affects every card in the app.
+        Which other pages would this touch?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This is a theme concern, not a Dolibarr core behaviour change
+          required: true

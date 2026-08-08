@@ -355,3 +355,38 @@ tr.liste_titre, .liste_titre { background: rgba(255,255,255,0.035); }
 include __DIR__.'/main_menu_fa_icons.inc.php';
 include __DIR__.'/flags-sprite.inc.php';
 ?>
+
+
+/* ---- Filled buttons on a light accent ----
+   Aurora is a dark theme, so its accent is a LIGHT violet. The shared button
+   rule paints filled actions white-on-accent, which is right for a light theme
+   and wrong here: white on #A78BFA measures 2.72:1. Dark ink on the same
+   accent measures 7.02:1 and keeps the accent's identity. */
+.butAction, a.butAction, input.butAction,
+div.tabsAction .butAction:first-of-type,
+input[type="submit"].button, button.button {
+	color: var(--c-canvas) !important;
+	font-weight: 620;
+}
+.butAction:hover, a.butAction:hover { color: var(--c-canvas) !important; }
+/* Outlined secondary actions keep accent-coloured text on the dark surface. */
+div.tabsAction .butAction:not(:first-of-type),
+div.tabsAction a.butAction:not(:first-of-type) {
+	color: var(--c-accent-ink) !important;
+}
+
+
+/* ---- Content emitted outside the layout wrapper ----
+   A few Dolibarr list pages render their table as a direct child of <body>
+   rather than inside #id-right. With side chrome that content slides under the
+   navigation and its first column becomes unreachable. Given the same offset
+   as #id-right. */
+body > div.div-table-responsive,
+body > div.div-table-responsive-no-min,
+body > div.fichecenter,
+body > table.liste,
+body > form > div.div-table-responsive {
+	margin-<?php echo $left; ?>: var(--side-w, 240px);
+	max-width: calc(100% - var(--side-w, 240px));
+	box-sizing: border-box;
+}
