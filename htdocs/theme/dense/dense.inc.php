@@ -347,3 +347,15 @@ body > form > div.div-table-responsive {
 @media only screen and (max-width: 900px) {
 	.dn-brand { max-width: 120px; }
 }
+
+
+/* ---- Picto gutter offset ----
+   The shared rule pins the leading picto at top:22px, which centres it on a
+   34px control inside default row padding -- correct for the other four themes,
+   where a control centres 30px down. Dense packs its rows tighter, so the
+   control centres at 22px and the glyph sat 6px low on every picto row.
+   Offset to match this theme's rhythm rather than changing the shared default. */
+div.tabBar table.border:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even) > span[class*="fa-"]:first-child,
+div.tabBar table.editmode:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even) > span[class*="fa-"]:first-child {
+	top: 16px;
+}

@@ -3329,3 +3329,38 @@ div.box a:hover > span.badge {
 	border-color: color-mix(in srgb, var(--c-accent) 35%, transparent);
 	color: var(--c-accent-ink);
 }
+
+
+/* ---- Icon-only actions in table rows ----
+   Edit, delete, move and reorder controls are emitted as a bare glyph inside an
+   anchor, so their clickable box is the glyph's own 13-17px. These are the
+   controls a user aims at most often on an admin screen, and they are the
+   hardest to hit. The box grows to 24px; the glyph does not, so row rhythm is
+   unchanged. */
+table td > a:has(> span[class*="fa-"]:only-child),
+table td > a:has(> img:only-child),
+table td > a.editfielda, table td > a.reposition,
+ul.treeview td > a:has(> span[class*="fa-"]:only-child),
+ul.treeview td > a:has(> img:only-child) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	min-height: 24px;
+	border-radius: var(--r-sm);
+	transition: background var(--t);
+}
+table td > a:has(> span[class*="fa-"]:only-child):hover,
+table td > a:has(> img:only-child):hover,
+ul.treeview td > a:hover:has(> span[class*="fa-"]:only-child) {
+	background: var(--c-sunken);
+}
+/* Sort arrows and reorder chevrons sit in dense clusters -- they get the box
+   without the hover fill, which would read as noise repeated down a column. */
+table th > a:has(> span[class*="fa-"]:only-child) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	min-height: 22px;
+}
