@@ -322,3 +322,20 @@ body > form > div.div-table-responsive {
 	max-width: calc(100% - var(--side-w, 268px));
 	box-sizing: border-box;
 }
+
+
+/* ---- Brand ----
+   The company name was clipped at 212px inside a 268px column -- "Aarav Demo
+   ERP Pvt Ltd" became "Aarav Demo ERP Pvt...". A company name is identity, not
+   a label: it gets the column's full width and is allowed a second line rather
+   than losing its ending. */
+.ed-brand, .ed-side .ed-brand, .ed-side-head a:first-child {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	white-space: normal;
+	overflow: visible;
+	text-overflow: clip;
+	line-height: 1.25;
+	overflow-wrap: anywhere;
+}
