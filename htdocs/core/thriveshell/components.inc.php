@@ -3364,3 +3364,27 @@ table th > a:has(> span[class*="fa-"]:only-child) {
 	min-width: 22px;
 	min-height: 22px;
 }
+
+
+/* ---- Avatar in the account control ----
+   The 80px cap above is for a card's portrait placeholder. In 24.x the top-bar
+   avatar carries .dropdown-user-image and is handled separately, but 22.x uses
+   the same .photouserphoto classes as a card portrait -- so the card rule won
+   and dropped an 80px photo into the bar, overlapping the chrome.
+
+   Scoped by where it sits rather than what it is called, which holds on both
+   versions. */
+.login_block img.userphoto, .login_block img.photouserphoto,
+.login-dropdown-a img, a.dropdown-toggle img.photo,
+.atoplogin img.userphoto, .cmd-bar-tools img.userphoto,
+.wb-rail-foot img.userphoto, .au-bar-tools img.userphoto,
+.ed-side-foot img.userphoto, .dn-bar-tools img.userphoto {
+	width: 26px !important;
+	height: 26px !important;
+	min-width: 0 !important;
+	border: 0 !important;
+	border-radius: 50%;
+	opacity: 1;
+	object-fit: cover;
+	vertical-align: middle;
+}
