@@ -1311,6 +1311,22 @@ td.center > img.userphoto, td.photo img.userphoto { width: 34px; height: 34px; m
 div.arearef img.userphoto, div.arearef img.photoref,
 .divphotoref img { width: auto; height: auto; min-width: 0; border-radius: var(--r); }
 
+/* The account avatar lives in the top-bar / rail login dropdown, not a table
+   cell, so the thumbnail rules above never reach it and Dolibarr renders it at
+   its stored size (up to 80-128px) — towering over the ~52px bar. Constrain it
+   to a small round thumbnail wherever the account block lands. */
+#topmenu-login-dropdown img.photouserphoto,
+#topmenu-login-dropdown img.userphoto,
+.login-dropdown-a img.photouserphoto, .login-dropdown-a img.userphoto,
+.atoplogin img.photouserphoto, .atoplogin img.userphoto {
+	width: 28px;
+	height: 28px;
+	min-width: 28px;
+	border-radius: 50%;
+	object-fit: cover;
+	vertical-align: middle;
+}
+
 /* ---- Leading field pictos ----
    Dolibarr prefixes many fields with a bare icon and no spacing, so the glyph
    sat flush against the input's border. The gap goes on the field rather than
