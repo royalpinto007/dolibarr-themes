@@ -28,7 +28,14 @@ them moved between the two releases.
   `cal_today_am`, `info-box-createlink` and similar. Those rules are simply inert on
   22.x; an unmatched selector costs nothing.
 
-### 3. It was verified by running, not by diffing
+### 3. One gap only a running install could reveal
+
+22.0.4 requests `theme/<name>/manifest.json.php` on every page — a PWA manifest that
+24.x no longer ships in `eldy`. A class-and-variable diff cannot see a **missing file**,
+so this only surfaced as a 404 in the server log of a real install. All five themes now
+ship one.
+
+### 4. It was verified by running, not by diffing
 
 A static diff is evidence, not proof. A full 22.0.4 install was stood up — its own
 schema (`d22_` prefix), admin user and module set — and the audit was run against it
