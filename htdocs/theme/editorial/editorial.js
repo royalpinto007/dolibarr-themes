@@ -1,0 +1,278 @@
+/* COMMAND theme -- command palette.
+ *
+ * Loaded by Dolibarr as theme/<theme>/<theme>.js when ALLOW_THEME_JS=1.
+ * The navigation tree is embedded in the page as JSON by command.lib.php, so
+ * the palette needs no network round-trip.
+ */
+(function () {
+	'use strict';
+
+	var data = [];
+	var palette, input, results, trigger;
+	var matches = [];
+	var cursor = 0;
+	var lastFocus = null;
+
+	function boot() {
+		var node = document.getElementById('cmd-nav-data');
+		palette = document.getElementById('cmd-palette');
+		input = document.getElementById('cmd-palette-input');
+		results = document.getElementById('cmd-palette-results');
+		trigger = document.getElementById('cmd-trigger');
+
+		if (!node || !palette || !input || !results) {
+			return;
+		}
+		try {
+			data = JSON.parse(node.textContent || '[]');
+		} catch (e) {
+			data = [];
+		}
+
+		if (trigger) {
+			trigger.addEventListener('click', open);
+		}
+		input.addEventListener('input', function () {
+			render(input.value);
+		});
+		palette.addEventListener('click', function (ev) {
+			if (ev.target && ev.target.hasAttribute('data-cmd-close')) {
+				close();
+			}
+		});
+		document.addEventListener('keydown', onGlobalKey, true);
+		input.addEventListener('keydown', onInputKey);
+
+		relocateTools();
+		initNav();
+		initTree();
+	}
+
+	/* Foldable navigation tree. Open branches persist per user so a module you
+	   work in daily does not need re-opening on every page load. */
+	function initTree() {
+		var KEY = 'thriveNavOpen';
+		var open = {};
+		try { open = JSON.parse(window.localStorage.getItem(KEY) || '{}'); } catch (e) { open = {}; }
+
+		function keyFor(node) {
+			var a = node.querySelector(':scope > .ts-row > a');
+			return a ? a.getAttribute('href') : null;
+		}
+
+		// Restore remembered branches, without closing the one holding the
+		// current page (the server already opened that path).
+		var nodes = document.querySelectorAll('.ts-node.has-kids');
+		for (var i = 0; i < nodes.length; i++) {
+			var k = keyFor(nodes[i]);
+			if (k && open[k]) {
+				nodes[i].classList.add('is-open');
+			}
+		}
+
+		document.addEventListener('click', function (ev) {
+			var btn = ev.target.closest ? ev.target.closest('[data-ts-fold]') : null;
+			if (!btn) {
+				return;
+			}
+			ev.preventDefault();
+			ev.stopPropagation();
+			var node = btn.closest('.ts-node');
+			if (!node) {
+				return;
+			}
+			var on = node.classList.toggle('is-open');
+			btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+			var k = keyFor(node);
+			if (k) {
+				if (on) { open[k] = 1; } else { delete open[k]; }
+				try { window.localStorage.setItem(KEY, JSON.stringify(open)); } catch (e) {}
+			}
+		});
+	}
+
+
+	/* Collapse state is a per-user working preference, so it persists locally
+	   and is applied before paint to avoid a visible jump. */
+	function initNav() {
+		var toggle = document.getElementById('cmd-nav-toggle');
+		if (!toggle) {
+			return;
+		}
+		toggle.addEventListener('click', function () {
+			var on = document.body.classList.toggle('cmd-nav-collapsed');
+			try {
+				window.localStorage.setItem('cmdNavCollapsed', on ? '1' : '0');
+			} catch (e) { /* private mode: fall back to per-page state */ }
+		});
+	}
+
+	/* Dolibarr prints its own tools/account block late in the document; move it
+	   into the bar so the shell owns a single row. */
+	function relocateTools() {
+		var slot = document.getElementById('cmd-bar-tools');
+		var block = document.querySelector('div.login_block');
+		if (slot && block && block.parentNode !== slot) {
+			slot.appendChild(block);
+		}
+	}
+
+	function onGlobalKey(ev) {
+		var key = ev.key;
+		if ((ev.ctrlKey || ev.metaKey) && (key === 'k' || key === 'K')) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			if (palette.hasAttribute('hidden')) {
+				open();
+			} else {
+				close();
+			}
+			return;
+		}
+		if (key === 'Escape' && !palette.hasAttribute('hidden')) {
+			ev.preventDefault();
+			close();
+		}
+	}
+
+	function onInputKey(ev) {
+		if (ev.key === 'ArrowDown') {
+			ev.preventDefault();
+			move(1);
+		} else if (ev.key === 'ArrowUp') {
+			ev.preventDefault();
+			move(-1);
+		} else if (ev.key === 'Enter') {
+			ev.preventDefault();
+			go(cursor);
+		}
+	}
+
+	function open() {
+		lastFocus = document.activeElement;
+		palette.removeAttribute('hidden');
+		document.body.classList.add('cmd-palette-open');
+		input.value = '';
+		render('');
+		input.focus();
+	}
+
+	function close() {
+		palette.setAttribute('hidden', '');
+		document.body.classList.remove('cmd-palette-open');
+		if (lastFocus && typeof lastFocus.focus === 'function') {
+			lastFocus.focus();
+		}
+	}
+
+	function move(delta) {
+		if (!matches.length) {
+			return;
+		}
+		cursor = (cursor + delta + matches.length) % matches.length;
+		paint();
+	}
+
+	function go(i) {
+		var hit = matches[i];
+		if (hit && hit.u) {
+			window.location.href = hit.u;
+		}
+	}
+
+	/* Subsequence match, so "thpa" finds "Third parties". Scores prefix and
+	   word-boundary hits above scattered ones. */
+	function score(text, q) {
+		if (!q) {
+			return 1;
+		}
+		var t = text.toLowerCase();
+		var idx = t.indexOf(q);
+		if (idx === 0) {
+			return 1000;
+		}
+		if (idx > 0) {
+			return 700 - idx;
+		}
+		var ti = 0, qi = 0, hits = 0, boundary = 0;
+		while (ti < t.length && qi < q.length) {
+			if (t.charAt(ti) === q.charAt(qi)) {
+				hits++;
+				if (ti === 0 || t.charAt(ti - 1) === ' ') {
+					boundary++;
+				}
+				qi++;
+			}
+			ti++;
+		}
+		return qi === q.length ? 100 + hits + boundary * 10 : -1;
+	}
+
+	function render(q) {
+		var query = (q || '').trim().toLowerCase();
+		var scored = [];
+		for (var i = 0; i < data.length; i++) {
+			var row = data[i];
+			var s = score(row.t, query);
+			if (s < 0 && query) {
+				s = score(row.g + ' ' + row.t, query) - 200;
+			}
+			if (s >= 0) {
+				scored.push({ row: row, s: s });
+			}
+		}
+		scored.sort(function (a, b) {
+			return b.s - a.s;
+		});
+		matches = scored.slice(0, 60).map(function (x) {
+			return x.row;
+		});
+		cursor = 0;
+		paint();
+	}
+
+	function paint() {
+		if (!matches.length) {
+			results.innerHTML = '<div class="cmd-palette-empty">No matches</div>';
+			return;
+		}
+		var html = '';
+		var lastGroup = null;
+		for (var i = 0; i < matches.length; i++) {
+			var m = matches[i];
+			if (m.g !== lastGroup) {
+				html += '<div class="cmd-res-group">' + esc(m.g) + '</div>';
+				lastGroup = m.g;
+			}
+			html += '<a class="cmd-res' + (i === cursor ? ' is-active' : '') +
+				'" role="option" data-i="' + i + '" href="' + esc(m.u) + '">' +
+				'<span class="cmd-res-title">' + esc(m.t) + '</span>' +
+				'<span class="cmd-res-group-tag">' + esc(m.g) + '</span></a>';
+		}
+		results.innerHTML = html;
+
+		var active = results.querySelector('.cmd-res.is-active');
+		if (active && active.scrollIntoView) {
+			active.scrollIntoView({ block: 'nearest' });
+		}
+		var nodes = results.querySelectorAll('.cmd-res');
+		for (var j = 0; j < nodes.length; j++) {
+			nodes[j].addEventListener('mouseenter', function () {
+				cursor = parseInt(this.getAttribute('data-i'), 10);
+				paint();
+			});
+		}
+	}
+
+	function esc(s) {
+		return String(s === undefined || s === null ? '' : s)
+			.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', boot);
+	} else {
+		boot();
+	}
+})();
