@@ -221,7 +221,11 @@ div.side-nav, #id-left, .menuhider { display: none !important; }
 	z-index: 1300;
 }
 .dn-brand {
-	display: flex; align-items: center;
+	/* A flex container turns its bare text into an anonymous flex item, and
+	   text-overflow cannot reach that item -- so the name was hard-cut
+	   mid-glyph ("Thrive ER") despite the ellipsis declared below. A block box
+	   centres identically against the bar's height and lets the ellipsis run. */
+	display: block; line-height: var(--bar-h);
 	padding-<?php echo $right; ?>: var(--sp-3);
 	color: var(--c-ink); font-weight: 660; font-size: <?php echo $fontsizesmaller; ?>;
 	letter-spacing: -0.01em; white-space: nowrap;
@@ -336,7 +340,10 @@ body > form > div.div-table-responsive {
 .dn-brand {
 	max-width: 260px;
 	min-width: 0;
-	flex: 0 1 auto;
+	/* The tab strip scrolls (overflow-x on .dn-tabs); the company name does
+	   not. Without this the bar crushed the brand to ~47px -- an ellipsis on
+	   its own would only have turned a hard cut into "Th...". */
+	flex: 0 0 auto;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

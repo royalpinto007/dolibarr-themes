@@ -230,6 +230,10 @@ div.side-nav, #id-left, .menuhider { display: none !important; }
 }
 .au-brand { display: inline-flex; align-items: center; gap: var(--sp-2); color: var(--c-ink); font-weight: 650; letter-spacing: -0.02em; }
 .au-brand:hover { color: var(--c-ink); }
+/* The name shares a fixed-height bar with the search field and the account
+   block: with no ceiling a long company name pushes both sideways. The text is
+   a flex item of .au-brand, so text-overflow resolves normally here. */
+.au-brand-text { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .au-brand-mark {
 	width: 26px; height: 26px; border-radius: 9px;
 	background: linear-gradient(135deg, #A78BFA, #22D3EE);

@@ -589,7 +589,7 @@ function thriveshell_render_aurora($tree)
 	$c = thriveshell_context($tree);
 
 	print '<header class="au-bar">';
-	print '<a class="au-brand" href="'.dol_escape_htmltag($c['home']).'">';
+	print '<a class="au-brand" href="'.dol_escape_htmltag($c['home']).'" title="'.dol_escape_htmltag($c['brand']).'">';
 	print '<span class="au-brand-mark" aria-hidden="true"></span>';
 	print '<span class="au-brand-text">'.dol_escape_htmltag($c['brand']).'</span>';
 	print '</a>';
@@ -672,7 +672,7 @@ function thriveshell_render_dense($tree)
 	$c = thriveshell_context($tree);
 
 	print '<header class="dn-bar">';
-	print '<a class="dn-brand" href="'.dol_escape_htmltag($c['home']).'">'.dol_escape_htmltag($c['brand']).'</a>';
+	print '<a class="dn-brand" href="'.dol_escape_htmltag($c['home']).'" title="'.dol_escape_htmltag($c['brand']).'">'.dol_escape_htmltag($c['brand']).'</a>';
 	print '<nav class="dn-tabs" aria-label="'.dol_escape_htmltag($langs->trans('Menu')).'">';
 	foreach ($tree as $g) {
 		$cls = 'dn-tab'.($g['key'] === $c['main'] ? ' is-active' : '');
