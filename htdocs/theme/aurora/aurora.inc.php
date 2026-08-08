@@ -390,3 +390,31 @@ body > form > div.div-table-responsive {
 	max-width: calc(100% - var(--side-w, 240px));
 	box-sizing: border-box;
 }
+
+
+/* ---- Third-party markup that hardcodes light colours ----
+   Aurora is dark by palette, not by Dolibarr's $darkmode preference, so the
+   shared darkmode layer never emits for it -- these belong here.
+
+   Dolibarr paints agenda event blocks #F0F0F0, so the themed link colour on
+   top measured 1.6:1. CKEditor ships #484848 button labels and a black
+   resizer, invisible on a dark toolbar. Both take the theme's own surface
+   and ink. */
+table.cal_event, td.cal_event, .cal_event {
+	background-color: var(--c-sunken) !important;
+	border-color: var(--c-border) !important;
+}
+table.cal_event a, .cal_event a.cal_event_title, .cal_event a,
+table.cal_event a.classforajaxtooltip { color: var(--c-ink) !important; }
+.cal_peruserviewname, .cal_current_month, .cal_other_month { color: var(--c-ink-2); }
+
+.cke_button_label, .cke_combo_text, .cke_path_item, .cke_toolbar_text {
+	color: var(--c-ink-2) !important;
+}
+.cke_resizer {
+	/* The resizer is a text glyph here, not a border triangle, so colour is
+	   what actually paints it -- border-color left it black at 1.4:1. */
+	color: var(--c-muted) !important;
+	border-color: transparent var(--c-border-strong) transparent transparent !important;
+}
+.cke_panel_list a, .cke_panel_listItem a { color: var(--c-ink-2) !important; }

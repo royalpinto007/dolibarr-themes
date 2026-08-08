@@ -123,3 +123,23 @@ img.userphoto, img.photo, img#img_logo, .dropdown-user-image { filter: none; }
 /* The editor ships a light chrome of its own. */
 .cke_top, .cke_bottom { background: var(--c-sunken) !important; }
 .cke_contents, .cke_inner { background: var(--c-surface) !important; }
+
+/* ---- Third-party markup that hardcodes light colours ----
+   Found on a dark theme only, and only with real data on the page.
+
+   Dolibarr paints agenda event blocks #F0F0F0 inline-ish, so the themed link
+   colour on top measured 1.6:1. CKEditor ships its own #484848 button labels
+   and a black resizer, which vanish on a dark toolbar. Both are given the
+   theme's own surface and ink. */
+table.cal_event, td.cal_event, .cal_event {
+	background-color: var(--c-sunken) !important;
+	border-color: var(--c-border) !important;
+}
+table.cal_event a, .cal_event a.cal_event_title, .cal_event a { color: var(--c-ink) !important; }
+.cal_peruserviewname, .cal_current_month, .cal_other_month { color: var(--c-ink-2); }
+
+.cke_button_label, .cke_combo_text, .cke_path_item, .cke_toolbar_text {
+	color: var(--c-ink-2) !important;
+}
+.cke_resizer { border-color: transparent var(--c-border-strong) transparent transparent !important; }
+.cke_panel_list a, .cke_panel_listItem a { color: var(--c-ink-2) !important; }

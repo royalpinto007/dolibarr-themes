@@ -40,16 +40,27 @@ cp -r htdocs/core/thriveshell    /path/to/dolibarr/htdocs/core/
 cp    htdocs/core/menus/standard/*.php /path/to/dolibarr/htdocs/core/menus/standard/
 ```
 
-Select the theme in **Home → Setup → Display**, then register its menu manager:
+Then two settings. **Both are required** — without them the theme half-loads.
+
+Select the theme in **Home → Setup → Display**, register its menu manager, and
+enable theme JavaScript:
 
 ```sql
--- command
+-- the shell: command
 UPDATE llx_const SET value='command_menu.php'     WHERE name='MAIN_MENU_STANDARD';
--- workbench, aurora, editorial, dense
+-- the shell: workbench, aurora, editorial, dense
 UPDATE llx_const SET value='thriveshell_menu.php' WHERE name='MAIN_MENU_STANDARD';
+
+-- the theme's own JavaScript (palette, sidebar state, account block placement)
+INSERT INTO llx_const (name, entity, value, type, visible)
+VALUES ('ALLOW_THEME_JS', 1, '1', 'chaine', 0);
 ```
 
-Without that second step the stylesheet applies but the shell does not.
+Without `MAIN_MENU_STANDARD` the stylesheet applies but the shell does not.
+
+Without `ALLOW_THEME_JS` Dolibarr silently skips `theme/<name>/<name>.js`, so the
+command palette does not open and the account block is left wherever Dolibarr put it —
+which, in the themes with side chrome, is underneath the rail.
 
 ## Architecture
 
