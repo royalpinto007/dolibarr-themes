@@ -3294,3 +3294,38 @@ span.fa-question-circle, .fa-question-circle { vertical-align: middle; line-heig
 ul.treeview, ul.treeview ul, .treeview { background-color: transparent; }
 ul.treeview a { color: var(--c-ink); }
 ul.treeview .opacitymedium, ul.treeview span.small { color: var(--c-muted); opacity: 1; }
+
+
+/* ---- Widget "more" links on the dashboard ----
+   Same construction as the area-page header counts -- an anchor wrapping a
+   .badge -- but emitted inside a div rather than a th, so the earlier rule
+   never reached them and they stayed 12px of bare text. */
+a:has(> span.badge), a.paddingleft:has(.badge) {
+	display: inline-flex;
+	align-items: center;
+	min-height: 22px;
+}
+div[class*="tdoverflow"] > a > span.badge,
+.info-box-content a > span.badge,
+div.box a > span.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 20px;
+	padding: 0 var(--sp-2);
+	background: var(--c-sunken);
+	border: 1px solid var(--c-border);
+	border-radius: 999px;
+	color: var(--c-ink-2);
+	font-size: 0.6875rem;
+	font-weight: 650;
+	line-height: 1;
+}
+div[class*="tdoverflow"] > a:hover > span.badge,
+.info-box-content a:hover > span.badge,
+div.box a:hover > span.badge {
+	background: var(--c-accent-soft);
+	border-color: color-mix(in srgb, var(--c-accent) 35%, transparent);
+	color: var(--c-accent-ink);
+}
