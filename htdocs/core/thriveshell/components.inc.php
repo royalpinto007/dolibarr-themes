@@ -689,6 +689,14 @@ input.inputsearch_dropdownselectedfields { width: 100%; }
 	border-radius: var(--r-sm); color: var(--c-accent-ink); padding: 1px var(--sp-2);
 }
 
+/* Stacking. jQuery UI hands the dialog and its overlay z-index 101/100, which was
+   sufficient against eldy's static chrome but sits far below the fixed shells here
+   (the bars and rails run 1200-1400): the dialog opened *underneath* the top bar and
+   the sidebar, its title clipped, and the scrim failed to dim the chrome it covered.
+   jQuery writes that z-index inline, so this has to be !important to win. */
+.ui-widget-overlay { z-index: 2400 !important; }
+.ui-dialog { z-index: 2500 !important; }
+
 .ui-dialog {
 	background: var(--c-surface); border: 1px solid var(--c-border);
 	border-radius: var(--r-lg); box-shadow: var(--sh-lg); font-family: var(--c-font); padding: 0;
@@ -700,7 +708,9 @@ input.inputsearch_dropdownselectedfields { width: 100%; }
 .ui-datepicker {
 	background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg);
 	box-shadow: var(--sh-lg); padding: var(--sp-2); font-family: var(--c-font);
-	font-size: <?php echo $fontsizesmaller; ?>; z-index: 2000 !important;
+	/* Above .ui-dialog (2500): date fields inside a dialog would otherwise drop
+	   their calendar behind it. */
+	font-size: <?php echo $fontsizesmaller; ?>; z-index: 2600 !important;
 }
 .ui-datepicker .ui-datepicker-header { background: transparent; border: 0; color: var(--c-ink); font-weight: 600; }
 .ui-datepicker td a, .ui-datepicker td span { text-align: center; border-radius: var(--r-sm); padding: var(--sp-1); color: var(--c-ink-2); border: 0; background: transparent; }

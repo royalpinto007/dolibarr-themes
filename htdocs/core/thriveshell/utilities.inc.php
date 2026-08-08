@@ -46,7 +46,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
    decoration, so they are behavioural and reimplemented in meaning.
    ========================================================================== */
 
-.hidden, .hideobject { display: none !important; }
+/* Deliberately NOT !important. Dolibarr ships every popup's host element as
+   <div id="idfordialog..." class="hidden"> (functions.lib.php) and jQuery UI reveals
+   it by writing an inline display:block. An !important declaration outranks that
+   inline style, so the host stayed collapsed and the dialog opened as a bare title
+   bar with no content -- the virtual business card URL and every other dialog built
+   on the same pattern. Plain `display: none` still hides it until JS says otherwise. */
+.hidden, .hideobject { display: none; }
 .clearboth { clear: both; }
 .nowrap, .nowraponall { white-space: nowrap !important; }
 .wrapimp { white-space: normal !important; }
