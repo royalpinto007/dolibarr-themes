@@ -3055,7 +3055,13 @@ div.tabBar td > table.centpercent.nobordernopadding {
 	width: auto;
 }
 div.tabBar td > table.nobordernopadding a.editfielda,
-div.tabBar td > table.nobordernopadding a[href*="action=edit"] {
+/* `action=edit` appears in plenty of links that are not the pencil -- Setup >
+   Display wraps each skin thumbnail in ihm.php?action=edit&theme=..., inside this
+   exact tabBar/nobordernopadding context. Those links were therefore hidden at
+   opacity 0 and only surfaced while the pointer was over them, so the skin chooser
+   read as an empty band. The pencil is an icon-only link; anything wrapping an
+   image is not it. */
+div.tabBar td > table.nobordernopadding a[href*="action=edit"]:not(:has(img)) {
 	margin-<?php echo $left; ?>: var(--sp-2);
 	opacity: 0;
 	transition: opacity var(--t);
