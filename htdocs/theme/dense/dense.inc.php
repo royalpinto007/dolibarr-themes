@@ -326,3 +326,24 @@ body > form > div.div-table-responsive {
 	max-width: calc(100% - 0px);
 	box-sizing: border-box;
 }
+
+
+/* ---- Brand ----
+   The company name was cut mid-word ("Aarav Demo ERP Pvt Lt..."). In a
+   horizontal bar it cannot wrap like the sidebar themes, so it is given room
+   to breathe and only truncates when the window genuinely cannot hold it --
+   with an ellipsis and the full name in a title tooltip rather than a hard cut. */
+.dn-brand {
+	max-width: 260px;
+	min-width: 0;
+	flex: 0 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+@media only screen and (max-width: 1280px) {
+	.dn-brand { max-width: 180px; }
+}
+@media only screen and (max-width: 900px) {
+	.dn-brand { max-width: 120px; }
+}
