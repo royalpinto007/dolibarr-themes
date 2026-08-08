@@ -55,3 +55,50 @@ its own chrome width.
 Some bundled plugins hardcode a background — `jquery.treeview.css` sets
 `background-color: white` on its list. Those need explicit neutralising; the shared
 layer does this for the treeview.
+
+## A page renders the menu and then stops
+
+The top bar is there, the content is not, and the HTML ends just after `</header>`.
+The status is **200**, so nothing looks wrong to a monitor, and with `display_errors`
+off the response carries no error text.
+
+This is not a theme bug — stock Dolibarr does it too — but the themes make it easy to
+misread as broken chrome, so it is recorded here.
+
+Dolibarr takes the timezone from the browser at login (`tz_string`), stores it in the
+session **without validating it**, and later passes it to `new DateTimeZone()` in
+`dol_print_date()`. If the PHP build's tzdata does not know the identifier it throws,
+after the header has already been flushed.
+
+Chrome still reports **legacy** zone names: it sends `Asia/Calcutta` even when the OS
+is set to `Asia/Kolkata`, and likewise `Asia/Katmandu`, `Europe/Kiev`. Current tzdata
+ships only the modern spellings. So the page breaks for users in those regions and
+looks perfectly healthy to everyone else.
+
+Confirm it without reading a log — log in once per zone and compare response sizes:
+
+```
+Asia/Calcutta   18792 bytes  truncated     Asia/Kolkata    168332 bytes  ok
+Asia/Katmandu   18792 bytes  truncated     Asia/Kathmandu  168334 bytes  ok
+Europe/Kiev     18792 bytes  truncated     Europe/Kyiv     168331 bytes  ok
+```
+
+Reproducing with `curl` **hides** the bug: hand-writing `tz_string` you naturally type
+the modern name and the page renders. Only a real browser sends the legacy alias.
+
+Patch both places. In `htdocs/main.inc.php`, where `$dol_tz_string` is built at login:
+
+```php
+if (!empty($dol_tz_string)) {
+    $aliases = array('Asia/Calcutta' => 'Asia/Kolkata', 'Asia/Katmandu' => 'Asia/Kathmandu',
+        'Asia/Rangoon' => 'Asia/Yangon', 'Asia/Saigon' => 'Asia/Ho_Chi_Minh',
+        'America/Buenos_Aires' => 'America/Argentina/Buenos_Aires', 'Europe/Kiev' => 'Europe/Kyiv');
+    if (isset($aliases[$dol_tz_string])) { $dol_tz_string = $aliases[$dol_tz_string]; }
+    try { new DateTimeZone($dol_tz_string); } catch (Exception $e) { $dol_tz_string = ''; }
+}
+```
+
+And again at the point of use in `htdocs/core/lib/functions.lib.php`, falling back to
+`'UTC'` and rewriting `$_SESSION['dol_tz_string']`. The second guard is not optional:
+without it, sessions established before the patch keep the bad value and stay broken
+until the user logs out.
