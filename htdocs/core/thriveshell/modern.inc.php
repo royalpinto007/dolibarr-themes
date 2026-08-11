@@ -944,9 +944,9 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	display: flex;
 	align-items: center;
 	gap: var(--sp-2);
-	flex: 0 1 350px;
-	width: 350px;
-	max-width: 100%;
+	flex: 1 1 340px;
+	width: auto;
+	max-width: 380px;
 	min-width: 240px;
 	height: 38px;
 	padding: 0 var(--sp-2) 0 var(--sp-3);
@@ -1012,8 +1012,8 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	width: 190px;
 	min-width: 180px;
 }
-.ts-filter-surface .ts-toolbar-filter-1 { flex-basis: 220px; width: 220px; }
-.ts-filter-surface .ts-toolbar-filter-2 { flex-basis: 170px; width: 170px; min-width: 150px; }
+.ts-filter-surface .ts-toolbar-filter-1 { flex-basis: 270px; width: 270px; min-width: 270px; }
+.ts-filter-surface .ts-toolbar-filter-2 { flex-basis: 225px; width: 225px; min-width: 225px; }
 .ts-filter-surface .ts-toolbar-filter-3 { flex-basis: 220px; width: 220px; }
 .ts-filter-surface .ts-toolbar-filter > span:not([class*="fa-"]) {
 	display: block;
@@ -1031,6 +1031,8 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-filter-surface .ts-toolbar-filter .select2-search__field {
 	box-sizing: border-box;
 	max-width: 100%;
+	white-space: nowrap;
+	text-overflow: clip;
 }
 .ts-filter-surface .divsearchfield > span[class*="fa-"] { display: none; }
 .ts-filter-surface .select2-container { width: 100% !important; min-width: 0 !important; }
@@ -1359,13 +1361,78 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	overflow: hidden;
 }
 .select2-dropdown.ts-page-size-dropdown .select2-search--dropdown { display: none; }
-.select2-dropdown.ts-page-size-dropdown .select2-results__options { padding: 0; }
+.select2-dropdown.ts-page-size-dropdown .select2-results__options {
+	max-height: none !important;
+	padding: 0;
+	overflow-y: visible !important;
+}
 .select2-dropdown.ts-page-size-dropdown .select2-results__option {
-	min-height: 34px;
-	padding: 7px var(--sp-3);
+	display: flex;
+	align-items: center;
+	min-height: 35px;
+	padding: 0 var(--sp-3);
 	border-radius: var(--r-sm);
 	font-size: 0.875rem;
 }
+.select2-dropdown.ts-page-size-dropdown .select2-results__option[aria-selected="true"] {
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+	font-weight: 620;
+}
+
+.ts-list-card tr.liste_titre .ts-sort-indicator {
+	display: inline-flex;
+	align-items: center;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+.ts-list-card tr.liste_titre .ts-sort-indicator .paddingright { padding-right: 0; }
+
+/* AJAX record previews share .mytooltip. Keep ordinary compact help tooltips
+   content-sized while giving record cards an opaque, structured surface. */
+.ui-tooltip.mytooltip {
+	box-sizing: border-box;
+	width: 280px;
+	max-width: calc(100vw - 24px);
+	padding: 14px 16px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	background: var(--c-surface) !important;
+	box-shadow: var(--sh-lg);
+	color: var(--c-ink-2);
+	font-size: 0.875rem;
+	line-height: 1.65;
+	opacity: 1 !important;
+	z-index: 3000 !important;
+}
+.ui-tooltip.mytooltip .ui-tooltip-content { padding: 0; }
+.ui-tooltip.mytooltip .centpercent { position: relative; }
+.ui-tooltip.mytooltip .centpercent > [class*="fa-"]:first-child {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	margin-right: var(--sp-2);
+	border-radius: var(--r);
+	background: var(--c-accent-soft);
+	vertical-align: middle;
+}
+.ui-tooltip.mytooltip u.paddingrightonly {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 0.875rem;
+	font-weight: 650;
+	letter-spacing: 0;
+	text-transform: none;
+	opacity: 1;
+	vertical-align: middle;
+}
+.ui-tooltip.mytooltip .badge-status { float: right; margin-top: 5px; }
+.ui-tooltip.mytooltip b,
+.ui-tooltip.mytooltip strong { color: var(--c-ink); font-weight: 600; }
 .ts-column-filters-source { display: none; }
 .ts-list-card {
 	min-width: 0;

@@ -608,6 +608,15 @@
 			var tooltipLabel = (cell.getAttribute('title') || '').replace(/\s+/g, ' ').trim();
 			if (visibleLabel && visibleLabel === tooltipLabel) { cell.removeAttribute('title'); }
 		});
+		/* Dolibarr emits the active sort indicator before its anchor. Move that
+		   existing indicator after the href-bearing label without recreating it. */
+		list.querySelectorAll('tr.liste_titre > th.liste_titre_sel, tr.liste_titre > td.liste_titre_sel').forEach(function (cell) {
+			var sortLink = cell.querySelector(':scope > a.reposition');
+			var sortIndicator = cell.querySelector(':scope > span.nowrap');
+			if (!sortLink || !sortIndicator) { return; }
+			sortIndicator.classList.add('ts-sort-indicator');
+			sortLink.insertAdjacentElement('afterend', sortIndicator);
+		});
 
 		var totalNode = title.querySelector('.ts-count');
 		var total = totalNode ? parseInt((totalNode.textContent || '').replace(/[^0-9]/g, ''), 10) : NaN;
@@ -685,6 +694,9 @@
 							var dropdown = selection && document.querySelector('.select2-container--open .select2-dropdown');
 							if (!dropdown) { return; }
 							dropdown.classList.add('ts-page-size-dropdown', 'ts-compact-select2-dropdown');
+							dropdown.querySelectorAll('.select2-results__option').forEach(function (option, index) {
+								if (index >= 6) { option.remove(); }
+							});
 							var width = limitItem.getBoundingClientRect().width;
 							dropdown.style.setProperty('width', width + 'px', 'important');
 							dropdown.style.setProperty('min-width', width + 'px');
