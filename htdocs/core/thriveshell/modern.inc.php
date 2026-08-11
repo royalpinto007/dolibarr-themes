@@ -1002,9 +1002,11 @@ div.pagination a.btnTitle:has(.fa-plus) {
 }
 .ts-filter-surface .ts-clear-all-filters:hover { background: var(--c-sunken); color: var(--c-ink); }
 .ts-filter-surface .ts-clear-all-filters[hidden] { display: none !important; }
+.ts-filter-surface .ts-clear-all-filters [class*="fa-"] { display: none; }
 .ts-filter-surface .divsearchfield {
 	margin: 0;
 	flex: 1 1 220px;
+	min-width: 180px;
 }
 .ts-filter-surface .divsearchfield > span[class*="fa-"] { display: none; }
 .ts-filter-surface .select2-container { width: 100% !important; min-width: 0 !important; }
@@ -1323,6 +1325,23 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	font-size: 0.8125rem;
 }
 .select2-dropdown.ts-column-filter-dropdown.ts-compact-select2-dropdown .select2-search--dropdown { display: none; }
+.select2-dropdown.ts-page-size-dropdown {
+	box-sizing: border-box;
+	padding: var(--sp-1) !important;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+	box-shadow: var(--sh-md);
+	overflow: hidden;
+}
+.select2-dropdown.ts-page-size-dropdown .select2-search--dropdown { display: none; }
+.select2-dropdown.ts-page-size-dropdown .select2-results__options { padding: 0; }
+.select2-dropdown.ts-page-size-dropdown .select2-results__option {
+	min-height: 34px;
+	padding: 7px var(--sp-3);
+	border-radius: var(--r-sm);
+	font-size: 0.875rem;
+}
 .ts-column-filters-source { display: none; }
 .ts-list-card {
 	min-width: 0;
@@ -1360,25 +1379,34 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-results-nav div.pagination { display: block; }
 .ts-results-nav li { display: inline-flex; align-items: center; min-height: 38px; }
 .ts-results-nav li.paginationcombolimit {
-	gap: 4px;
+	position: relative;
+	width: 132px;
 	height: 38px;
-	padding: 0 8px;
+	padding: 0;
 	border: 1px solid var(--c-border);
 	border-radius: var(--r);
 	background: var(--c-surface);
 }
-.ts-results-nav li.paginationcombolimit .select2-container { width: 44px !important; }
+.ts-results-nav li.paginationcombolimit .select2-container { width: 100% !important; }
 .ts-results-nav li.paginationcombolimit .select2-selection--single {
-	height: 34px;
-	min-height: 34px;
-	padding: 0 18px 0 2px;
+	height: 36px;
+	min-height: 36px;
+	padding: 0 30px 0 12px;
 	border: 0 !important;
 	background: transparent;
 	box-shadow: none !important;
 }
-.ts-results-nav li.paginationcombolimit .select2-selection__rendered { line-height: 34px; }
-.ts-results-nav li.paginationcombolimit .select2-selection__arrow { width: 18px; height: 34px; right: 0; }
-.ts-per-page-label { color: var(--c-muted); white-space: nowrap; }
+.ts-results-nav li.paginationcombolimit .select2-selection__rendered {
+	line-height: 36px;
+	padding: 0 !important;
+	overflow: visible;
+	text-overflow: clip;
+	font-size: 0.875rem;
+	color: var(--c-ink-2);
+}
+.ts-results-nav li.paginationcombolimit .select2-selection__rendered::after { content: " per page"; }
+.ts-results-nav li.paginationcombolimit .select2-selection__arrow { width: 24px; height: 36px; right: 6px; }
+.ts-per-page-label { display: none; }
 .ts-results-nav input.pageplusone {
 	width: 38px;
 	height: 38px;
@@ -1399,10 +1427,23 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	border: 1px solid var(--c-border);
 	border-radius: var(--r); color: var(--c-ink-2);
 	background: var(--c-surface);
+	font-size: 0.875rem;
 }
+.ts-results-nav .paginationpageleft a,
+.ts-results-nav .paginationpageright a,
+.ts-results-nav .ts-pagination-disabled .inactive { font-size: 1rem; }
 .ts-results-nav .ts-pagination-disabled .inactive { color: var(--c-faint); cursor: default; }
 .ts-results-nav .ts-pager-value { border: 1px solid var(--c-border); background: var(--c-surface); }
 .ts-results-nav a:hover { background: var(--c-sunken); color: var(--c-ink); }
+
+/* Sort labels stay part of the flat header plane. The shared hit-area rule
+   otherwise paints a white rounded chip on hover. */
+.ts-list-card tr.liste_titre th a.reposition:hover,
+.ts-list-card tr.liste_titre td a.reposition:hover {
+	background: transparent;
+	box-shadow: none;
+	color: var(--c-accent-ink);
+}
 @media only screen and (max-width: 640px) {
 	.ts-list-composition .ts-filter-surface { padding: var(--sp-3); }
 	.ts-filter-surface .ts-quick-search,

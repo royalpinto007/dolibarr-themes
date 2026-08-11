@@ -489,18 +489,25 @@
 					if (compactSelect && compactSelect.options.length <= 5) {
 						compactSelect.setAttribute('data-ts-compact-select2', '1');
 					}
-					if (compactSelect && label.textContent === 'Status') {
-						var emptyStatus = Array.from(compactSelect.options).find(function (option) {
+					var compactEmptyLabels = {
+						'status': 'All statuses',
+						'nature of third party': 'All types'
+					};
+					var compactEmptyLabel = compactEmptyLabels[label.textContent.toLowerCase()];
+					if (compactSelect && compactEmptyLabel) {
+						var emptyOption = Array.from(compactSelect.options).find(function (option) {
 							return option.value === '-1' && !(option.textContent || '').replace(/\u00a0/g, ' ').trim();
 						});
-						if (emptyStatus) {
-							emptyStatus.textContent = 'All statuses';
-							compactSelect.setAttribute('data-ts-empty-label', 'All statuses');
-							compactSelect.addEventListener('change', function () {
+						if (emptyOption) {
+							emptyOption.textContent = compactEmptyLabel;
+							compactSelect.setAttribute('data-ts-empty-label', compactEmptyLabel);
+							compactSelect.addEventListener('change', function (event) {
+								var changedSelect = event.currentTarget;
 								window.requestAnimationFrame(function () {
-									if (compactSelect.value !== '-1') { return; }
-									var rendered = control.querySelector('.select2-selection__rendered');
-									if (rendered) { rendered.textContent = 'All statuses'; rendered.setAttribute('title', 'All statuses'); }
+									if (changedSelect.value !== '-1') { return; }
+									var rendered = changedSelect.parentElement.querySelector('.select2-selection__rendered');
+									var selectedEmptyLabel = changedSelect.getAttribute('data-ts-empty-label');
+									if (rendered && selectedEmptyLabel) { rendered.textContent = selectedEmptyLabel; rendered.setAttribute('title', selectedEmptyLabel); }
 								});
 							});
 						}
@@ -520,7 +527,8 @@
 							return value !== null && String(value).trim() !== '' && String(value) !== '-1';
 						});
 						clearFilters.hidden = !hasActiveFilter;
-						quick.appendChild(clearFilters);
+						clearFilters.lastChild.textContent = 'Clear';
+						filter.appendChild(clearFilters);
 					}
 
 					/* Details provides the native button toggle but deliberately has no
@@ -559,7 +567,7 @@
 							}
 							var emptyLabel = source && source.getAttribute('data-ts-empty-label');
 							if (emptyLabel) {
-								dropdown.querySelectorAll('.select2-results__option.optiongrey').forEach(function (option) {
+								dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
 									if (!(option.textContent || '').replace(/\u00a0/g, ' ').trim()) { option.textContent = emptyLabel; }
 								});
 							}
@@ -582,10 +590,20 @@
 		card.className = 'ts-list-card';
 		composition.appendChild(card);
 		card.appendChild(listWrap);
+		/* Dolibarr repeats each visible sortable label in the parent th title.
+		   That produces a redundant native tooltip and adds no accessible name. */
+		list.querySelectorAll('tr.liste_titre > th[title], tr.liste_titre > td[title]').forEach(function (cell) {
+			var sortLink = cell.querySelector('a.reposition');
+			if (!sortLink) { return; }
+			var visibleLabel = (sortLink.textContent || '').replace(/\s+/g, ' ').trim();
+			var tooltipLabel = (cell.getAttribute('title') || '').replace(/\s+/g, ' ').trim();
+			if (visibleLabel && visibleLabel === tooltipLabel) { cell.removeAttribute('title'); }
+		});
 
 		var totalNode = title.querySelector('.ts-count');
 		var total = totalNode ? parseInt((totalNode.textContent || '').replace(/[^0-9]/g, ''), 10) : NaN;
 		var limitSelect = form.querySelector('select[name="limit"], select.selectlimit');
+		if (limitSelect) { limitSelect.setAttribute('data-ts-compact-select2', '1'); }
 		var limit = limitSelect ? parseInt(limitSelect.value, 10) : NaN;
 		var pageInput = form.querySelector('input[name="pageplusone"], .pageplusone input');
 		var current = pageInput ? parseInt(pageInput.value, 10) : 1;
@@ -650,6 +668,21 @@
 					perPage.className = 'ts-per-page-label';
 					perPage.textContent = 'per page';
 					limitItem.appendChild(perPage);
+				}
+				if (limitItem && limitSelect) {
+					var syncPageSizeDropdown = function () {
+						window.requestAnimationFrame(function () {
+							var selection = limitItem.querySelector('.select2-selection[aria-expanded="true"]');
+							var dropdown = selection && document.querySelector('.select2-container--open .select2-dropdown');
+							if (!dropdown) { return; }
+							dropdown.classList.add('ts-page-size-dropdown', 'ts-compact-select2-dropdown');
+							var width = limitItem.getBoundingClientRect().width;
+							dropdown.style.setProperty('width', width + 'px', 'important');
+							dropdown.style.setProperty('min-width', width + 'px');
+						});
+					};
+					var pageSizeObserver = new MutationObserver(syncPageSizeDropdown);
+					pageSizeObserver.observe(document.body, {childList: true, subtree: true});
 				}
 			}
 			var nav = document.createElement('nav');
