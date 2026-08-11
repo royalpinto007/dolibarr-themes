@@ -3117,9 +3117,25 @@ div.fichehalfleft > table, div.fichehalfright > table,
 div.fichehalfleft table.border, div.fichehalfright table.border,
 div.fichehalfleft table.tableforfield, div.fichehalfright table.tableforfield {
 	max-width: 100%;
-	table-layout: fixed;
+	table-layout: auto;
 }
-div.fichehalfleft table td, div.fichehalfright table td { overflow-wrap: anywhere; }
+/* `anywhere` let the browser break inside a word, so a value read
+   "No particular sales representat / ive assigned". `break-word` only breaks a
+   word that genuinely cannot fit, so ordinary values wrap at spaces. */
+div.fichehalfleft table td, div.fichehalfright table td { overflow-wrap: break-word; }
+/* Under `table-layout: fixed` the columns come from the first row, and Dolibarr
+   emits later rows with an extra cell (the edit pencil hangs in its own td).
+   Those rows pushed the value column down to ~102px of a 625px card, which is
+   what forced the mid-word wrapping above. Pinning the label column leaves the
+   rest of the card to the value, whatever the row's cell count. */
+div.fichehalfleft table > tbody > tr > td.titlefield,
+div.fichehalfleft table > tbody > tr > td.titlefieldmiddle,
+div.fichehalfright table > tbody > tr > td.titlefield,
+div.fichehalfright table > tbody > tr > td.titlefieldmiddle,
+div.fichehalfleft table > tr > td.titlefield,
+div.fichehalfright table > tr > td.titlefield {
+	width: 40%;
+}
 /* Compact enough that a control and both buttons fit a half-card column. */
 div.tabBar td input[type="submit"].smallpaddingimp,
 div.fichehalfleft td input[type="submit"],
