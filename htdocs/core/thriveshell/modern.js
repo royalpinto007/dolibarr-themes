@@ -460,6 +460,14 @@
 					}
 				});
 				if (nameSearch) { filter.insertBefore(quick, filter.firstChild); }
+				/* The first row of Dolibarr's list filter provides the promoted toolbar
+				   controls in display order. Add structural hooks without depending on
+				   translated labels or field names. */
+				Array.from(filter.children).filter(function (child) {
+					return child.classList.contains('divsearchfield');
+				}).forEach(function (control, index) {
+					control.classList.add('ts-toolbar-filter', 'ts-toolbar-filter-' + (index + 1));
+				});
 
 				var details = document.createElement('details');
 				details.className = 'ts-column-filters';
@@ -531,21 +539,22 @@
 						filter.appendChild(clearFilters);
 					}
 
-					/* Details provides the native button toggle but deliberately has no
-					   outside-click dismissal. Treat Select2's body-mounted dropdown as
-					   part of the panel so choosing an option cannot close its parent. */
+					/* Select2 mounts its dropdown under body. Only a dropdown whose
+					   expanded source selection lives in this panel is internal; toolbar
+					   and page-size Select2 instances must dismiss the advanced panel. */
+					var hasOpenAdvancedSelect2 = function () {
+						return Boolean(panel.querySelector('.select2-selection[aria-expanded="true"]'));
+					};
 					document.addEventListener('click', function (event) {
 						if (!details.open || details.contains(event.target)) { return; }
-						var externalWidget = event.target.closest && event.target.closest('.select2-container, .select2-dropdown');
-						if (externalWidget) { return; }
+						var bodyMountedDropdown = event.target.closest && event.target.closest('.select2-dropdown');
+						if (bodyMountedDropdown && (bodyMountedDropdown.classList.contains('ts-column-filter-dropdown') || hasOpenAdvancedSelect2())) { return; }
 						details.removeAttribute('open');
 					});
 					document.addEventListener('keydown', function (event) {
 						if (event.key !== 'Escape' || !details.open) { return; }
-						/* Let an open Select2 consume the first Escape itself. */
-						if (document.querySelector('.select2-container--open')) { return; }
 						details.removeAttribute('open');
-						disclosure.focus();
+						window.requestAnimationFrame(function () { disclosure.focus(); });
 					});
 
 					/* These Select2 instances were initialised before Dolibarr's controls
@@ -618,8 +627,8 @@
 		var summary = document.createElement('span');
 		summary.className = 'ts-results-summary';
 		summary.textContent = Number.isNaN(total)
-			? ('Showing ' + first + '–' + last)
-			: ('Showing ' + first + '–' + last + ' of ' + total);
+			? ('Showing ' + first + ' to ' + last)
+			: ('Showing ' + first + ' to ' + last + ' of ' + total + ' results');
 		footer.appendChild(summary);
 		var topPager = form.querySelector('table.table-fiche-title div.pagination');
 		if (topPager) {

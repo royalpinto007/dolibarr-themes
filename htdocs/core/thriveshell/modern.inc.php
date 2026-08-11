@@ -944,7 +944,9 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	display: flex;
 	align-items: center;
 	gap: var(--sp-2);
-	flex: 1 1 290px;
+	flex: 0 1 350px;
+	width: 350px;
+	max-width: 100%;
 	min-width: 240px;
 	height: 38px;
 	padding: 0 var(--sp-2) 0 var(--sp-3);
@@ -990,7 +992,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	height: 32px;
 	width: auto;
 	flex: 0 0 auto;
-	margin: 0;
+	margin: 0 0 0 auto;
 	padding: 0 var(--sp-1);
 	border: 0;
 	border-radius: var(--r);
@@ -1005,9 +1007,13 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-filter-surface .ts-clear-all-filters [class*="fa-"] { display: none; }
 .ts-filter-surface .divsearchfield {
 	margin: 0;
-	flex: 1 1 220px;
+	flex: 0 1 190px;
+	width: 190px;
 	min-width: 180px;
 }
+.ts-filter-surface .ts-toolbar-filter-1 { flex-basis: 220px; width: 220px; }
+.ts-filter-surface .ts-toolbar-filter-2 { flex-basis: 170px; width: 170px; min-width: 150px; }
+.ts-filter-surface .ts-toolbar-filter-3 { flex-basis: 220px; width: 220px; }
 .ts-filter-surface .divsearchfield > span[class*="fa-"] { display: none; }
 .ts-filter-surface .select2-container { width: 100% !important; min-width: 0 !important; }
 .ts-filter-surface .select2-selection { min-height: 38px; }
@@ -1373,14 +1379,14 @@ div.pagination a.btnTitle:has(.fa-plus) {
 }
 .ts-results-summary { white-space: nowrap; }
 .ts-results-nav ul {
-	display: flex; align-items: center; gap: 4px;
+	display: flex; align-items: center; gap: 6px;
 	margin: 0; padding: 0; list-style: none;
 }
 .ts-results-nav div.pagination { display: block; }
 .ts-results-nav li { display: inline-flex; align-items: center; min-height: 38px; }
 .ts-results-nav li.paginationcombolimit {
 	position: relative;
-	width: 132px;
+	width: 126px;
 	height: 38px;
 	padding: 0;
 	border: 1px solid var(--c-border);
@@ -1431,7 +1437,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 }
 .ts-results-nav .paginationpageleft a,
 .ts-results-nav .paginationpageright a,
-.ts-results-nav .ts-pagination-disabled .inactive { font-size: 1rem; }
+.ts-results-nav .ts-pagination-disabled .inactive { font-size: 1.125rem; }
 .ts-results-nav .ts-pagination-disabled .inactive { color: var(--c-faint); cursor: default; }
 .ts-results-nav .ts-pager-value { border: 1px solid var(--c-border); background: var(--c-surface); }
 .ts-results-nav a:hover { background: var(--c-sunken); color: var(--c-ink); }
@@ -1447,7 +1453,8 @@ div.pagination a.btnTitle:has(.fa-plus) {
 @media only screen and (max-width: 640px) {
 	.ts-list-composition .ts-filter-surface { padding: var(--sp-3); }
 	.ts-filter-surface .ts-quick-search,
-	.ts-filter-surface .divsearchfield { flex-basis: 100%; min-width: 0; }
+	.ts-filter-surface .divsearchfield { flex-basis: 100%; width: 100%; min-width: 0; }
+	.ts-filter-surface .ts-clear-all-filters { width: auto; flex: 0 0 auto; margin-left: auto; }
 	.ts-column-filters { width: 100%; }
 	.ts-column-filters > summary { width: 100%; justify-content: center; }
 	.ts-column-filters-panel {
@@ -1490,7 +1497,7 @@ body { font-size: 0.875rem; }
 .ts-list-card tr.oddeven td,
 .ts-list-card tr.impair td,
 .ts-list-card tr.pair td { height: 52px; padding-top: var(--sp-3); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--c-hairline); }
-.ts-results-footer { min-height: 56px; padding: var(--sp-3) var(--sp-4); background: #fbfcfe; }
+.ts-results-footer { min-height: 52px; padding: 6px var(--sp-4); background: #fbfcfe; }
 
 /* The record is a canvas containing independent surfaces, not one white sheet. */
 div.tabBar.ts-entity-card {
