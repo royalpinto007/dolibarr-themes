@@ -64,6 +64,10 @@
 		crumb.className = 'ts-breadcrumb';
 		crumb.setAttribute('aria-label', 'Breadcrumb');
 
+		/* The breadcrumb now carries this destination, so the in-banner copy is
+		   redundant. Marking the source lets CSS hide that one anchor while the
+		   pager's prev/next arrows beside it keep working. */
+		back.classList.add('ts-crumb-source');
 		var parent = document.createElement('a');
 		parent.href = back.getAttribute('href');
 		parent.textContent = (back.textContent || '').trim();

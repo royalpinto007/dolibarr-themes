@@ -329,7 +329,7 @@ div.titre {
 }
 /* The create action is the only btnTitle carrying a plus glyph. Promoting it to a
    labelled primary button uses @title, which Dolibarr has already translated. */
-a.btnTitle:has(.fa-plus-circle), a.btnTitle:has(.fa-plus) {
+div.pagination a.btnTitle:has(.fa-plus-circle), div.pagination a.btnTitle:has(.fa-plus) {
 	display: inline-flex; align-items: center; gap: var(--sp-2);
 	min-height: 34px; padding: 0 var(--sp-4);
 	border-radius: var(--r);
@@ -338,17 +338,17 @@ a.btnTitle:has(.fa-plus-circle), a.btnTitle:has(.fa-plus) {
 	box-shadow: 0 1px 2px var(--c-accent-ring);
 	transition: background var(--t), border-color var(--t);
 }
-a.btnTitle:has(.fa-plus-circle):hover, a.btnTitle:has(.fa-plus):hover {
+div.pagination a.btnTitle:has(.fa-plus-circle):hover, div.pagination a.btnTitle:has(.fa-plus):hover {
 	background: var(--c-accent-hover); border-color: var(--c-accent-hover);
 }
-a.btnTitle:has(.fa-plus-circle)::after, a.btnTitle:has(.fa-plus)::after {
+div.pagination a.btnTitle:has(.fa-plus-circle)::after, div.pagination a.btnTitle:has(.fa-plus)::after {
 	content: attr(title);
 	font: inherit;
 }
-a.btnTitle:has(.fa-plus-circle) .btnTitle-label,
-a.btnTitle:has(.fa-plus) .btnTitle-label { display: none; }   /* @title already prints it */
-a.btnTitle:has(.fa-plus-circle) span[class*="fa-"],
-a.btnTitle:has(.fa-plus) span[class*="fa-"] { color: #fff; }
+div.pagination a.btnTitle:has(.fa-plus-circle) .btnTitle-label,
+div.pagination a.btnTitle:has(.fa-plus) .btnTitle-label { display: none; }   /* @title already prints it */
+div.pagination a.btnTitle:has(.fa-plus-circle) span[class*="fa-"],
+div.pagination a.btnTitle:has(.fa-plus) span[class*="fa-"] { color: #fff; }
 /* Secondary title actions (view mode, tools) stay quiet next to it. */
 a.btnTitle:not(:has(.fa-plus-circle)):not(:has(.fa-plus)) {
 	display: inline-flex; align-items: center; justify-content: center;
@@ -412,8 +412,8 @@ div.pagination {
 	max-width: 100%;
 }
 @media only screen and (max-width: 1200px) {
-	a.btnTitle:has(.fa-plus-circle)::after, a.btnTitle:has(.fa-plus)::after { content: none; }
-	a.btnTitle:has(.fa-plus-circle), a.btnTitle:has(.fa-plus) { padding: 0 var(--sp-3); }
+	div.pagination a.btnTitle:has(.fa-plus-circle)::after, div.pagination a.btnTitle:has(.fa-plus)::after { content: none; }
+	div.pagination a.btnTitle:has(.fa-plus-circle), div.pagination a.btnTitle:has(.fa-plus) { padding: 0 var(--sp-3); }
 }
 
 /* At phone widths the title bar is a table row, so the actions cell cannot wrap
@@ -426,3 +426,120 @@ div.pagination {
 	table.centpercent.notopnoleftnoright > tbody > tr > td { display: block; width: 100%; text-align: <?php echo $left; ?>; }
 	div.pagination { justify-content: flex-<?php echo $left; ?>; }
 }
+
+/* ==========================================================================
+   Record header corrections
+   ========================================================================== */
+/* Only the anchor the breadcrumb duplicated is hidden -- the pager's prev/next
+   arrows sit beside it in the same block and keep working. */
+div.arearef.ts-has-actions .paginationref a.ts-crumb-source { display: none; }
+
+/* The banner reserved room for a pager that no longer prints its label, leaving a
+   tall empty band between the title and the first field. */
+div.arearef.ts-has-actions { padding-top: var(--sp-2); padding-bottom: var(--sp-2); }
+div.arearef.ts-has-actions .refid,
+div.arearef.ts-has-actions .refidno { margin-top: 0; margin-bottom: 0; }
+div.arearef.ts-has-actions + div,
+div.tabBar > div.arearef.ts-has-actions { margin-bottom: var(--sp-3); }
+div.arearef.ts-has-actions .paginationref { align-self: center; }
+
+/* ==========================================================================
+   Tabs: one row, scrolled rather than wrapped
+   A wrapped second row is the most legacy-looking part of a record page. Keeping
+   them on one line and scrolling the overflow avoids measuring anything in JS.
+   The scrollbar chrome is hidden but the strip stays focusable and swipeable, so
+   keyboard and touch reach the tabs the scrollbar would have revealed.
+   ========================================================================== */
+div.tabs, ul.tabs, div.tabBar > div.tabs {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: stretch;
+	gap: var(--sp-1);
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-x: contain;
+	max-width: 100%;
+}
+div.tabs::-webkit-scrollbar, ul.tabs::-webkit-scrollbar { height: 0; width: 0; }
+div.tabs a.tab, div.tabs .tabsElem, ul.tabs a.tab, ul.tabs li.tabsElem {
+	white-space: nowrap;
+	flex: 0 0 auto;
+}
+div.tabs a.tab, ul.tabs a.tab {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+	padding: var(--sp-3) var(--sp-3);
+	font-size: 0.8125rem;
+	border-radius: var(--r-sm) var(--r-sm) 0 0;
+}
+/* Focus must stay visible: the strip scrolls, so a tab reached by keyboard has to
+   announce itself even though the scrollbar is hidden. */
+div.tabs a.tab:focus-visible, ul.tabs a.tab:focus-visible {
+	outline: 2px solid var(--c-accent);
+	outline-offset: -2px;
+}
+
+/* ==========================================================================
+   Sections below a record (Linked files, Events, ...)
+   Dolibarr reuses div.titre for these, the same class as a list's page title, so
+   they inherited page-title weight and read as if each were a new page. Their
+   td.col-title parent is what separates a section heading from a page heading.
+   ========================================================================== */
+td.col-title div.titre, .col-title div.titre {
+	font-size: 1rem;
+	font-weight: 620;
+	letter-spacing: -0.01em;
+}
+/* The block that follows each of those headings becomes the card. Scoped to the
+   table wrapper Dolibarr already emits, so no section is restructured. */
+td.col-title ~ td .div-table-responsive,
+.col-title ~ td .div-table-responsive,
+div.fichecenter .div-table-responsive,
+div.fichecenter .div-table-responsive-no-min {
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+/* Actions that sit beside a section heading were colliding with it; the heading
+   row lays them out instead of letting them overlap. */
+tr:has(> td.col-title) {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-3);
+	flex-wrap: wrap;
+	width: 100%;
+}
+tr:has(> td.col-title) > td { display: inline-flex; align-items: center; gap: var(--sp-2); }
+tr:has(> td.col-title) > td.col-title { flex: 1 1 auto; }
+
+/* A genuinely empty section reads as a considered state rather than a stray word.
+   Only cells Dolibarr has actually marked empty are treated this way. */
+div.fichecenter td.opacitymedium[colspan],
+div.fichecenter tr.oddeven td.opacitymedium {
+	border: 1px dashed var(--c-border-strong);
+	border-radius: var(--r-lg);
+	background: var(--c-canvas);
+	padding: var(--sp-6) var(--sp-4);
+	text-align: center;
+	color: var(--c-faint);
+}
+
+/* A section heading has nowhere near the room of the page title bar, so a create
+   action beside one stays an icon button and is not given a label it would only
+   have to clip. */
+.col-title ~ td a.btnTitle, tr:has(> td.col-title) a.btnTitle {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-width: 30px; min-height: 30px; padding: 0 var(--sp-2);
+	border-radius: var(--r-sm);
+	background: var(--c-accent-soft); border: 1px solid transparent; color: var(--c-accent-ink);
+	box-shadow: none; overflow: visible;
+}
+.col-title ~ td a.btnTitle::after, tr:has(> td.col-title) a.btnTitle::after { content: none; }
+.col-title ~ td a.btnTitle span[class*="fa-"],
+tr:has(> td.col-title) a.btnTitle span[class*="fa-"] { color: var(--c-accent-ink); }
