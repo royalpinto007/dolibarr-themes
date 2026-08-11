@@ -72,11 +72,11 @@ $barheight = 60;
 	--c-ink-2: #263244;
 	--c-muted: #5B6B82;
 	--c-faint: #8C9AAE;
-	--c-hairline: #EDF0F4;
-	--c-border: #E1E6ED;
+	--c-hairline: #EEF0F3;
+	--c-border: #E7E9EE;
 	--c-border-strong: #C9D2DE;
 	--c-surface: #FFFFFF;
-	--c-canvas: #F5F7FA;
+	--c-canvas: #F7F8FA;
 	--c-sunken: #F1F4F8;
 
 	/* One accent. Indigo reads as "tool", not "brochure". */
@@ -99,12 +99,14 @@ $barheight = 60;
 
 	--r-sm: 6px; --r: 8px; --r-lg: 12px; --r-xl: 16px; --r-pill: 999px;
 
-	--sh-sm: 0 1px 2px rgba(11, 18, 32, 0.04);
-	--sh: 0 1px 2px rgba(11, 18, 32, 0.04), 0 4px 10px -2px rgba(11, 18, 32, 0.05);
+	--sh-sm: 0 1px 2px rgba(11, 18, 32, 0.035);
+	--sh: 0 1px 2px rgba(11, 18, 32, 0.035), 0 5px 14px -5px rgba(11, 18, 32, 0.07);
 	--sh-md: 0 2px 4px rgba(11, 18, 32, 0.04), 0 12px 24px -6px rgba(11, 18, 32, 0.09);
 	--sh-lg: 0 24px 64px -12px rgba(11, 18, 32, 0.28), 0 4px 12px rgba(11, 18, 32, 0.08);
 
 	--bar-h: <?php echo $barheight; ?>px;
+	--control-h: 40px;
+	--table-row-h: 50px;
 	--t: 120ms cubic-bezier(0.4, 0, 0.2, 1);
 
 	/* Dolibarr's documented variable contract -- core and third-party module
@@ -273,7 +275,7 @@ header.cmd-bar {
 	background: color-mix(in srgb, var(--c-surface) 97%, transparent);
 	-webkit-backdrop-filter: saturate(180%) blur(16px);
 	backdrop-filter: saturate(180%) blur(16px);
-	border-bottom: 1px solid var(--c-border);
+	border-bottom: 1px solid var(--c-hairline);
 }
 <?php if (!empty($dol_hide_topmenu)) { ?>
 header.cmd-bar { display: none; }
@@ -334,7 +336,7 @@ header.cmd-bar { display: none; }
 	align-items: center;
 	gap: var(--sp-2);
 	min-width: 240px;
-	height: 34px;
+	height: var(--control-h);
 	padding: 0 var(--sp-2) 0 var(--sp-3);
 	margin-<?php echo $right; ?>: var(--sp-2);
 	background: var(--c-sunken);
@@ -349,6 +351,18 @@ header.cmd-bar { display: none; }
 .cmd-trigger:hover { border-color: var(--c-border-strong); background: var(--c-surface); }
 .cmd-trigger-label { flex: 1; text-align: <?php echo $left; ?>; }
 .cmd-trigger-icon { font-size: 0.8125rem; }
+
+@media only screen and (min-width: 993px) {
+	header.cmd-bar .cmd-trigger {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		width: clamp(380px, 30vw, 470px);
+		margin: 0;
+		background: var(--c-surface);
+		box-shadow: var(--sh-sm);
+	}
+}
 
 .cmd-kbd {
 	display: inline-flex;
@@ -375,13 +389,13 @@ header.cmd-bar { display: none; }
 	position: static;
 	display: flex;
 	align-items: center;
-	gap: var(--sp-1);
+	gap: var(--sp-2);
 	color: var(--c-muted);
 	font-size: <?php echo $fontsizesmaller; ?>;
 }
 .cmd-bar-tools .login_block_other,
 .cmd-bar-tools .login_block_tools,
-.cmd-bar-tools .login_block_user { display: flex; align-items: center; gap: var(--sp-1); }
+.cmd-bar-tools .login_block_user { display: flex; align-items: center; gap: var(--sp-2); }
 .cmd-bar-tools .login_block_elem {
 	display: inline-flex; align-items: center; justify-content: center;
 	min-width: 32px; height: 32px; padding: 0 var(--sp-1);

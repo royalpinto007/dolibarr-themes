@@ -102,6 +102,8 @@
 		var title = banner.querySelector('.refid');
 		var status = banner.querySelector('.statusref');
 		if (title && status && !title.contains(status)) { title.appendChild(status); }
+		var pager = banner.querySelector('.pagination.paginationref');
+		if (pager && pager.parentNode !== banner) { banner.appendChild(pager); }
 		banner.setAttribute('data-ts-identity', '1');
 		return true;
 	}
@@ -279,6 +281,18 @@
 					empty.innerHTML = '<span class="far fa-file-alt" aria-hidden="true"></span><strong>No files linked</strong><span>Files attached to this third party will appear here.</span>';
 					var responsive = none.closest('.div-table-responsive') || none.closest('table');
 					if (responsive) { responsive.classList.add('ts-native-empty-source'); responsive.insertAdjacentElement('afterend', empty); }
+				}
+			}
+			if (kind === 'events') {
+				var fullList = Array.from(half.querySelectorAll('a.btnTitle')).find(function (link) {
+					return /Full list/i.test(link.getAttribute('title') || '');
+				});
+				if (fullList && !fullList.querySelector('.ts-section-action-label')) {
+					var actionLabel = document.createElement('span');
+					actionLabel.className = 'ts-section-action-label';
+					actionLabel.textContent = 'View all events';
+					fullList.appendChild(actionLabel);
+					fullList.classList.add('ts-section-labelled-action');
 				}
 			}
 			changed = true;

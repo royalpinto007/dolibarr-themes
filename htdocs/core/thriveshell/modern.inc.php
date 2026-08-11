@@ -1127,17 +1127,24 @@ div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] {
 div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] + * { margin-top: 0; }
 div.tabBar.ts-entity-card div.tabs a.tab {
 	min-height: 48px;
-	padding: 0 var(--sp-4);
+	padding: 0 18px;
 	font-size: 0.875rem;
 	font-weight: 520;
 	border: 0;
-	border-radius: var(--r-sm);
+	border-radius: 0;
+	background: transparent;
 }
 div.tabBar.ts-entity-card div.tabs .tabactive > a.tab,
 div.tabBar.ts-entity-card div.tabs .tabsElemActive > a.tab {
 	color: var(--c-accent-ink);
 	font-weight: 650;
-	background: var(--c-accent-soft);
+	background: transparent;
+}
+div.tabBar.ts-entity-card div.tabs .tabactive::after,
+div.tabBar.ts-entity-card div.tabs .tabsElemActive::after {
+	left: var(--sp-3);
+	right: var(--sp-3);
+	height: 2px;
 }
 div.arearef.ts-has-actions .refid { font-size: 1.625rem; }
 div.arearef.ts-has-actions .paginationref { opacity: .58; margin-<?php echo $left; ?>: var(--sp-2); }
@@ -1173,6 +1180,20 @@ div.arearef.ts-has-actions .paginationref { opacity: .58; margin-<?php echo $lef
 	background: var(--c-surface);
 	border-color: var(--c-border);
 	color: var(--c-accent-ink);
+}
+.ts-record-section-card .ts-section-labelled-action {
+	width: auto;
+	padding: 0 var(--sp-3);
+	gap: var(--sp-2);
+	font-size: 0.8125rem;
+	font-weight: 600;
+}
+.ts-section-action-label { white-space: nowrap; }
+
+@media only screen and (min-width: 1401px) {
+	.ts-thirdparty-groups { align-items: stretch; }
+	.ts-field-group { display: flex; flex-direction: column; }
+	.ts-field-group table.tableforfield { flex: 1 1 auto; }
 }
 
 @media only screen and (max-width: 992px) {
