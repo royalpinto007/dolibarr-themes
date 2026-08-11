@@ -96,6 +96,16 @@
 		return true;
 	}
 
+	function polishEntityHeader() {
+		var banner = findBanner();
+		if (!banner || banner.getAttribute('data-ts-identity') === '1') { return false; }
+		var title = banner.querySelector('.refid');
+		var status = banner.querySelector('.statusref');
+		if (title && status && !title.contains(status)) { title.appendChild(status); }
+		banner.setAttribute('data-ts-identity', '1');
+		return true;
+	}
+
 	/* Dolibarr emits the tab strip before the record card. Moving that same node
 	   directly after the banner makes header and navigation one composition, with
 	   all tab hrefs, counters and module-injected entries unchanged. */
@@ -197,14 +207,15 @@
 		back.classList.add('ts-crumb-source');
 		var parent = document.createElement('a');
 		parent.href = back.getAttribute('href');
-		parent.textContent = (back.textContent || '').trim();
+		var activeNav = document.querySelector('.cmd-nav-group.is-active .cmd-nav-label');
+		parent.textContent = activeNav ? (activeNav.textContent || '').trim() : (back.textContent || '').trim();
 		crumb.appendChild(parent);
 
 		if (title) {
 			var sep = document.createElement('span');
 			sep.className = 'ts-breadcrumb-sep';
 			sep.setAttribute('aria-hidden', 'true');
-			sep.textContent = '/';
+			sep.textContent = '›';
 			crumb.appendChild(sep);
 			var here = document.createElement('span');
 			here.className = 'ts-breadcrumb-current';
@@ -214,7 +225,7 @@
 			   that furniture removed, then keep the first line only. */
 			var probe = title.cloneNode(true);
 			probe.querySelectorAll(
-				'.hidden, .hideobject, [id^="idfordialog"], script, style, .badge, .refidno, .ts-breadcrumb'
+				'.hidden, .hideobject, [id^="idfordialog"], script, style, .badge, .statusref, .refidno, .ts-breadcrumb'
 			).forEach(function (n) { n.remove(); });
 			var name = (probe.textContent || '').replace(/\s+/g, ' ').trim();
 			here.textContent = name.slice(0, 80);
@@ -226,6 +237,43 @@
 		var card = banner.closest('div.fichecenter, div.tabBar') || banner;
 		if (card.parentNode) { card.parentNode.insertBefore(crumb, card); }
 		return true;
+	}
+
+	function polishRecordSections() {
+		if (!document.querySelector('div.tabBar.ts-entity-card')) { return false; }
+		var changed = false;
+		document.querySelectorAll('div.fichecenter > div.fichehalfleft, div.fichecenter > div.fichehalfright').forEach(function (half) {
+			var titleCell = half.querySelector('table.table-fiche-title td.col-title, .titre');
+			if (!titleCell) { return; }
+			var label = (titleCell.textContent || '').replace(/\s+/g, ' ').trim();
+			var kind = /^Linked files$/i.test(label) ? 'files' : (/events/i.test(label) ? 'events' : '');
+			if (!kind) { return; }
+			half.classList.add('ts-record-section-card', 'ts-record-section-' + kind);
+			if (kind === 'events') { titleCell.textContent = 'Recent events'; }
+			var icon = titleCell.querySelector('.fas, .far');
+			if (icon) {
+				icon.classList.add('ts-section-icon');
+			} else {
+				icon = document.createElement('span');
+				icon.className = 'ts-section-icon fas ' + (kind === 'files' ? 'fa-paperclip' : 'fa-history');
+				icon.setAttribute('aria-hidden', 'true');
+				titleCell.insertBefore(icon, titleCell.firstChild);
+			}
+			if (kind === 'files') {
+				var none = Array.from(half.querySelectorAll('.opacitymedium')).find(function (node) {
+					return /^None$/i.test((node.textContent || '').trim());
+				});
+				if (none && !half.querySelector('.ts-emptybox')) {
+					var empty = document.createElement('div');
+					empty.className = 'ts-emptybox';
+					empty.innerHTML = '<span class="far fa-file-alt" aria-hidden="true"></span><strong>No files linked</strong><span>Files attached to this third party will appear here.</span>';
+					var responsive = none.closest('.div-table-responsive') || none.closest('table');
+					if (responsive) { responsive.classList.add('ts-native-empty-source'); responsive.insertAdjacentElement('afterend', empty); }
+				}
+			}
+			changed = true;
+		});
+		return changed;
 	}
 
 	/* Dolibarr already wraps a list's row count in its own span inside div.titre
@@ -455,8 +503,10 @@
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
+		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
+		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
 	});
 })();

@@ -47,15 +47,6 @@ class ActionsThriveshell extends CommonHookActions
 				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupIdentity'),
 				'fields' => array(
 					'nature' => array($langs->trans('NatureOfThirdParty')),
-					'customer-code' => array($langs->trans('CustomerCode')),
-					'supplier-code' => array($langs->trans('SupplierCode')),
-					'barcode' => array($langs->trans('Gencod')),
-					'vat-id' => array($langs->trans('VATIntra')),
-				),
-			),
-			'business' => array(
-				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupBusiness'),
-				'fields' => array(
 					'customer-categories' => array($langs->trans('CustomersCategoriesShort')),
 					'supplier-categories' => array($langs->trans('SuppliersCategoriesShort')),
 					'thirdparty-type' => array($langs->trans('ThirdPartyType')),
@@ -64,12 +55,21 @@ class ActionsThriveshell extends CommonHookActions
 					'capital' => array($langs->trans('Capital')),
 					'incoterms' => array($langs->trans('IncotermLabel')),
 					'currency' => array($langs->trans('Currency')),
+					'parent-company' => array($langs->trans('ParentCompany')),
+				),
+			),
+			'business' => array(
+				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupBusiness'),
+				'fields' => array(
+					'customer-code' => array($langs->trans('CustomerCode')),
+					'supplier-code' => array($langs->trans('SupplierCode')),
+					'barcode' => array($langs->trans('Gencod')),
+					'vat-id' => array($langs->trans('VATIntra')),
 				),
 			),
 			'relationships' => array(
 				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupRelationships'),
 				'fields' => array(
-					'parent-company' => array($langs->trans('ParentCompany')),
 					'sales-representatives' => array($langs->trans('SalesRepresentatives')),
 					'member-link' => array($langs->trans('LinkedToDolibarrMember')),
 				),
@@ -80,7 +80,7 @@ class ActionsThriveshell extends CommonHookActions
 		for ($i = 1; $i <= $maxProfId; $i++) {
 			$label = $langs->transcountry('ProfId'.$i, $object->country_code);
 			if ($label !== '-') {
-				$groups['identity']['fields']['professional-id-'.$i] = array($label);
+				$groups['business']['fields']['professional-id-'.$i] = array($label);
 			}
 		}
 

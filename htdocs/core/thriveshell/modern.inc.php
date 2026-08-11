@@ -280,6 +280,28 @@ div.arearef.ts-has-actions .pagination.paginationref {
 	white-space: nowrap;
 }
 div.arearef.ts-has-actions .ts-header-actions { order: 2; }
+div.arearef.ts-has-actions .refid {
+	display: grid;
+	grid-template-columns: auto auto 1fr;
+	align-items: center;
+	column-gap: var(--sp-2);
+	row-gap: var(--sp-1);
+}
+div.arearef.ts-has-actions .refid .refidno { grid-column: 1 / -1; grid-row: 2; }
+div.arearef.ts-has-actions .refid .statusref { grid-column: 3; grid-row: 1; display: inline-flex; margin: 0 0 0 var(--sp-2); }
+div.arearef.ts-has-actions .divphotoref {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	margin-<?php echo $right; ?>: var(--sp-4);
+	border-radius: var(--r-lg);
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+}
+div.arearef.ts-has-actions .divphotoref .photoref,
+div.arearef.ts-has-actions .divphotoref .pictotitle { margin: 0; font-size: 1.5rem; }
 
 /* Compact entity card: identity and frequent actions share the first row, with
    record navigation immediately below. The containing tabBar supplies the full
@@ -319,6 +341,9 @@ div.tabsAction .ts-record-secondary {
 	border-color: var(--c-border);
 	color: var(--c-ink-2);
 }
+.ts-header-actions div.tabsAction > .ts-record-primary { order: 1; }
+.ts-header-actions div.tabsAction > .ts-record-secondary { order: 2; }
+.ts-header-actions div.tabsAction > .ts-more-actions { order: 3; }
 .ts-more-actions { position: relative; flex: 0 0 auto; }
 .ts-more-actions > summary { list-style: none; }
 .ts-more-actions > summary::-webkit-details-marker { display: none; }
@@ -376,7 +401,7 @@ div.tabsAction .ts-record-secondary {
 .ts-thirdparty-groups {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	align-items: start;
+	align-items: stretch;
 	gap: var(--sp-4);
 	padding: 0 var(--sp-4) var(--sp-4);
 }
@@ -387,6 +412,8 @@ div.tabsAction .ts-record-secondary {
 	border-radius: var(--r-lg);
 	box-shadow: var(--sh-sm);
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 }
 .ts-field-group-title {
 	margin: 0;
@@ -397,8 +424,8 @@ div.tabsAction .ts-record-secondary {
 	line-height: 1.4;
 	color: var(--c-ink);
 }
-.ts-field-group table.tableforfield { margin: 0; border: 0; box-shadow: none; }
-.ts-field-group table.tableforfield td { padding: var(--sp-3) var(--sp-4); }
+.ts-field-group table.tableforfield { margin: 0; border: 0; box-shadow: none; flex: 1 1 auto; }
+.ts-field-group table.tableforfield td { padding: 10px var(--sp-4); font-size: 0.8125rem; line-height: 1.35; }
 .ts-field-group table.tableforfield tr + tr { border-top: 1px solid var(--c-hairline); }
 .ts-field-group table.tableforfield td:first-child { color: var(--c-ink-2); font-weight: 600; }
 @media only screen and (max-width: 1400px) {
@@ -527,6 +554,38 @@ div.fichecenter div.fichehalfright .div-table-responsive { box-shadow: none; bor
 	color: var(--c-faint);
 	font-size: 0.875rem;
 }
+.ts-record-section-card {
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	padding: var(--sp-4);
+	box-sizing: border-box;
+	min-height: 270px;
+}
+.ts-record-section-card table.table-fiche-title td.col-picto { display: none; }
+.ts-record-section-card table.table-fiche-title { margin: 0 0 var(--sp-3); }
+.ts-record-section-card table.table-fiche-title td.col-title,
+.ts-record-section-card .titre {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	font-size: 0.9375rem;
+	font-weight: 650;
+}
+.ts-record-section-card .ts-section-icon { color: var(--c-accent); }
+.ts-record-section-files .ts-native-empty-source { display: none; }
+.ts-record-section-card .ts-emptybox {
+	min-height: 150px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2);
+}
+.ts-record-section-card .ts-emptybox > .far { font-size: 1.5rem; color: var(--c-muted); }
+.ts-record-section-card .ts-emptybox > strong { color: var(--c-ink-2); }
+.ts-record-section-card .ts-emptybox > span:last-child { font-size: 0.8125rem; }
 
 /* The title-bar actions share div.pagination with the pager. Adding a label to the
    create button widened that row, and as a rigid row it pushed the button past the
@@ -697,6 +756,7 @@ div.arearef.ts-has-actions .paginationref {
 	gap: var(--sp-1);
 	flex: 0 0 auto;
 }
+div.arearef.ts-has-actions .paginationref { opacity: .72; }
 div.arearef.ts-has-actions .paginationref a {
 	display: inline-flex; align-items: center; justify-content: center;
 	min-width: 28px; min-height: 28px;
