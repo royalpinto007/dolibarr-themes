@@ -986,6 +986,85 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	content: "\f1de";
 }
 
+/* Keep Dolibarr's selected-column chooser and its event handlers, but present
+   the existing list as a COMMAND popover.  The stock rules leave this control
+   at the inherited table font size and add label padding on top of the flex
+   gap, which makes the rows look cramped and uneven. */
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft {
+	top: 8px;
+	left: 0;
+	right: auto;
+	width: 280px;
+	min-width: 280px;
+	max-width: calc(100vw - 32px);
+	max-height: min(380px, calc(100vh - 32px));
+	padding: 12px;
+	border: 1px solid var(--c-border);
+	border-radius: 12px;
+	background: var(--c-surface);
+	box-shadow: 0 14px 36px rgba(11, 18, 32, 0.14), 0 3px 10px rgba(11, 18, 32, 0.06);
+	font-size: 0.8125rem;
+	line-height: 1.35;
+	scrollbar-width: thin;
+	scrollbar-color: #cbd2dc transparent;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft::-webkit-scrollbar { width: 6px; }
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft::-webkit-scrollbar-track { background: transparent; }
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft::-webkit-scrollbar-thumb {
+	border-radius: 999px;
+	background: #cbd2dc;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft li {
+	min-height: 38px;
+	padding: 0 8px;
+	gap: 10px;
+	border: 0;
+	border-radius: 8px;
+	font-size: 0.8125rem;
+	line-height: 1.35;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft li:hover:not(.liinputsearch) {
+	background: var(--c-accent-soft);
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft li.liinputsearch {
+	min-height: 0;
+	padding: 0 0 10px;
+	background: var(--c-surface);
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft input.inputsearch_dropdownselectedfields {
+	width: 100% !important;
+	min-width: 0 !important;
+	height: 38px;
+	padding: 0 11px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: 8px !important;
+	background: var(--c-surface) !important;
+	box-shadow: none !important;
+	font-size: 0.8125rem !important;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft input.inputsearch_dropdownselectedfields:focus {
+	border-color: var(--c-border-strong) !important;
+	box-shadow: none !important;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft input.inputsearch_dropdownselectedfields:focus-visible {
+	border-color: var(--c-accent) !important;
+	box-shadow: 0 0 0 2px var(--c-accent-ring) !important;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft li > input[type="checkbox"] {
+	flex: 0 0 16px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft li > label {
+	flex: 1 1 auto;
+	padding: 0;
+	font-size: inherit;
+	line-height: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-column-filters > summary {
 	display: inline-flex;
