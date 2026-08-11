@@ -986,12 +986,55 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	content: "\f1de";
 }
 
+/* The definition list is the chooser's stable box; make it the popover anchor
+   instead of the empty dd element and turn its existing link into one clear
+   toolbar control beside (rather than on top of) the select-all checkbox. */
+.ts-list-card tr.liste_titre > :first-child dl.dropdown {
+	position: relative;
+	margin: 0 8px 0 0;
+	vertical-align: middle;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dt a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--c-muted);
+	overflow: visible;
+	transition: background var(--t), color var(--t), box-shadow var(--t);
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dt a:hover {
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dt a:focus { outline: none; }
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dt a:focus-visible {
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+	box-shadow: 0 0 0 2px var(--c-accent-ring);
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dt a .fa-list {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	font-size: 15px;
+	line-height: 1;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown dd { position: static; }
+
 /* Keep Dolibarr's selected-column chooser and its event handlers, but present
    the existing list as a COMMAND popover.  The stock rules leave this control
    at the inherited table font size and add label padding on top of the flex
    gap, which makes the rows look cramped and uneven. */
 .ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft {
-	top: 8px;
+	top: calc(100% + 7px);
 	left: 0;
 	right: auto;
 	width: 280px;
@@ -1063,6 +1106,11 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	line-height: inherit;
 	text-align: left;
 	cursor: pointer;
+}
+@media only screen and (max-width: 900px) {
+	.ts-list-card tr.liste_titre > :first-child dl.dropdown dd ul.selectedfieldsleft {
+		max-height: min(340px, calc(100vh - 32px));
+	}
 }
 
 .ts-column-filters { position: relative; flex: 0 0 auto; }
