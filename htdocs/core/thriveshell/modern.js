@@ -123,7 +123,70 @@
 		return done;
 	}
 
+	/* List page header.
+	   The target puts the title and count on the left and a labelled create action
+	   on the right. Dolibarr prints the title in one cell and the create link in the
+	   pager cell beside the view switches, where a label has nowhere to go.
+
+	   The nodes are MOVED into a header row, never rebuilt: the create control is an
+	   <a href> carrying its own token, so re-parenting it cannot affect any form's
+	   submission -- no input, select or button is touched, and every form keeps its
+	   own fields. The label is a real text node taken from the anchor's own title
+	   attribute, which Dolibarr has already translated; nothing is invented and no
+	   CSS content is used. */
+	function buildPageHeader() {
+		if (document.querySelector('.ts-pagehead')) { return false; }
+		var title = document.querySelector('div.titre');
+		/* Dolibarr uses the same td.col-title cell for a list's page title and for the
+		   heading of a section under a record, so that class cannot tell them apart.
+		   The section headings are the ones inside div.fichecenter; a page title is
+		   not, which is the distinction used here. */
+		if (!title || title.closest('div.fichecenter')) { return false; }
+		var list = document.querySelector('div.div-table-responsive, div.div-table-responsive-no-min, table.liste');
+		if (!list) { return false; }                                   // not a list page
+
+		var head = document.createElement('div');
+		head.className = 'ts-pagehead';
+		var left = document.createElement('div');
+		left.className = 'ts-pagehead-title';
+		var right = document.createElement('div');
+		right.className = 'ts-pagehead-actions';
+		head.appendChild(left);
+		head.appendChild(right);
+
+		/* Dolibarr lays the title bar out as a table, so anchoring inside the title's
+		   own cell would confine the header to that cell's width -- which is what
+		   clipped the labelled action. The header is placed before the whole table
+		   instead, where it can span the content width. */
+		var mount = title.closest('table') || title.closest('div') || title;
+		if (!mount.parentNode) { return false; }
+		mount.parentNode.insertBefore(head, mount);
+		left.appendChild(title);
+
+		var create = null;
+		document.querySelectorAll('a.btnTitle').forEach(function (a) {
+			if (create) { return; }
+			if (a.querySelector('.fa-plus-circle, .fa-plus')) { create = a; }
+		});
+		if (create) {
+			right.appendChild(create);
+			create.classList.add('ts-primary-action');
+			/* Give it a visible label only if it has none: a real node, from the
+			   anchor's own translated title. */
+			var hasText = (create.textContent || '').trim().length > 0;
+			var label = (create.getAttribute('title') || '').trim();
+			if (!hasText && label) {
+				var span = document.createElement('span');
+				span.className = 'ts-action-label';
+				span.textContent = label;
+				create.appendChild(span);
+			}
+		}
+		return true;
+	}
+
 	ready(function () {
+		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }

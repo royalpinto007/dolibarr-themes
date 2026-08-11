@@ -657,3 +657,42 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	padding: 0 var(--sp-2);
 	justify-content: center;
 }
+
+/* ==========================================================================
+   Page header (paired with buildPageHeader in modern.js)
+   Title and count on the left, the primary create action on the right. The rules
+   apply only once the script has built .ts-pagehead, so a page it skipped keeps
+   Dolibarr's own header untouched.
+   ========================================================================== */
+.ts-pagehead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-4);
+	flex-wrap: wrap;
+	margin: 0 0 var(--sp-4);
+}
+.ts-pagehead-title { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.ts-pagehead-title div.titre { font-size: 1.375rem; font-weight: 650; letter-spacing: -0.02em; }
+.ts-pagehead-actions { display: flex; align-items: center; gap: var(--sp-2); flex: 0 0 auto; }
+
+/* In the header the create action has room for its label, so it is a full button
+   again -- the earlier clipping came from the fixed-width pager cell it used to
+   share, which it no longer sits in. */
+.ts-pagehead a.btnTitle.ts-primary-action {
+	display: inline-flex; align-items: center; gap: var(--sp-2);
+	min-height: 36px; padding: 0 var(--sp-4); min-width: 0;
+	border-radius: var(--r);
+	background: var(--c-accent); border: 1px solid var(--c-accent); color: #fff;
+	font-size: 0.8125rem; font-weight: 600; line-height: 1;
+	box-shadow: 0 1px 2px var(--c-accent-ring);
+	white-space: nowrap;
+}
+.ts-pagehead a.btnTitle.ts-primary-action:hover { background: var(--c-accent-hover); border-color: var(--c-accent-hover); }
+.ts-pagehead a.btnTitle.ts-primary-action span[class*="fa-"] { color: #fff; }
+.ts-action-label { font: inherit; }
+@media only screen and (max-width: 640px) {
+	.ts-pagehead { align-items: stretch; }
+	.ts-pagehead-actions { width: 100%; }
+	.ts-pagehead a.btnTitle.ts-primary-action { width: 100%; justify-content: center; }
+}
