@@ -590,6 +590,7 @@ body.cmd-nav-collapsed .cmd-nav-toggle-icon { transform: rotate(-135deg); margin
 
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/navtree.inc.php'; ?>
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/select2.inc.php'; ?>
+<?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/modern.inc.php'; ?>
 
 
 <?php

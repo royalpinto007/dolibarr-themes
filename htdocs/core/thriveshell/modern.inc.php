@@ -1,0 +1,237 @@
+<?php
+/* Copyright (C) 2026 Thrive
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+/**
+ * Modernisation layer.
+ *
+ * Included last, after components.inc.php, so it refines the component set
+ * rather than competing with it. Everything here is expressed in the --c-*
+ * token contract, so it inherits whichever palette the active theme defines
+ * and never hardcodes a colour.
+ *
+ * Scope rules this file keeps to, learned from regressions in this codebase:
+ *   - no `display: none !important`  (Dolibarr reveals panels with an inline style)
+ *   - no opacity:0 on selectors matched by href (skin thumbnails were caught once)
+ *   - no rule that depends on a module's own markup; only Dolibarr's shared classes
+ * so third-party modules inherit the styling instead of breaking under it.
+ */
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+}
+?>
+
+/* ==========================================================================
+   Status pills
+   Dolibarr emits <span class="badge badge-statusN badge-status">. The numbered
+   variant carries the meaning (4 = open/active, 8 = closed, ...), so the tint is
+   attached to the number and the shape to the shared class.
+   ========================================================================== */
+.badge-status {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-1);
+	padding: 2px var(--sp-2);
+	min-height: 22px;
+	border-radius: var(--r-pill);
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.4;
+	letter-spacing: 0;
+	border: 1px solid transparent;
+	white-space: nowrap;
+}
+/* Draft / neutral */
+.badge-status0, .badge-status9 {
+	background: var(--c-sunken); color: var(--c-muted);
+	border-color: var(--c-border);
+}
+/* Open / validated / active */
+.badge-status1, .badge-status4 {
+	background: color-mix(in srgb, var(--c-success) 10%, transparent);
+	color: var(--c-success);
+	border-color: color-mix(in srgb, var(--c-success) 22%, transparent);
+}
+/* In progress / waiting */
+.badge-status3, .badge-status7 {
+	background: color-mix(in srgb, var(--c-warning) 12%, transparent);
+	color: var(--c-warning);
+	border-color: color-mix(in srgb, var(--c-warning) 24%, transparent);
+}
+/* Cancelled / refused */
+.badge-status5, .badge-status8 {
+	background: color-mix(in srgb, var(--c-danger) 9%, transparent);
+	color: var(--c-danger);
+	border-color: color-mix(in srgb, var(--c-danger) 20%, transparent);
+}
+/* Paid / closed positively */
+.badge-status6 {
+	background: var(--c-accent-soft); color: var(--c-accent-ink);
+	border-color: color-mix(in srgb, var(--c-accent) 20%, transparent);
+}
+
+/* ==========================================================================
+   Action hierarchy
+   One filled accent action, everything else a quiet surface button. Dolibarr
+   decides which is which through its own classes, so the hierarchy follows the
+   markup instead of the page.
+   ========================================================================== */
+.butAction, .butActionDelete, .butActionRefused, .butActionNew,
+a.butAction, a.butActionDelete, a.butActionRefused, a.butActionNew {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2);
+	min-height: 34px;
+	padding: 0 var(--sp-4);
+	border-radius: var(--r);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: 0;
+	border: 1px solid var(--c-border);
+	background: var(--c-surface);
+	color: var(--c-ink-2);
+	box-shadow: var(--sh-sm);
+	transition: background var(--t), border-color var(--t), color var(--t), box-shadow var(--t);
+}
+.butAction:hover, a.butAction:hover {
+	background: var(--c-sunken);
+	border-color: var(--c-border-strong);
+	color: var(--c-ink);
+}
+/* The primary action on a record: Dolibarr marks it butActionNew, or it is the
+   first butAction in the bar. Only one is filled, so the eye has one target. */
+.butActionNew, a.butActionNew,
+div.tabsAction .butAction:first-of-type, div.tabsAction a.butAction:first-of-type {
+	background: var(--c-accent);
+	border-color: var(--c-accent);
+	color: #fff;
+	box-shadow: 0 1px 2px var(--c-accent-ring);
+}
+.butActionNew:hover, a.butActionNew:hover,
+div.tabsAction .butAction:first-of-type:hover, div.tabsAction a.butAction:first-of-type:hover {
+	background: var(--c-accent-hover);
+	border-color: var(--c-accent-hover);
+	color: #fff;
+}
+.butActionDelete, a.butActionDelete {
+	background: var(--c-surface);
+	border-color: color-mix(in srgb, var(--c-danger) 28%, transparent);
+	color: var(--c-danger);
+}
+.butActionDelete:hover, a.butActionDelete:hover {
+	background: color-mix(in srgb, var(--c-danger) 8%, transparent);
+	border-color: var(--c-danger);
+	color: var(--c-danger);
+}
+.butActionRefused, a.butActionRefused {
+	background: var(--c-sunken);
+	border-color: var(--c-border);
+	color: var(--c-faint);
+	box-shadow: none;
+	cursor: not-allowed;
+}
+/* The action bar itself: a right-aligned row that wraps instead of overflowing. */
+div.tabsAction {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+	gap: var(--sp-2);
+	margin: var(--sp-4) 0;
+}
+div.tabsAction > * { margin: 0; }
+
+/* ==========================================================================
+   List filter row
+   The filter inputs share the table header band. Giving them one control style
+   makes the band read as a filter bar rather than a second header row.
+   ========================================================================== */
+tr.liste_titre_filter > td, tr.liste_titre_filter > th {
+	background: var(--c-surface);
+	border-bottom: 1px solid var(--c-hairline);
+	padding: var(--sp-2) var(--sp-3);
+	vertical-align: middle;
+}
+tr.liste_titre_filter input[type="text"],
+tr.liste_titre_filter input[type="search"],
+tr.liste_titre_filter select,
+tr.liste_titre_filter .select2-selection {
+	min-height: 32px;
+	border-radius: var(--r-sm);
+	border: 1px solid var(--c-border);
+	background: var(--c-surface);
+	font-size: 0.8125rem;
+}
+tr.liste_titre_filter input:focus,
+tr.liste_titre_filter select:focus {
+	border-color: var(--c-accent);
+	box-shadow: 0 0 0 3px var(--c-accent-ring);
+	outline: none;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+.pagination select, select.flat.selectlimit {
+	min-height: 32px;
+	border-radius: var(--r-sm);
+	border: 1px solid var(--c-border);
+	background: var(--c-surface);
+	font-size: 0.8125rem;
+	padding: 0 var(--sp-2);
+}
+.pagination a, .pagination .paginationafterarrows a, li.pagination a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 30px;
+	min-height: 30px;
+	padding: 0 var(--sp-2);
+	border-radius: var(--r-sm);
+	color: var(--c-ink-2);
+	transition: background var(--t), color var(--t);
+}
+.pagination a:hover { background: var(--c-sunken); color: var(--c-ink); }
+.pagination .active, .pagination li.active > a, .pagination .pageplusone.active {
+	background: var(--c-accent);
+	color: #fff;
+	font-weight: 600;
+}
+
+/* ==========================================================================
+   Empty states
+   Dolibarr prints a muted "None" / "No record found" where a table would be.
+   Centring it and giving it room turns a stray word into a deliberate state.
+   ========================================================================== */
+tr.oddeven td.opacitymedium:only-child,
+td.opacitymedium[colspan]:only-child,
+tr td.center.opacitymedium[colspan] {
+	padding: var(--sp-7) var(--sp-4);
+	text-align: center;
+	color: var(--c-faint);
+	font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   Responsive
+   The action bar and filter controls are the two rows that overflow first on a
+   narrow window, so they stack rather than scroll.
+   ========================================================================== */
+@media only screen and (max-width: 900px) {
+	div.tabsAction { justify-content: stretch; }
+	div.tabsAction > * { flex: 1 1 auto; }
+	.pagination select, select.flat.selectlimit { width: auto; }
+}
