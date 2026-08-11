@@ -1943,22 +1943,22 @@ form.ts-modern-form table.ts-modern-form-table > tbody {
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row {
 	display: grid;
-	grid-template-columns: minmax(128px, 0.58fr) minmax(0, 1.42fr);
+	grid-template-columns: 170px minmax(0, 1fr);
 	align-items: center;
 	min-width: 0;
-	min-height: 60px;
+	min-height: 64px;
 	box-sizing: border-box;
-	padding: 10px 0;
+	padding: 12px 0;
 	border: 0;
-	border-bottom: 1px solid #f3f5f8;
+	border-bottom: 1px solid #f6f7fa;
 	background: transparent;
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full {
 	grid-column: 1 / -1;
-	grid-template-columns: minmax(182px, 0.38fr) minmax(0, 1.62fr);
+	grid-template-columns: 200px minmax(0, 1fr);
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
-	grid-template-columns: minmax(128px, 0.58fr) minmax(0, 1.42fr) minmax(128px, 0.58fr) minmax(0, 1.42fr);
+	grid-template-columns: 145px minmax(0, 1fr) 145px minmax(0, 1fr);
 	column-gap: 16px;
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-empty { display: none; }
@@ -1981,17 +1981,21 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label {
 	font-weight: 600;
 	line-height: 1.35;
 }
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label:has(+ td.ts-form-value-has-leading) {
+	padding-<?php echo $right; ?>: 36px;
+}
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
 	position: relative;
 	gap: 8px;
 	color: var(--c-ink);
 	font-size: 0.8125rem;
 }
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea) td {
-	align-items: flex-start;
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea),
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(.select2-selection--multiple) {
+	align-items: start;
 }
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea) td.ts-form-label {
-	padding-top: 11px;
+	padding-top: 12px;
 }
 
 /* Components' generic form alignment reserves an absolute icon gutter. The
@@ -2000,7 +2004,9 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea) td
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.ts-form-leading-icon,
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child {
-	position: static;
+	position: absolute;
+	<?php echo $left; ?>: -28px;
+	top: 0;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -2012,7 +2018,9 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > 
 	color: var(--c-muted);
 }
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
-	position: static;
+	position: absolute;
+	<?php echo $right; ?>: -20px;
+	top: 0;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -2045,10 +2053,34 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > 
 	display: block;
 	flex: 1 1 auto;
 }
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > div:has(> .select2-container) {
+	position: relative;
+	display: block;
+	flex: 1 1 auto;
+	width: 100%;
+	min-width: 0;
+}
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span > .select2-container {
 	width: 100% !important;
 	max-width: none !important;
 	min-width: 0 !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > div > .select2-container {
+	width: 100% !important;
+	max-width: none !important;
+	min-width: 0 !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > div > .fa-info-circle {
+	position: absolute;
+	<?php echo $right; ?>: -20px;
+	top: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 40px;
+	margin: 0;
+	color: var(--c-muted);
 }
 form.ts-modern-form table.ts-modern-form-table td.ts-form-value > table.nobordernopadding input {
 	width: 100% !important;
@@ -2084,6 +2116,13 @@ form.ts-modern-form .select2-container--default .select2-selection--single {
 	padding: 0 10px;
 	border-color: #e0e6ef !important;
 	border-radius: 8px !important;
+}
+form.ts-modern-form .select2-container--default.select2-container--focus .select2-selection--single,
+form.ts-modern-form .select2-container--default.select2-container--focus .select2-selection--multiple,
+form.ts-modern-form .select2-container--default.select2-container--open .select2-selection--single,
+form.ts-modern-form .select2-container--default.select2-container--open .select2-selection--multiple {
+	border-color: var(--c-accent) !important;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent) 14%, transparent);
 }
 form.ts-modern-form .select2-container--default .select2-selection--single .select2-selection__rendered {
 	line-height: 38px;
@@ -2135,14 +2174,14 @@ form.ts-modern-form .select2-container--default .select2-selection--multiple::af
 form.ts-modern-form .select2-container--default .select2-search--inline {
 	display: inline-flex;
 	align-items: center;
-	flex: 1 1 90px;
-	min-width: 60px;
+	flex: 1 1 40px;
+	min-width: 24px;
 	height: 30px;
 	margin: 0;
 }
 body#mainbody form.ts-modern-form .select2-container--default .select2-search__field {
 	width: 100% !important;
-	min-width: 60px !important;
+	min-width: 24px !important;
 	height: 30px !important;
 	margin: 0 !important;
 	padding: 0 3px !important;
@@ -2174,24 +2213,37 @@ body .ts-form-select2-dropdown .select2-search__field:focus {
 }
 body .ts-form-select2-dropdown .select2-results__option { min-height: 34px; padding: 8px 10px; font-size: .8125rem; }
 
-form.ts-modern-form tr.ts-form-choice-row td.ts-form-value {
-	gap: 18px;
-	flex-wrap: wrap;
+body#mainbody form.ts-modern-form tr.ts-form-choice-row td.ts-form-value {
+	gap: 24px;
+	flex-wrap: nowrap;
 }
-form.ts-modern-form tr.ts-form-choice-row td.ts-form-value > label {
+form.ts-modern-form tr.ts-form-choice-row td.ts-form-value > .spannature {
 	display: inline-flex;
 	align-items: center;
-	justify-content: flex-end;
+	flex: 0 0 auto;
+	min-height: 32px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+form.ts-modern-form tr.ts-form-choice-row td.ts-form-value > .spannature > label {
+	display: inline-flex;
+	align-items: center;
 	gap: 8px;
 	margin: 0;
 	font-size: 0.8125rem;
 	font-weight: 520;
+	line-height: 1.25;
+	cursor: pointer;
 }
 form.ts-modern-form input[type="checkbox"],
 form.ts-modern-form input[type="radio"] {
-	width: 16px;
-	height: 16px;
-	margin: 0;
+	width: 17px;
+	height: 17px;
+	min-width: 17px;
+	margin: 0 !important;
 }
 
 /* Compound fields retain every native control while presenting one deliberate
@@ -2270,7 +2322,7 @@ form.ts-modern-form .ts-modern-form-actions {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 14px;
+	gap: 12px;
 	margin: 30px 0 0;
 	padding: 0 0 8px;
 }
@@ -2299,10 +2351,10 @@ form.ts-modern-form .ts-modern-form-actions input.button-save:hover {
 	form.ts-modern-form table.ts-modern-form-table > tbody { column-gap: 20px; }
 	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row,
 	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full {
-		grid-template-columns: minmax(135px, 0.65fr) minmax(0, 1.35fr);
+		grid-template-columns: 150px minmax(0, 1fr);
 	}
 	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
-		grid-template-columns: minmax(120px, 0.6fr) minmax(0, 1.4fr) minmax(120px, 0.6fr) minmax(0, 1.4fr);
+		grid-template-columns: 120px minmax(0, 1fr) 120px minmax(0, 1fr);
 		column-gap: 14px;
 	}
 }
@@ -2349,7 +2401,33 @@ form.ts-modern-form .ts-modern-form-actions input.button-save:hover {
 		min-height: 0;
 		padding: 0;
 	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
+		box-sizing: border-box;
+		padding-<?php echo $left; ?>: 28px;
+		padding-<?php echo $right; ?>: 20px;
+	}
 	form.ts-modern-form table.ts-modern-form-table td.ts-form-label { padding-top: 0; }
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label:has(+ td.ts-form-value-has-leading) {
+		padding-<?php echo $right; ?>: 12px;
+	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.ts-form-leading-icon,
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child,
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
+		position: absolute;
+		flex: 0 0 20px;
+	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.ts-form-leading-icon,
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child {
+		<?php echo $left; ?>: 0;
+	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
+		<?php echo $right; ?>: 0;
+	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > div > .fa-info-circle {
+		<?php echo $right; ?>: 0;
+	}
 	body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value {
 		grid-template-columns: minmax(0, 1fr);
 	}
@@ -2360,7 +2438,7 @@ form.ts-modern-form .ts-modern-form-actions input.button-save:hover {
 	form.ts-modern-form .ts-modern-form-actions input.button { flex: 1 1 0; min-width: 0; }
 }
 
-@media only screen and (max-width: 520px) {
+@media only screen and (max-width: 680px) {
 	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
 		grid-template-columns: minmax(0, 1fr);
 	}

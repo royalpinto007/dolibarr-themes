@@ -773,7 +773,9 @@
 				if (index % 2 === 1) {
 					Array.from(cell.children).forEach(function (child) {
 						if (!child.matches('span[class*="fa-"], img.pictofixedwidth')) { return; }
-						child.classList.add(child.classList.contains('fa-info-circle') ? 'ts-form-help' : 'ts-form-leading-icon');
+						var isHelp = child.classList.contains('fa-info-circle');
+						child.classList.add(isHelp ? 'ts-form-help' : 'ts-form-leading-icon');
+						cell.classList.add(isHelp ? 'ts-form-value-has-help' : 'ts-form-value-has-leading');
 					});
 				}
 			});
