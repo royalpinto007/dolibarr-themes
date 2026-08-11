@@ -1990,6 +1990,36 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
 	color: var(--c-ink);
 	font-size: 0.8125rem;
 }
+/* Every paired value reserves the same leading-icon and trailing-help slots.
+   Controls therefore share an x-axis whether a particular field has zero, one,
+   or both adornments. The native icons stay associated with their value cell. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value {
+	display: grid;
+	grid-template-columns: 20px minmax(0, 1fr) 16px;
+	column-gap: 8px;
+	align-items: center;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > *:not([type="hidden"]):not(.ts-form-leading-icon):not(.ts-form-help):not(.pictofixedwidth):not(img) {
+	grid-column: 2;
+	min-width: 0;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > span.ts-form-leading-icon,
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > span.pictofixedwidth:first-child,
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > img.pictofixedwidth:first-child {
+	position: static;
+	grid-column: 1;
+	grid-row: 1;
+	justify-self: center;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > .ts-form-help {
+	position: static;
+	grid-column: 3;
+	grid-row: 1;
+	justify-self: center;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-label:has(+ td.ts-form-value-has-leading) {
+	padding-<?php echo $right; ?>: 12px;
+}
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea),
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(.select2-selection--multiple) {
 	align-items: start;
@@ -2212,6 +2242,25 @@ body .ts-form-select2-dropdown .select2-search__field:focus {
 	outline: 0;
 }
 body .ts-form-select2-dropdown .select2-results__option { min-height: 34px; padding: 8px 10px; font-size: .8125rem; }
+body .ts-form-select2-dropdown .select2-results__options {
+	max-width: 100%;
+	padding: 4px;
+}
+body .ts-form-select2-dropdown .select2-results__option {
+	display: flex;
+	align-items: center;
+	min-height: 36px;
+	border-radius: 6px;
+}
+body .ts-form-select2-dropdown .select2-results__option--highlighted { background: var(--c-accent-soft); color: var(--c-accent-ink); }
+body .ts-form-select2-dropdown .select2-results__option[aria-selected="true"] { font-weight: 600; }
+body .ts-form-select2-dropdown .ts-form-select2-empty-option { display: none !important; }
+body .ts-form-select2-dropdown-compact .select2-search--dropdown { display: none; }
+body .ts-form-select2-dropdown-compact .select2-results__options {
+	max-height: min(432px, calc(100vh - 32px));
+	overflow-y: auto;
+}
+form.ts-modern-form .ts-form-select2-placeholder { color: var(--c-faint); }
 
 body#mainbody form.ts-modern-form tr.ts-form-choice-row td.ts-form-value {
 	gap: 24px;

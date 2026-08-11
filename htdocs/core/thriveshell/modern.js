@@ -777,6 +777,17 @@
 						child.classList.add(isHelp ? 'ts-form-help' : 'ts-form-leading-icon');
 						cell.classList.add(isHelp ? 'ts-form-value-has-help' : 'ts-form-value-has-leading');
 					});
+					/* Generated reference codes place their existing tooltip in a
+					   nested two-cell table. Promote that same node to the shared help
+					   slot so the input is not uniquely narrowed by legacy table cells. */
+					var nestedHelp = cell.querySelector(':scope > table.nobordernopadding .classfortooltip:has(.fa-info-circle)');
+					if (nestedHelp) {
+						var nestedHelpCell = nestedHelp.closest('td');
+						nestedHelp.classList.add('ts-form-help');
+						cell.appendChild(nestedHelp);
+						cell.classList.add('ts-form-value-has-help');
+						if (nestedHelpCell && !(nestedHelpCell.textContent || '').trim() && !nestedHelpCell.children.length) { nestedHelpCell.remove(); }
+					}
 				}
 			});
 
@@ -827,11 +838,17 @@
 			secondRow.remove();
 			return firstRow;
 		}
-		var statusRow = rowFor('status');
-		var barcodeRow = rowFor('barcode');
-		if (statusRow && barcodeRow && statusRow.nextElementSibling !== barcodeRow) {
-			body.insertBefore(statusRow, barcodeRow);
-		}
+		/* Create/edit templates disagree about which visual pairs arrive as one
+		   four-cell row. Normalise every requested pair through the same primitive,
+		   which is a no-op when Dolibarr already emitted the relationship. */
+		[
+			['customer_code', 'supplier_code'],
+			['status', 'barcode'],
+			['zipcode', 'town'],
+			['phone', 'phone_mobile'],
+			['fax', 'url'],
+			['idprof1', 'idprof2']
+		].forEach(function (fields) { pairSeparateRows(fields[0], fields[1]); });
 
 		/* Create already prints this relationship as four cells, while edit prints
 		   two independent rows. Pair the edit nodes to the same native structure. */
@@ -892,19 +909,69 @@
 		});
 		if (actions) { actions.classList.add('ts-modern-form-actions'); }
 
+		/* Form Select2 widgets share one behavioural contract. Short single-choice
+		   lists are compact enums; relational and multi-value controls remain
+		   searchable. The native option values and empty-option semantics are never
+		   changed: only Select2's presentation is annotated. */
+		function sourceSelectFor(container) {
+			var sibling = container && container.previousElementSibling;
+			if (sibling && sibling.matches('select')) { return sibling; }
+			return Array.from(form.querySelectorAll('select')).find(function (select) {
+				return select.nextElementSibling === container;
+			}) || null;
+		}
+		function formSelectLabel(select) {
+			var cell = select && select.closest('td.ts-form-value');
+			var labelCell = cell && cell.previousElementSibling;
+			var label = labelCell ? (labelCell.textContent || '').replace(/\s+/g, ' ').trim().replace(/\s*\*$/, '') : '';
+			return label ? 'Select ' + label : 'Select an option';
+		}
+		function decorateFormSelect2() {
+			form.querySelectorAll('.select2-container').forEach(function (container) {
+				var select = sourceSelectFor(container);
+				if (!select) { return; }
+				var meaningfulOptions = Array.from(select.options).filter(function (option) {
+					return (option.textContent || '').replace(/\u00a0/g, ' ').trim();
+				});
+				var compact = !select.multiple && meaningfulOptions.length <= 12;
+				container.classList.toggle('ts-form-select2-compact', compact);
+				container.classList.toggle('ts-form-select2-searchable', !compact);
+				var selected = select.options[select.selectedIndex];
+				var rendered = container.querySelector('.select2-selection__rendered');
+				if (rendered && selected && !(selected.textContent || '').replace(/\u00a0/g, ' ').trim()) {
+					var placeholder = formSelectLabel(select);
+					rendered.textContent = placeholder;
+					rendered.setAttribute('title', placeholder);
+					rendered.classList.add('ts-form-select2-placeholder');
+				} else if (rendered) {
+					rendered.classList.remove('ts-form-select2-placeholder');
+				}
+			});
+		}
+		decorateFormSelect2();
+
 		/* Select2 dropdowns are body-mounted, so descendant selectors cannot give
 		   them the form control's width. Mark only surfaces whose expanded source is
 		   inside this form and anchor them to that live trigger. */
 		var syncFormSelect2 = function () {
 			window.requestAnimationFrame(function () {
+				decorateFormSelect2();
 				var selection = form.querySelector('.select2-selection[aria-expanded="true"]');
 				var container = selection && selection.closest('.select2-container');
 				var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
 				if (!container || !dropdown) { return; }
+				var select = sourceSelectFor(container);
+				var compact = container.classList.contains('ts-form-select2-compact');
 				var rect = container.getBoundingClientRect();
-				dropdown.classList.add('ts-form-select2-dropdown');
+				dropdown.classList.add('ts-form-select2-dropdown', compact ? 'ts-form-select2-dropdown-compact' : 'ts-form-select2-dropdown-searchable');
 				dropdown.style.setProperty('width', Math.min(rect.width, window.innerWidth - 24) + 'px', 'important');
 				dropdown.style.setProperty('min-width', Math.min(rect.width, window.innerWidth - 24) + 'px');
+				dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
+					var blank = !(option.textContent || '').replace(/\u00a0/g, ' ').trim();
+					option.classList.toggle('ts-form-select2-empty-option', blank);
+					if (blank) { option.setAttribute('aria-hidden', 'true'); }
+				});
+				if (select) { dropdown.setAttribute('data-ts-select-name', select.name || select.id || ''); }
 			});
 		};
 		var formSelect2Observer = new MutationObserver(syncFormSelect2);
