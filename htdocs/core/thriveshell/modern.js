@@ -504,6 +504,16 @@
 		grid.classList.add('ts-command-kanban', 'ts-thirdparty-kanban');
 		if (table) { table.classList.add('ts-kanban-table'); }
 		if (listCard) { listCard.classList.add('ts-kanban-card-surface'); }
+		/* The shared list composition already moves Dolibarr's native reset button.
+		   Its initial active-state check covers quick and advanced fields; Kanban's
+		   promoted category/representative selects also need to reveal that same
+		   button when they alone carry a value. Operator helper selects are excluded. */
+		var clearFilters = document.querySelector('.ts-filter-surface .ts-clear-all-filters');
+		var hasActiveToolbarFilter = Array.from(document.querySelectorAll('.ts-filter-surface .ts-toolbar-filter select[name$="[]"]')).some(function (field) {
+			var value = window.jQuery && window.jQuery(field).val ? window.jQuery(field).val() : field.value;
+			return Array.isArray(value) ? value.length > 0 : value !== null && String(value).trim() !== '' && String(value) !== '-1';
+		});
+		if (clearFilters && hasActiveToolbarFilter) { clearFilters.hidden = false; }
 
 		function element(tag, className, text) {
 			var node = document.createElement(tag);
@@ -579,6 +589,7 @@
 
 			var rawName = (nameLink.textContent || '').replace(/\s+/g, ' ').trim();
 			nameLink.replaceChildren(document.createTextNode(rawName));
+			nameLink.classList.remove('valignmiddle');
 			nameLink.classList.add('ts-kanban-name');
 			nameWrap.className = 'ts-kanban-identity';
 
@@ -674,8 +685,8 @@
 				if (data.name) {
 					var match = data.name.match(/^(.*?)\s+\((.+)\)$/);
 					entry.nameLink.textContent = match ? match[1] : data.name;
-					if (match) { entry.identity.insertBefore(element('span', 'ts-kanban-alias', match[2]), entry.badges); }
 				}
+				entry.badges.hidden = data.natures.length === 0;
 				addDetail(entry.details, 'ts-kanban-email', 'fa-envelope', data.email);
 				addDetail(entry.details, 'ts-kanban-location', 'fa-map-marker-alt', data.location);
 				var nativeCode = entry.identity.querySelector('.ts-kanban-code');
