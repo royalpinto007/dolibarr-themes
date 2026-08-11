@@ -484,12 +484,11 @@
 		observer.observe(document.body, {childList: true, subtree: true});
 	}
 
-	/* Dolibarr's Kanban mode emits a real card container, but each Third Party
-	   card contains only icon links and a code while the useful entity metadata
-	   remains available through the same authorised AJAX tooltip used by the name
-	   link. Enhance that native container rather than reshaping table rows: every
-	   record, telephone and email href is moved intact, and the field mapping from
-	   the tooltip response is deliberately isolated to this reference card type. */
+	/* Dolibarr's Kanban mode emits a real card container, but only a subset of the
+	   list fields. The matching normal-mode result set already contains the exact
+	   authorised records and selected columns for the current filters/page. Read
+	   that markup once and import only the requested metadata; the visible List
+	   view and its styling remain untouched. */
 	function enhanceThirdPartyKanban() {
 		var grid = document.querySelector('.ts-list-composition div.box-flex-container.kanban');
 		if (!grid || grid.getAttribute('data-ts-kanban') === 'thirdparty') { return false; }
@@ -526,42 +525,6 @@
 			node.setAttribute('aria-hidden', 'true');
 			return node;
 		}
-		var thirdPartyFieldMap = {
-			'name': 'name',
-			'address': 'location',
-			'customer code': 'customerCode',
-			'vendor code': 'vendorCode',
-			'supplier code': 'vendorCode'
-		};
-		function tooltipData(html) {
-			var documentFragment = new DOMParser().parseFromString(html, 'text/html');
-			var content = documentFragment.querySelector('.centpercent');
-			var data = {natures: []};
-			if (!content) { return data; }
-			content.querySelectorAll('.customer-back, .prospect-back, .vendor-back').forEach(function (badge) {
-				var label = (badge.getAttribute('title') || badge.textContent || '').replace(/\s+/g, ' ').trim();
-				if (label && data.natures.indexOf(label) === -1) { data.natures.push(label); }
-			});
-			var lines = [[]];
-			Array.from(content.childNodes).forEach(function (node) {
-				if (node.nodeName === 'BR') { lines.push([]); return; }
-				lines[lines.length - 1].push(node);
-			});
-			lines.forEach(function (line) {
-				var text = line.map(function (node) { return node.textContent || ''; }).join('').replace(/\s+/g, ' ').trim();
-				if (!text) { return; }
-				var separator = text.indexOf(':');
-				if (separator > 0) {
-					var label = text.slice(0, separator).trim().toLowerCase();
-					var value = text.slice(separator + 1).trim();
-					var field = thirdPartyFieldMap[label];
-					if (field) { data[field] = value; }
-					return;
-				}
-				if (text.indexOf('@') !== -1) { data.email = text; }
-			});
-			return data;
-		}
 		function addDetail(details, className, iconClass, value) {
 			if (!value) { return; }
 			var row = element('div', 'ts-kanban-detail ' + className);
@@ -571,8 +534,31 @@
 			row.appendChild(valueNode);
 			details.appendChild(row);
 		}
+		function addRepresentatives(details, representatives) {
+			if (!representatives.length) { return; }
+			var row = element('div', 'ts-kanban-detail ts-kanban-representatives');
+			var iconSlot = element('span', 'ts-kanban-detail-icon');
+			var avatar = representatives[0].querySelector('img');
+			if (avatar) {
+				avatar.removeAttribute('style');
+				iconSlot.appendChild(avatar);
+			} else {
+				iconSlot.appendChild(icon('fas fa-user'));
+			}
+			var values = element('span', 'ts-kanban-detail-value ts-kanban-representative-links');
+			representatives.forEach(function (representative, index) {
+				representative.querySelectorAll('.userimg, [class*="fa-"]').forEach(function (glyph) { glyph.remove(); });
+				representative.className = 'ts-kanban-representative';
+				representative.removeAttribute('title');
+				if (index) { values.appendChild(document.createTextNode(', ')); }
+				values.appendChild(representative);
+			});
+			row.appendChild(iconSlot);
+			row.appendChild(values);
+			details.appendChild(row);
+		}
 
-		var enrichQueue = [];
+		var entries = new Map();
 		cards.forEach(function (item) {
 			var card = item.querySelector('.info-box');
 			var content = card && card.querySelector('.info-box-content');
@@ -600,29 +586,9 @@
 			identity.appendChild(badges);
 			head.appendChild(identity);
 
-			var emailAction = content.querySelector('a[href*="action=presend"]');
-			if (emailAction) {
-				var menu = element('details', 'ts-kanban-actions');
-				var trigger = element('summary', 'ts-kanban-actions-trigger');
-				trigger.setAttribute('aria-label', 'More actions');
-				trigger.appendChild(icon('fas fa-ellipsis-h'));
-				var menuPanel = element('div', 'ts-kanban-actions-menu');
-				emailAction.className = 'ts-kanban-action';
-				var emailGlyph = emailAction.querySelector('[class*="fa-"]');
-				if (emailGlyph) { emailGlyph.removeAttribute('title'); }
-				emailAction.appendChild(document.createTextNode('Send email'));
-				menuPanel.appendChild(emailAction);
-				menu.appendChild(trigger);
-				menu.appendChild(menuPanel);
-				head.appendChild(menu);
-			}
-
-			var code = content.querySelector('.info-box-label');
-			if (code) {
-				code.className = 'ts-kanban-code';
-				if ((code.textContent || '').trim()) { identity.appendChild(code); }
-				else { code.remove(); }
-			}
+			var barcode = element('span', 'ts-kanban-barcode');
+			barcode.hidden = true;
+			identity.appendChild(barcode);
 
 			var details = element('div', 'ts-kanban-details');
 			var phoneLink = content.querySelector('a[href^="tel:"]');
@@ -659,45 +625,69 @@
 
 			var params;
 			try { params = JSON.parse(nameLink.getAttribute('data-params') || '{}'); } catch (error) { params = null; }
-			if (params && params.id) { enrichQueue.push({nameLink: nameLink, identity: identity, badges: badges, details: details, params: params}); }
+			if (params && params.id) {
+				entries.set(String(params.id), {nameLink: nameLink, badges: badges, barcode: barcode, details: details, phone: details.querySelector('.ts-kanban-phone')});
+			}
 		});
 
-		var tokenNode = document.querySelector('meta[name="anti-csrf-currenttoken"]');
-		var token = tokenNode && tokenNode.getAttribute('content');
-		var cursor = 0;
-		function enrichNext() {
-			if (cursor >= enrichQueue.length) { grid.setAttribute('data-ts-enriched', '1'); return Promise.resolve(); }
-			var entry = enrichQueue[cursor++];
-			var params = Object.assign({}, entry.params, {token: token || ''});
-			return window.fetch((window.DOL_URL_ROOT || '') + '/core/ajax/ajaxtooltip.php', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-				body: new URLSearchParams(params).toString(),
-				credentials: 'same-origin'
-			}).then(function (response) { return response.ok ? response.text() : ''; }).then(function (html) {
-				var data = tooltipData(html);
-				entry.badges.replaceChildren();
-				data.natures.forEach(function (nature) {
-					var key = nature.toLowerCase();
-					var badge = element('span', 'ts-kanban-nature ts-kanban-nature-' + key.replace(/[^a-z]+/g, '-'), nature);
-					entry.badges.appendChild(badge);
+		var listUrl = new URL(window.location.href);
+		listUrl.searchParams.set('mode', 'common');
+		window.fetch(listUrl.toString(), {credentials: 'same-origin'}).then(function (response) {
+			return response.ok ? response.text() : '';
+		}).then(function (html) {
+			var listDocument = new DOMParser().parseFromString(html, 'text/html');
+			var listTable = listDocument.querySelector('table.liste');
+			var headingRow = listTable && listTable.querySelector('tr.liste_titre');
+			if (!headingRow) { return; }
+			var headings = Array.from(headingRow.cells);
+			function headingIndex(sortField, fallbackLabel) {
+				var index = headings.findIndex(function (heading) {
+					var link = heading.querySelector('a[href*="sortfield="]');
+					if (!link) { return false; }
+					return new URL(link.getAttribute('href'), window.location.href).searchParams.get('sortfield') === sortField;
 				});
-				if (data.name) {
-					var match = data.name.match(/^(.*?)\s+\((.+)\)$/);
-					entry.nameLink.textContent = match ? match[1] : data.name;
+				if (index >= 0) { return index; }
+				return headings.findIndex(function (heading) { return (heading.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase() === fallbackLabel; });
+			}
+			var columns = {
+				barcode: headingIndex('s.barcode', 'barcode'),
+				address: headingIndex('s.address', 'address'),
+				zip: headingIndex('s.zip', 'zip code'),
+				phone: headingIndex('s.phone', 'phone'),
+				representatives: headings.findIndex(function (heading) { return (heading.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase() === 'sales representatives'; }),
+				nature: headings.findIndex(function (heading) { return (heading.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase() === 'nature of third party'; })
+			};
+			listTable.querySelectorAll('tr[data-rowid]').forEach(function (row) {
+				var entry = entries.get(String(row.getAttribute('data-rowid')));
+				if (!entry) { return; }
+				var cells = row.cells;
+				var sourceName = row.querySelector('[data-key="ref"]');
+				if (sourceName) { entry.nameLink.textContent = (sourceName.textContent || '').replace(/\s+/g, ' ').trim(); }
+				var barcodeValue = columns.barcode >= 0 && cells[columns.barcode] ? (cells[columns.barcode].textContent || '').trim() : '';
+				entry.barcode.textContent = barcodeValue;
+				entry.barcode.hidden = !barcodeValue;
+				entry.badges.replaceChildren();
+				var natureCell = columns.nature >= 0 && cells[columns.nature];
+				if (natureCell) {
+					natureCell.querySelectorAll('.customer-back, .prospect-back, .vendor-back').forEach(function (sourceBadge) {
+						var nature = (sourceBadge.getAttribute('title') || sourceBadge.textContent || '').replace(/\s+/g, ' ').trim();
+						if (!nature) { return; }
+						entry.badges.appendChild(element('span', 'ts-kanban-nature ts-kanban-nature-' + nature.toLowerCase().replace(/[^a-z]+/g, '-'), nature));
+					});
 				}
-				entry.badges.hidden = data.natures.length === 0;
-				addDetail(entry.details, 'ts-kanban-email', 'fa-envelope', data.email);
-				addDetail(entry.details, 'ts-kanban-location', 'fa-map-marker-alt', data.location);
-				var nativeCode = entry.identity.querySelector('.ts-kanban-code');
-				if ((!nativeCode || !(nativeCode.textContent || '').trim()) && (data.customerCode || data.vendorCode)) {
-					entry.identity.appendChild(element('span', 'ts-kanban-code', data.customerCode || data.vendorCode));
-				}
-			}).catch(function () { /* the native core card remains usable */ }).then(enrichNext);
-		}
-		var workers = [];
-		for (var worker = 0; worker < Math.min(4, enrichQueue.length); worker++) { workers.push(enrichNext()); }
-		Promise.all(workers).then(function () { grid.setAttribute('data-ts-enriched', '1'); });
+				entry.badges.hidden = !entry.badges.children.length;
+				var representativeCell = columns.representatives >= 0 && cells[columns.representatives];
+				var representatives = representativeCell ? Array.from(representativeCell.querySelectorAll('a[data-params*="user"]')).map(function (node) { return document.importNode(node, true); }) : [];
+				addRepresentatives(entry.details, representatives);
+				var address = columns.address >= 0 && cells[columns.address] ? (cells[columns.address].textContent || '').replace(/\s+/g, ' ').trim() : '';
+				var zip = columns.zip >= 0 && cells[columns.zip] ? (cells[columns.zip].textContent || '').replace(/\s+/g, ' ').trim() : '';
+				addDetail(entry.details, 'ts-kanban-address', 'fa-map-marker-alt', address);
+				addDetail(entry.details, 'ts-kanban-zip', 'fa-map-pin', zip);
+				if (entry.phone) { entry.details.appendChild(entry.phone); }
+			});
+		}).catch(function () { /* native name, phone and status remain usable */ }).then(function () {
+			grid.setAttribute('data-ts-enriched', '1');
+		});
 		return true;
 	}
 
