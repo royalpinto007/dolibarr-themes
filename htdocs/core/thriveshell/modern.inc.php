@@ -423,7 +423,12 @@ div.tabsAction .ts-record-secondary {
 	font-weight: 650;
 	line-height: 1.4;
 	color: var(--c-ink);
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
 }
+.ts-field-group-icon { color: var(--c-accent); width: 18px; text-align: center; }
+.ts-field-group td.ts-empty-value::after { content: "—"; color: var(--c-faint); }
 .ts-field-group table.tableforfield { margin: 0; border: 0; box-shadow: none; flex: 1 1 auto; }
 .ts-field-group table.tableforfield td { padding: 10px var(--sp-4); font-size: 0.8125rem; line-height: 1.35; }
 .ts-field-group table.tableforfield tr + tr { border-top: 1px solid var(--c-hairline); }
@@ -1060,4 +1065,137 @@ div.pagination a.btnTitle:has(.fa-plus) {
 		width: calc(100vw - var(--nav-w) - (var(--sp-4) * 2));
 	}
 	.ts-results-footer { align-items: flex-start; flex-direction: column; }
+}
+
+/* ==========================================================================
+   COMMAND parity scale and surface rhythm
+   Shared structural components keep their semantics; this final layer aligns
+   their browser proportions with the COMMAND reference system.
+   ========================================================================== */
+body { font-size: 0.875rem; }
+.fiche { max-width: 1600px; padding: var(--sp-6) var(--sp-6) var(--sp-8); }
+
+.ts-pagehead { margin-bottom: var(--sp-5); }
+.ts-pagehead-title div.titre, div.titre { font-size: 1.625rem; line-height: 1.15; }
+.ts-count { min-width: 30px; height: 26px; font-size: 0.8125rem; }
+.ts-pagehead a.btnTitle.ts-primary-action {
+	min-height: 40px;
+	padding: 0 18px;
+	font-size: 0.875rem;
+}
+
+.ts-list-composition { gap: var(--sp-5); }
+.ts-list-composition .ts-filter-surface {
+	padding: var(--sp-4);
+	gap: var(--sp-3);
+	box-shadow: var(--sh);
+}
+.ts-filter-surface .ts-quick-search,
+.ts-column-filters > summary { height: 40px; }
+.ts-filter-surface .select2-selection { min-height: 40px; }
+.ts-list-card { border-color: var(--c-border); box-shadow: var(--sh); }
+.ts-list-card tr.liste_titre th,
+.ts-list-card tr.liste_titre td { height: 48px; padding-top: var(--sp-3); padding-bottom: var(--sp-3); background: #f7f9fc; }
+.ts-list-card tr.oddeven td,
+.ts-list-card tr.impair td,
+.ts-list-card tr.pair td { height: 52px; padding-top: var(--sp-3); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--c-hairline); }
+.ts-results-footer { min-height: 56px; padding: var(--sp-3) var(--sp-4); background: #fbfcfe; }
+
+/* The record is a canvas containing independent surfaces, not one white sheet. */
+div.tabBar.ts-entity-card {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+div.tabBar.ts-entity-card > div.arearef.ts-has-actions {
+	margin: 0 0 var(--sp-3);
+	padding: 20px var(--sp-5);
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh);
+}
+div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] {
+	margin: 0 0 var(--sp-4);
+	padding: 0 var(--sp-3);
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+}
+div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] + * { margin-top: 0; }
+div.tabBar.ts-entity-card div.tabs a.tab {
+	min-height: 48px;
+	padding: 0 var(--sp-4);
+	font-size: 0.875rem;
+	font-weight: 520;
+	border: 0;
+	border-radius: var(--r-sm);
+}
+div.tabBar.ts-entity-card div.tabs .tabactive > a.tab,
+div.tabBar.ts-entity-card div.tabs .tabsElemActive > a.tab {
+	color: var(--c-accent-ink);
+	font-weight: 650;
+	background: var(--c-accent-soft);
+}
+div.arearef.ts-has-actions .refid { font-size: 1.625rem; }
+div.arearef.ts-has-actions .paginationref { opacity: .58; margin-<?php echo $left; ?>: var(--sp-2); }
+.ts-header-actions .butAction,
+.ts-header-actions .butActionRefused,
+.ts-header-actions .ts-more-actions-trigger { min-height: 40px; padding: 0 var(--sp-4); font-size: 0.875rem; }
+
+.ts-thirdparty-groups {
+	align-items: start;
+	gap: var(--sp-4);
+	padding: 0;
+}
+.ts-field-group { display: block; border-color: var(--c-border); box-shadow: var(--sh); }
+.ts-field-group-title { padding: var(--sp-4); font-size: 1rem; border-bottom-color: var(--c-hairline); }
+.ts-field-group table.tableforfield td { padding: 11px var(--sp-4); font-size: 0.875rem; }
+.ts-field-group table.tableforfield tr + tr { border-top-color: var(--c-hairline); }
+
+.ts-record-section-card { border-color: var(--c-border); box-shadow: var(--sh); padding: var(--sp-5); }
+.ts-record-section-card table.table-fiche-title { margin-bottom: var(--sp-4); }
+.ts-record-section-card table.table-fiche-title td.col-title,
+.ts-record-section-card .titre { font-size: 1rem; }
+.ts-record-section-card tr.liste_titre th,
+.ts-record-section-card tr.liste_titre td { background: #f7f9fc; }
+.ts-record-section-card tr.oddeven td { height: 48px; }
+.ts-record-section-card a.btnTitle {
+	min-width: 34px;
+	min-height: 34px;
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	box-shadow: none;
+}
+.ts-record-section-card tr:has(> td.col-title) a.btnTitle {
+	background: var(--c-surface);
+	border-color: var(--c-border);
+	color: var(--c-accent-ink);
+}
+
+@media only screen and (max-width: 992px) {
+	.fiche { padding: var(--sp-5) var(--sp-4) var(--sp-7); }
+}
+@media only screen and (max-width: 640px) {
+	.fiche { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
+	.ts-pagehead-title div.titre, div.titre { font-size: 1.375rem; }
+	div.tabBar.ts-entity-card > div.arearef.ts-has-actions { padding: var(--sp-4); }
+	.ts-list-composition { gap: var(--sp-4); }
+}
+@media only screen and (max-width: 767px) {
+	/* Read-only semantic cards stay compact on phones; generic edit tables still
+	   use the safer label-above-field layout from components.inc.php. */
+	.ts-field-group table.tableforfield:not(.liste) > tbody > tr {
+		display: grid;
+		grid-template-columns: minmax(0, 48%) minmax(0, 1fr);
+		align-items: center;
+		padding: 0;
+	}
+	.ts-field-group table.tableforfield:not(.liste) > tbody > tr > td {
+		display: table-cell;
+		width: auto !important;
+		padding: 11px var(--sp-4);
+	}
 }

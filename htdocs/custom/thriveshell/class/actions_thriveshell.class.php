@@ -45,6 +45,7 @@ class ActionsThriveshell extends CommonHookActions
 		$groups = array(
 			'identity' => array(
 				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupIdentity'),
+				'icon' => 'fa-building',
 				'fields' => array(
 					'nature' => array($langs->trans('NatureOfThirdParty')),
 					'customer-categories' => array($langs->trans('CustomersCategoriesShort')),
@@ -60,6 +61,7 @@ class ActionsThriveshell extends CommonHookActions
 			),
 			'business' => array(
 				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupBusiness'),
+				'icon' => 'fa-shield-alt',
 				'fields' => array(
 					'customer-code' => array($langs->trans('CustomerCode')),
 					'supplier-code' => array($langs->trans('SupplierCode')),
@@ -69,6 +71,7 @@ class ActionsThriveshell extends CommonHookActions
 			),
 			'relationships' => array(
 				'title' => $langs->transnoentitiesnoconv('ThriveshellGroupRelationships'),
+				'icon' => 'fa-briefcase',
 				'fields' => array(
 					'sales-representatives' => array($langs->trans('SalesRepresentatives')),
 					'member-link' => array($langs->trans('LinkedToDolibarrMember')),

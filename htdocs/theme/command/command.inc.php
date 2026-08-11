@@ -57,7 +57,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  */
 
 $darkmode = getDolGlobalInt('THEME_DARKMODEENABLED');
-$barheight = 56;
+$barheight = 60;
 ?>
 
 /* ==========================================================================
@@ -436,7 +436,7 @@ body.bodylogin { padding: 0; }		/* the login page has no chrome */
    The palette is fast but invisible; this is what makes the app browsable.
    ========================================================================== */
 
-:root { --nav-w: 244px; --nav-w-collapsed: 64px; }
+:root { --nav-w: 260px; --nav-w-collapsed: 68px; }
 
 aside.cmd-nav {
 	position: fixed;
@@ -470,6 +470,8 @@ aside.cmd-nav {
 	font-weight: 500;
 	white-space: nowrap;
 	transition: background var(--t), color var(--t);
+	min-height: 42px;
+	font-size: 0.875rem;
 }
 .cmd-nav-link:hover { background: var(--c-sunken); color: var(--c-ink); }
 .cmd-nav-group.is-active > .cmd-nav-link {
@@ -482,7 +484,7 @@ aside.cmd-nav {
 	width: 1.15em;
 	text-align: center;
 	color: var(--c-faint);
-	font-size: 1rem;
+	font-size: 1.125rem;
 }
 .cmd-nav-group.is-active .cmd-nav-icon { color: var(--c-accent); }
 .cmd-nav-link:hover .cmd-nav-icon { color: var(--c-muted); }

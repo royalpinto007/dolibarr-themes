@@ -169,11 +169,21 @@
 			section.setAttribute('data-group', groupKey);
 			var heading = document.createElement('h2');
 			heading.className = 'ts-field-group-title';
-			heading.textContent = definition.title || groupKey;
+			if (definition.icon) {
+				var groupIcon = document.createElement('span');
+				groupIcon.className = 'ts-field-group-icon fas ' + definition.icon;
+				groupIcon.setAttribute('aria-hidden', 'true');
+				heading.appendChild(groupIcon);
+			}
+			heading.appendChild(document.createTextNode(definition.title || groupKey));
 			var table = document.createElement('table');
 			table.className = 'border tableforfield centpercent';
 			var body = document.createElement('tbody');
 			groupRows.forEach(function (row) { body.appendChild(row); });
+			groupRows.forEach(function (row) {
+				var value = row.cells[row.cells.length - 1];
+				if (value && !(value.textContent || '').replace(/\s+/g, '').length) { value.classList.add('ts-empty-value'); }
+			});
 			table.appendChild(body);
 			section.appendChild(heading);
 			section.appendChild(table);
