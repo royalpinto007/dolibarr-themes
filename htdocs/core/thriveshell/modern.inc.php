@@ -938,7 +938,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-	gap: var(--sp-2);
+	gap: 10px;
 }
 .ts-filter-surface .ts-quick-search {
 	display: flex;
@@ -982,6 +982,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	background: transparent;
 	color: var(--c-muted);
 }
+.ts-filter-surface .ts-submit-search { display: none; }
 .ts-filter-surface .ts-submit-search:hover { background: var(--c-accent-soft); color: var(--c-accent-ink); }
 .ts-filter-surface .ts-clear-filters:hover { background: var(--c-sunken); color: var(--c-ink); }
 .ts-filter-surface .ts-clear-all-filters {
@@ -997,12 +998,12 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	border: 0;
 	border-radius: var(--r);
 	background: transparent;
-	color: var(--c-muted);
+	color: var(--c-accent-ink);
 	font-size: 0.8125rem;
 	font-weight: 550;
 	white-space: nowrap;
 }
-.ts-filter-surface .ts-clear-all-filters:hover { background: var(--c-sunken); color: var(--c-ink); }
+.ts-filter-surface .ts-clear-all-filters:hover { background: var(--c-accent-soft); color: var(--c-accent); }
 .ts-filter-surface .ts-clear-all-filters[hidden] { display: none !important; }
 .ts-filter-surface .ts-clear-all-filters [class*="fa-"] { display: none; }
 .ts-filter-surface .divsearchfield {
@@ -1014,6 +1015,23 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-filter-surface .ts-toolbar-filter-1 { flex-basis: 220px; width: 220px; }
 .ts-filter-surface .ts-toolbar-filter-2 { flex-basis: 170px; width: 170px; min-width: 150px; }
 .ts-filter-surface .ts-toolbar-filter-3 { flex-basis: 220px; width: 220px; }
+.ts-filter-surface .ts-toolbar-filter > span:not([class*="fa-"]) {
+	display: block;
+	width: 100%;
+	min-width: 0;
+}
+.ts-filter-surface .ts-toolbar-filter .select2-container,
+.ts-filter-surface .ts-toolbar-filter .select2-selection {
+	box-sizing: border-box;
+	width: 100% !important;
+	min-width: 0 !important;
+	max-width: 100% !important;
+}
+.ts-filter-surface .ts-toolbar-filter .select2-search--inline,
+.ts-filter-surface .ts-toolbar-filter .select2-search__field {
+	box-sizing: border-box;
+	max-width: 100%;
+}
 .ts-filter-surface .divsearchfield > span[class*="fa-"] { display: none; }
 .ts-filter-surface .select2-container { width: 100% !important; min-width: 0 !important; }
 .ts-filter-surface .select2-selection { min-height: 38px; }
@@ -1388,6 +1406,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	position: relative;
 	width: 126px;
 	height: 38px;
+	box-sizing: border-box;
 	padding: 0;
 	border: 1px solid var(--c-border);
 	border-radius: var(--r);
@@ -1414,9 +1433,15 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-results-nav li.paginationcombolimit .select2-selection__arrow { width: 24px; height: 36px; right: 6px; }
 .ts-per-page-label { display: none; }
 .ts-results-nav input.pageplusone {
-	width: 38px;
-	height: 38px;
+	width: 38px !important;
+	min-width: 38px !important;
+	max-width: 38px !important;
+	height: 38px !important;
+	min-height: 38px !important;
+	max-height: 38px !important;
+	box-sizing: border-box;
 	padding: 0;
+	margin: 0 !important;
 	border: 1px solid var(--c-accent) !important;
 	border-radius: var(--r);
 	background: var(--c-accent) !important;
@@ -1429,15 +1454,38 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-results-nav .inactive,
 .ts-results-nav .ts-pager-value {
 	display: inline-flex; align-items: center; justify-content: center;
-	min-width: 38px; min-height: 38px; padding: 0 var(--sp-2);
+	width: 38px !important; min-width: 38px !important; max-width: 38px !important;
+	height: 38px !important; min-height: 38px !important; max-height: 38px !important;
+	box-sizing: border-box; margin: 0 !important; padding: 0 !important;
 	border: 1px solid var(--c-border);
 	border-radius: var(--r); color: var(--c-ink-2);
 	background: var(--c-surface);
 	font-size: 0.875rem;
 }
+.ts-results-nav li.pagination:not(.paginationcombolimit) {
+	width: 38px;
+	min-width: 38px;
+	max-width: 38px;
+	height: 38px;
+	min-height: 38px;
+}
 .ts-results-nav .paginationpageleft a,
 .ts-results-nav .paginationpageright a,
-.ts-results-nav .ts-pagination-disabled .inactive { font-size: 1.125rem; }
+.ts-results-nav .ts-pagination-disabled .inactive { font-size: 0; }
+.ts-results-nav .paginationpageleft a::before,
+.ts-results-nav .paginationpageright a::before,
+.ts-results-nav .ts-pagination-disabled .inactive::before {
+	display: block;
+	font-family: "Font Awesome 5 Free", "Font Awesome 6 Free";
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 1;
+}
+.ts-results-nav .paginationpageleft a::before,
+.ts-results-nav .ts-pagination-disabled .inactive::before { content: "\f053"; }
+.ts-results-nav .paginationpageright a::before { content: "\f054"; }
+.ts-results-nav .paginationpageleft a > i,
+.ts-results-nav .paginationpageright a > i { display: none; }
 .ts-results-nav .ts-pagination-disabled .inactive { color: var(--c-faint); cursor: default; }
 .ts-results-nav .ts-pager-value { border: 1px solid var(--c-border); background: var(--c-surface); }
 .ts-results-nav a:hover { background: var(--c-sunken); color: var(--c-ink); }
@@ -1485,7 +1533,7 @@ body { font-size: 0.875rem; }
 .ts-list-composition { gap: var(--sp-5); }
 .ts-list-composition .ts-filter-surface {
 	padding: var(--sp-4);
-	gap: var(--sp-3);
+	gap: 10px;
 	box-shadow: var(--sh);
 }
 .ts-filter-surface .ts-quick-search,
