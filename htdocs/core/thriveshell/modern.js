@@ -405,6 +405,85 @@
 		return true;
 	}
 
+	function structureAjaxTooltip(root) {
+		(root || document).querySelectorAll('.ui-tooltip.mytooltip .centpercent:not([data-ts-structured])').forEach(function (content) {
+			document.querySelectorAll('a.classforajaxtooltip:hover[title]').forEach(function (target) {
+				if ((target.getAttribute('title') || '').trim().toLowerCase() === 'tocomplete') { target.removeAttribute('title'); }
+			});
+			var lines = [[]];
+			Array.from(content.childNodes).forEach(function (node) {
+				if (node.nodeName === 'BR') { lines.push([]); return; }
+				lines[lines.length - 1].push(node);
+			});
+			var headerLine = lines.shift() || [];
+			var header = document.createElement('div');
+			header.className = 'ts-tooltip-header';
+			var headerElements = headerLine.filter(function (node) { return node.nodeType === Node.ELEMENT_NODE; });
+			var icon = headerElements.find(function (node) { return node.matches('[class*="fa-"]'); });
+			var heading = headerElements.find(function (node) { return node.matches('u'); });
+			var status = headerElements.find(function (node) { return node.matches('.badge-status'); });
+			var metadata = headerElements.find(function (node) { return node.matches('.customer-back, .vendor-back, .prospect-back'); });
+			var headingText = heading && (heading.textContent || '').trim().toLowerCase();
+			if (headingText !== 'third party' && headingText !== 'user') {
+				content.setAttribute('data-ts-structured', 'native');
+				return;
+			}
+			if (icon) { icon.classList.add('ts-tooltip-icon'); header.appendChild(icon); }
+			if (heading) {
+				heading.classList.add('ts-tooltip-kind');
+				header.appendChild(heading);
+			}
+			if (metadata) { metadata.classList.add('ts-tooltip-meta'); header.appendChild(metadata); }
+			if (status) { status.classList.add('ts-tooltip-status'); header.appendChild(status); }
+
+			var details = document.createElement('div');
+			details.className = 'ts-tooltip-details';
+			lines.forEach(function (line) {
+				var text = line.map(function (node) { return node.textContent || ''; }).join('').replace(/\u00a0/g, ' ').trim();
+				if (!text) { return; }
+				var labelNode = line.find(function (node) { return node.nodeType === Node.ELEMENT_NODE && node.matches('b, strong'); });
+				var iconNode = line.find(function (node) {
+					return node.nodeType === Node.ELEMENT_NODE && (node.matches('[class*="fa-"]') || node.querySelector('[class*="fa-"]'));
+				});
+				var label = '';
+				var value = text;
+				var labelIcon = null;
+				if (labelNode) {
+					label = (labelNode.textContent || '').replace(/:\s*$/, '').trim();
+					value = text.slice((labelNode.textContent || '').trim().length).replace(/^:\s*/, '').trim();
+				} else if (iconNode) {
+					var glyph = iconNode.matches('[class*="fa-"]') ? iconNode : iconNode.querySelector('[class*="fa-"]');
+					labelIcon = glyph.cloneNode(true);
+					labelIcon.removeAttribute('title');
+					labelIcon.removeAttribute('style');
+					label = glyph.className.indexOf('fa-at') !== -1 ? 'Email' : (glyph.className.indexOf('fa-phone') !== -1 ? 'Phone' : 'Detail');
+				}
+				var row = document.createElement('div');
+				row.className = 'ts-tooltip-row';
+				var labelCell = document.createElement('span');
+				labelCell.className = 'ts-tooltip-label';
+				if (labelIcon) { labelCell.appendChild(labelIcon); }
+				labelCell.appendChild(document.createTextNode(label));
+				var valueCell = document.createElement('span');
+				valueCell.className = 'ts-tooltip-value';
+				valueCell.textContent = value || '\u2014';
+				row.appendChild(labelCell);
+				row.appendChild(valueCell);
+				details.appendChild(row);
+			});
+			content.replaceChildren(header, details);
+			content.setAttribute('data-ts-structured', '1');
+		});
+	}
+
+	function watchAjaxTooltips() {
+		structureAjaxTooltip(document);
+		var observer = new MutationObserver(function (mutations) {
+			if (mutations.some(function (mutation) { return mutation.addedNodes.length; })) { structureAjaxTooltip(document); }
+		});
+		observer.observe(document.body, {childList: true, subtree: true});
+	}
+
 	/* Compose the filters, table and result navigation as one list surface. All
 	   form controls remain inside their original form and the real table wrapper
 	   is moved rather than copied. Only the footer pager is a navigation-only copy
@@ -494,25 +573,32 @@
 					   callback, so detect the real select without depending on its runtime
 					   select2-hidden-accessible class. */
 					var compactSelect = control.querySelector('select');
-					if (compactSelect && compactSelect.options.length <= 5) {
+					if (compactSelect && compactSelect.options.length <= 8) {
 						compactSelect.setAttribute('data-ts-compact-select2', '1');
 					}
 					var compactEmptyLabels = {
 						'status': 'All statuses',
-						'nature of third party': 'All types'
+						'nature of third party': 'All types',
+						'third-party type': 'All third-party types'
 					};
-					var compactEmptyLabel = compactEmptyLabels[label.textContent.toLowerCase()];
-					if (compactSelect && compactEmptyLabel) {
+					var compactLabelKey = label.textContent.toLowerCase();
+					var compactEmptyLabel = compactEmptyLabels[compactLabelKey] || ('All ' + compactLabelKey);
+					if (compactSelect && compactSelect.getAttribute('data-ts-compact-select2') === '1') {
 						var emptyOption = Array.from(compactSelect.options).find(function (option) {
-							return option.value === '-1' && !(option.textContent || '').replace(/\u00a0/g, ' ').trim();
+							return !(option.textContent || '').replace(/\u00a0/g, ' ').trim();
 						});
 						if (emptyOption) {
 							emptyOption.textContent = compactEmptyLabel;
 							compactSelect.setAttribute('data-ts-empty-label', compactEmptyLabel);
+							var renderedEmpty = control.querySelector('.select2-selection__rendered');
+							if (renderedEmpty && compactSelect.value === emptyOption.value) {
+								renderedEmpty.textContent = compactEmptyLabel;
+								renderedEmpty.setAttribute('title', compactEmptyLabel);
+							}
 							compactSelect.addEventListener('change', function (event) {
 								var changedSelect = event.currentTarget;
 								window.requestAnimationFrame(function () {
-									if (changedSelect.value !== '-1') { return; }
+									if (changedSelect.value !== emptyOption.value) { return; }
 									var rendered = changedSelect.parentElement.querySelector('.select2-selection__rendered');
 									var selectedEmptyLabel = changedSelect.getAttribute('data-ts-empty-label');
 									if (rendered && selectedEmptyLabel) { rendered.textContent = selectedEmptyLabel; rendered.setAttribute('title', selectedEmptyLabel); }
@@ -599,6 +685,18 @@
 		card.className = 'ts-list-card';
 		composition.appendChild(card);
 		card.appendChild(listWrap);
+		list.querySelectorAll('a.classforajaxtooltip[title]').forEach(function (link) {
+			if ((link.getAttribute('title') || '').trim().toLowerCase() !== 'tocomplete') { return; }
+			if (!link.hasAttribute('aria-label')) {
+				var accessibleName = (link.textContent || '').replace(/\s+/g, ' ').trim();
+				if (accessibleName) { link.setAttribute('aria-label', accessibleName); }
+			}
+			/* Dolibarr's delegated handler needs this sentinel title while it fetches.
+			   structureAjaxTooltip removes it as soon as the custom card arrives. */
+			link.addEventListener('mouseleave', function () {
+				if (!link.hasAttribute('title')) { link.setAttribute('title', 'tocomplete'); }
+			});
+		});
 		/* Dolibarr repeats each visible sortable label in the parent th title.
 		   That produces a redundant native tooltip and adds no accessible name. */
 		list.querySelectorAll('tr.liste_titre > th[title], tr.liste_titre > td[title]').forEach(function (cell) {
@@ -668,19 +766,77 @@
 				Array.from(pagerList.childNodes).forEach(function (node) {
 					if (node.nodeType === Node.TEXT_NODE && !(node.textContent || '').replace('/', '').trim()) { node.remove(); }
 				});
-				var currentPage = pagerList.querySelector('li.pageplusone, li.paginationpage');
+				var limitItem = pagerList.querySelector('.paginationcombolimit');
+				var currentPage = pagerList.querySelector('li.pageplusone');
 				var previous = pagerList.querySelector('.paginationpageleft, .paginationprevious, .paginationleft');
+				var next = pagerList.querySelector('.paginationpageright, .paginationnext, .paginationright');
+				var makeDisabledDirection = function (direction) {
+					var item = document.createElement('li');
+					item.className = 'pagination paginationpage ts-pagination-disabled ts-pagination-' + direction;
+					var label = document.createElement('span');
+					label.className = 'inactive';
+					label.setAttribute('aria-disabled', 'true');
+					label.setAttribute('aria-label', direction === 'previous' ? 'Previous page unavailable' : 'Next page unavailable');
+					item.appendChild(label);
+					return item;
+				};
 				if (currentPage && !previous) {
-					previous = document.createElement('li');
-					previous.className = 'pagination ts-pagination-disabled';
-					var previousLabel = document.createElement('span');
-					previousLabel.className = 'inactive';
-					previousLabel.setAttribute('aria-hidden', 'true');
-					previousLabel.textContent = '‹';
-					previous.appendChild(previousLabel);
+					previous = makeDisabledDirection('previous');
 					pagerList.insertBefore(previous, currentPage);
 				}
-				var limitItem = pagerList.querySelector('.paginationcombolimit');
+				if (currentPage && !next) {
+					next = makeDisabledDirection('next');
+					pagerList.appendChild(next);
+				}
+				if (previous) { previous.classList.add('ts-pagination-previous'); }
+				if (next) { next.classList.add('ts-pagination-next'); }
+
+				var currentNumber = currentPage ? parseInt(currentPage.querySelector('input') && currentPage.querySelector('input').value, 10) : current;
+				var totalPages = total > 0 && limit > 0 ? Math.max(1, Math.ceil(total / limit)) : currentNumber;
+				var numericItems = Array.from(pagerList.children).filter(function (item) {
+					return item !== previous && item !== next && item !== currentPage && /^\d+$/.test((item.textContent || '').trim());
+				});
+				numericItems.forEach(function (item) {
+					if (parseInt((item.textContent || '').trim(), 10) === currentNumber) { item.remove(); }
+				});
+				var hasPageNumber = function (number) {
+					return Array.from(pagerList.children).some(function (item) {
+						return item !== currentPage && parseInt((item.textContent || '').trim(), 10) === number;
+					});
+				};
+				var makePageNumber = function (number, directionItem) {
+					var source = directionItem && directionItem.querySelector('a[href]');
+					if (!source) { return null; }
+					var item = document.createElement('li');
+					item.className = 'pagination ts-pager-number';
+					var link = source.cloneNode(false);
+					link.classList.remove('paginationprevious', 'paginationnext');
+					link.removeAttribute('title');
+					link.setAttribute('aria-label', 'Page ' + number);
+					link.textContent = String(number);
+					item.appendChild(link);
+					return item;
+				};
+				if (currentNumber > 1 && !hasPageNumber(currentNumber - 1)) {
+					var previousNumber = makePageNumber(currentNumber - 1, previous);
+					if (previousNumber) { pagerList.insertBefore(previousNumber, currentPage); }
+				}
+				if (currentNumber < totalPages && !hasPageNumber(currentNumber + 1)) {
+					var nextNumber = makePageNumber(currentNumber + 1, next);
+					if (nextNumber) { pagerList.insertBefore(nextNumber, next); }
+				}
+				var pageItems = Array.from(pagerList.children).filter(function (item) {
+					return item !== limitItem && item !== previous && item !== next;
+				}).sort(function (a, b) {
+					var aValue = a === currentPage ? currentNumber : parseInt((a.textContent || '').trim(), 10);
+					var bValue = b === currentPage ? currentNumber : parseInt((b.textContent || '').trim(), 10);
+					return aValue - bValue;
+				});
+				if (previous) { pagerList.appendChild(previous); }
+				pageItems.forEach(function (item) { pagerList.appendChild(item); });
+				if (next) { pagerList.appendChild(next); }
+				pagerList.classList.add('ts-pager-group');
+				if (!limitItem) { limitItem = topPager.querySelector('.paginationcombolimit'); }
 				if (limitItem && !limitItem.querySelector('.ts-per-page-label')) {
 					var perPage = document.createElement('span');
 					perPage.className = 'ts-per-page-label';
@@ -724,6 +880,12 @@
 					var pageSizeObserver = new MutationObserver(syncPageSizeDropdown);
 					pageSizeObserver.observe(document.body, {childList: true, subtree: true});
 				}
+				if (limitItem) {
+					var pageSizeGroup = document.createElement('ul');
+					pageSizeGroup.className = 'ts-page-size-group';
+					topPager.insertBefore(pageSizeGroup, pagerList);
+					pageSizeGroup.appendChild(limitItem);
+				}
 			}
 			var nav = document.createElement('nav');
 			nav.className = 'ts-results-nav';
@@ -736,6 +898,7 @@
 	}
 
 	ready(function () {
+		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }

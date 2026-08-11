@@ -1392,7 +1392,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
    content-sized while giving record cards an opaque, structured surface. */
 .ui-tooltip.mytooltip {
 	box-sizing: border-box;
-	width: 376px;
+	width: 400px;
 	max-width: calc(100vw - 24px);
 	padding: 16px;
 	border: 1px solid var(--c-border);
@@ -1466,6 +1466,67 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	padding: 0;
 	text-align: left;
 }
+.ui-tooltip.mytooltip .centpercent[data-ts-structured="1"] { position: static; }
+.ui-tooltip.mytooltip .ts-tooltip-header {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	min-width: 0;
+}
+.ui-tooltip.mytooltip .ts-tooltip-header .ts-tooltip-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 34px;
+	width: 34px;
+	height: 34px;
+	border-radius: var(--r);
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+}
+.ui-tooltip.mytooltip .ts-tooltip-kind {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: var(--c-ink);
+	font-size: 0.875rem;
+	font-weight: 650;
+	text-decoration: none;
+}
+.ui-tooltip.mytooltip .ts-tooltip-header .ts-tooltip-status {
+	position: static;
+	margin: 0 0 0 auto;
+	flex: 0 0 auto;
+}
+.ui-tooltip.mytooltip .ts-tooltip-details {
+	display: grid;
+	gap: 7px;
+	margin-top: var(--sp-3);
+}
+.ui-tooltip.mytooltip .ts-tooltip-row {
+	display: grid;
+	grid-template-columns: 112px minmax(0, 1fr);
+	align-items: start;
+	column-gap: var(--sp-3);
+}
+.ui-tooltip.mytooltip .ts-tooltip-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--c-muted);
+	font-weight: 550;
+}
+.ui-tooltip.mytooltip .ts-tooltip-label [class*="fa-"] {
+	flex: 0 0 14px;
+	width: 14px;
+	text-align: center;
+}
+.ui-tooltip.mytooltip .ts-tooltip-value {
+	min-width: 0;
+	color: var(--c-ink-2);
+	font-weight: 400;
+	overflow-wrap: anywhere;
+}
 .ts-column-filters-source { display: none; }
 .ts-list-card {
 	min-width: 0;
@@ -1507,6 +1568,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-results-nav div.pagination {
 	display: flex;
 	align-items: center;
+	gap: 8px;
 }
 .ts-results-nav div.pagination > ul {
 	display: flex; align-items: center; gap: 8px;
@@ -1603,8 +1665,9 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	line-height: 1;
 }
 .ts-results-nav .paginationpageleft a::before,
-.ts-results-nav .ts-pagination-disabled .inactive::before { content: "\f053"; }
+.ts-results-nav .ts-pagination-previous .inactive::before { content: "\f053"; }
 .ts-results-nav .paginationpageright a::before { content: "\f054"; }
+.ts-results-nav .ts-pagination-next .inactive::before { content: "\f054"; }
 .ts-results-nav .paginationpageleft a > i,
 .ts-results-nav .paginationpageright a > i { display: none; }
 .ts-results-nav .ts-pagination-disabled .inactive { color: var(--c-faint); cursor: default; }
