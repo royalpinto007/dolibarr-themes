@@ -30,7 +30,7 @@
  * would be invisible to the class below.
  */
 if (!defined('THRIVE_SHELLS')) {
-	define('THRIVE_SHELLS', 'workbench,aurora,editorial,dense');
+	define('THRIVE_SHELLS', 'workbench,aurora,editorial,dense,novo');
 }
 
 $activeTheme = (isset($conf) && is_object($conf) && !empty($conf->theme))
