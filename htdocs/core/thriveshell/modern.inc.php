@@ -615,9 +615,11 @@ div.tabs a.tab:focus-visible, ul.tabs a.tab:focus-visible {
    Sections below a record (Linked files, Events, ...)
    Dolibarr reuses div.titre for these, the same class as a list's page title, so
    they inherited page-title weight and read as if each were a new page. Their
-   td.col-title parent is what separates a section heading from a page heading.
+   Their location inside div.fichecenter separates a section heading from a
+   page heading; td.col-title is used for both and is not a safe discriminator.
    ========================================================================== */
-td.col-title div.titre, .col-title div.titre {
+div.fichecenter td.col-title div.titre,
+div.fichecenter .col-title div.titre {
 	font-size: 1rem;
 	font-weight: 620;
 	letter-spacing: -0.01em;

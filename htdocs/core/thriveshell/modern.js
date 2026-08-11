@@ -250,6 +250,27 @@
 		return done;
 	}
 
+	/* Some landing pages print an empty title table (often a non-breaking-space
+	   placeholder), and list-page composition leaves that native table behind
+	   after moving its real title. Mark only inert, textless tables so buttons,
+	   icons and module hooks can never be hidden accidentally. */
+	function markEmptyTitleTables() {
+		var done = false;
+		document.querySelectorAll('table.table-fiche-title').forEach(function (table) {
+			var title = table.querySelector('div.titre');
+			var text = ((title && title.innerText) || '').replace(/\u00a0/g, ' ').trim();
+			var visibleAction = Array.from(table.querySelectorAll('a, button, input, select, textarea')).some(function (control) {
+				var style = window.getComputedStyle(control);
+				return style.display !== 'none' && style.visibility !== 'hidden' && control.getClientRects().length > 0;
+			});
+			if (!text && !visibleAction) {
+				table.classList.add('ts-empty-title');
+				done = true;
+			}
+		});
+		return done;
+	}
+
 	/* List page header.
 	   The target puts the title and count on the left and a labelled create action
 	   on the right. Dolibarr prints the title in one cell and the create link in the
@@ -390,6 +411,7 @@
 
 	ready(function () {
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
+		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
