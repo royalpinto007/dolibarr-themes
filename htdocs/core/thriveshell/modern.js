@@ -245,9 +245,86 @@
 		return true;
 	}
 
+	/* Compose the filters, table and result navigation as one list surface. All
+	   form controls remain inside their original form and the real table wrapper
+	   is moved rather than copied. Only the footer pager is a navigation-only copy
+	   of hrefs already rendered by Dolibarr. */
+	function composeListSurface() {
+		if (document.querySelector('.ts-list-composition')) { return false; }
+		var title = document.querySelector('.ts-pagehead div.titre');
+		if (!title || title.closest('div.fichecenter')) { return false; }
+		var listWrap = document.querySelector('div.div-table-responsive, div.div-table-responsive-no-min');
+		var list = listWrap && listWrap.querySelector('table.liste');
+		var form = listWrap && listWrap.closest('form');
+		if (!list || !form) { return false; }
+
+		var filter = form.querySelector('div.liste_titre.liste_titre_bydiv');
+		var composition = document.createElement('section');
+		composition.className = 'ts-list-composition';
+		composition.setAttribute('aria-label', (title.textContent || '').replace(/\s+/g, ' ').trim());
+		listWrap.parentNode.insertBefore(composition, filter || listWrap);
+		if (filter) {
+			filter.classList.add('ts-filter-surface');
+			composition.appendChild(filter);
+		}
+		var card = document.createElement('div');
+		card.className = 'ts-list-card';
+		composition.appendChild(card);
+		card.appendChild(listWrap);
+
+		var totalNode = title.querySelector('.ts-count');
+		var total = totalNode ? parseInt((totalNode.textContent || '').replace(/[^0-9]/g, ''), 10) : NaN;
+		var limitSelect = form.querySelector('select[name="limit"], select.selectlimit');
+		var limit = limitSelect ? parseInt(limitSelect.value, 10) : NaN;
+		var pageInput = form.querySelector('input[name="pageplusone"], .pageplusone input');
+		var current = pageInput ? parseInt(pageInput.value, 10) : 1;
+		if (!current || current < 1) { current = 1; }
+		var visibleRows = list.querySelectorAll('tbody tr.oddeven').length;
+		if (!limit || limit < 1) { limit = visibleRows || total || 0; }
+		var first = total === 0 ? 0 : ((current - 1) * limit) + 1;
+		var last = Number.isNaN(total) ? first + Math.max(visibleRows - 1, 0) : Math.min(total, first + Math.max(visibleRows - 1, 0));
+
+		var footer = document.createElement('footer');
+		footer.className = 'ts-results-footer';
+		var summary = document.createElement('span');
+		summary.className = 'ts-results-summary';
+		summary.textContent = Number.isNaN(total) ? (first + '\u2013' + last) : (first + '\u2013' + last + ' of ' + total);
+		footer.appendChild(summary);
+		var topPager = form.querySelector('table.table-fiche-title div.pagination');
+		var pagerList = topPager && topPager.querySelector('ul');
+		if (pagerList) {
+			var nav = document.createElement('nav');
+			nav.className = 'ts-results-nav';
+			nav.setAttribute('aria-label', 'Results pages');
+			var links = pagerList.cloneNode(true);
+			/* The top pager nests its page-size select and current-page input inside
+			   the same list. A literal clone would introduce duplicate named controls
+			   into this form, so footer copies are inert text while navigation anchors
+			   remain real links. */
+			links.querySelectorAll('select, input, button').forEach(function (control) {
+				var value = control.tagName === 'SELECT'
+					? (control.options[control.selectedIndex] || {}).text
+					: (control.value || control.textContent || '');
+				var display = document.createElement('span');
+				display.className = 'ts-pager-value';
+				display.textContent = (value || '').trim();
+				control.replaceWith(display);
+			});
+			links.querySelectorAll('[id], [accesskey]').forEach(function (n) {
+				n.removeAttribute('id');
+				n.removeAttribute('accesskey');
+			});
+			nav.appendChild(links);
+			footer.appendChild(nav);
+		}
+		card.appendChild(footer);
+		return true;
+	}
+
 	ready(function () {
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
+		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }

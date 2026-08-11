@@ -782,3 +782,65 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	.ts-pagehead-actions { width: 100%; }
 	.ts-pagehead a.btnTitle.ts-primary-action { width: 100%; justify-content: center; }
 }
+
+/* ==========================================================================
+   Coherent list composition (paired with composeListSurface in modern.js)
+   The filter block stays in the submitting form, while the table and its result
+   footer share a single card edge. Wide tables scroll inside that card only.
+   ========================================================================== */
+.ts-list-composition { display: grid; gap: var(--sp-3); min-width: 0; }
+.ts-list-composition .ts-filter-surface {
+	margin: 0;
+	padding: var(--sp-3) var(--sp-4);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+}
+.ts-list-card {
+	min-width: 0;
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+.ts-list-card > .div-table-responsive,
+.ts-list-card > .div-table-responsive-no-min {
+	margin: 0;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	overflow-x: auto;
+}
+.ts-results-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-3);
+	min-height: 50px;
+	padding: var(--sp-2) var(--sp-4);
+	border-top: 1px solid var(--c-hairline);
+	background: var(--c-surface);
+	color: var(--c-muted);
+	font-size: 0.8125rem;
+}
+.ts-results-summary { white-space: nowrap; }
+.ts-results-nav ul {
+	display: flex; align-items: center; gap: var(--sp-1);
+	margin: 0; padding: 0; list-style: none;
+}
+.ts-results-nav li { display: inline-flex; align-items: center; }
+.ts-results-nav a,
+.ts-results-nav .inactive,
+.ts-results-nav .ts-pager-value {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-width: 30px; min-height: 30px; padding: 0 var(--sp-2);
+	border-radius: var(--r-sm); color: var(--c-ink-2);
+}
+.ts-results-nav .ts-pager-value { border: 1px solid var(--c-border); background: var(--c-surface); }
+.ts-results-nav a:hover { background: var(--c-sunken); color: var(--c-ink); }
+@media only screen and (max-width: 640px) {
+	.ts-list-composition .ts-filter-surface { padding: var(--sp-3); }
+	.ts-results-footer { align-items: flex-start; flex-direction: column; }
+}
