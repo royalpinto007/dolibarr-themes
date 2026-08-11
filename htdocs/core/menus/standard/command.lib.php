@@ -63,9 +63,11 @@ function command_menu_entry_allowed($entry)
  *  @param  array<int,array<string,mixed>>      $tabMenu   Menu entries from Menubase
  *  @param  string                              $atarget   Link target
  *  @param  int<0,1>                            $type_user 0=internal, 1=external
- *  @return array<int,array<string,mixed>>                 Groups with 'items'
+ *  @param  string                          $forceMain Force active module while building submenus
+ *  @param  string                          $forceLeft Force active submenu while building submenus
+ *  @return array<int,array<string,mixed>>             Groups with 'items'
  */
-function command_build_tree($db, &$tabMenu, $atarget, $type_user)
+function command_build_tree($db, &$tabMenu, $atarget, $type_user, $forceMain = '', $forceLeft = '')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
@@ -89,6 +91,10 @@ function command_build_tree($db, &$tabMenu, $atarget, $type_user)
 	// queried with the real leftmenu while the rest stay collapsed.
 	$curMain = GETPOSTISSET('mainmenu') ? GETPOST('mainmenu', 'aZ09') : (string) $savedMain;
 	$curLeft = GETPOSTISSET('leftmenu') ? GETPOST('leftmenu', 'aZ09') : (string) $savedLeft;
+	if ($forceMain !== '') {
+		$curMain = $forceMain;
+		$curLeft = $forceLeft;
+	}
 
 	// Top-level entries, in Dolibarr's own order.
 	$topmenu = new Menu();
@@ -170,6 +176,50 @@ function command_build_tree($db, &$tabMenu, $atarget, $type_user)
 
 
 /**
+ * Infer the active module from the current route when Dolibarr omitted
+ * mainmenu from a deep link. Session state is not reliable here: opening a
+ * Third Party URL after Setup otherwise leaves Home expanded indefinitely.
+ *
+ * @param  array<int,array<string,mixed>> $tree Navigation groups
+ * @return string                               Best matching mainmenu key
+ */
+function command_infer_current_main($tree)
+{
+	$selfDir = rtrim(dirname((string) $_SERVER['PHP_SELF']), '/');
+	$urlRoot = rtrim((string) DOL_URL_ROOT, '/');
+	$bestKey = '';
+	$bestScore = 0;
+	foreach ($tree as $group) {
+		$score = 0;
+		$urls = array($group['url']);
+		foreach ($group['items'] as $item) {
+			$urls[] = $item['url'];
+		}
+		foreach ($urls as $url) {
+			$exact = command_match_score($url);
+			if ($exact >= 0) {
+				$score = max($score, 100 + $exact);
+				continue;
+			}
+			$parts = parse_url($url);
+			$urlPath = !empty($parts['path']) ? $parts['path'] : '';
+			if ($urlRoot !== '' && strpos($urlPath, $urlRoot.'/') === 0) {
+				$urlPath = substr($urlPath, strlen($urlRoot));
+			}
+			if ($urlPath !== '' && rtrim(dirname($urlPath), '/') === $selfDir) {
+				$score = max($score, 10);
+			}
+		}
+		if ($score > $bestScore) {
+			$bestScore = $score;
+			$bestKey = $group['key'];
+		}
+	}
+	return $bestKey;
+}
+
+
+/**
  *  Make a menu URL absolute against DOL_URL_ROOT.
  *
  *  @param  string $url Raw menu url
@@ -233,12 +283,17 @@ function command_match_score($url)
 	if (empty($parts['path'])) {
 		return -1;
 	}
+	$path = $parts['path'];
+	$urlRoot = rtrim((string) DOL_URL_ROOT, '/');
+	if ($urlRoot !== '' && strpos($path, $urlRoot.'/') === 0) {
+		$path = substr($path, strlen($urlRoot));
+	}
 	$self = (string) $_SERVER['PHP_SELF'];
-	if (basename($parts['path']) !== basename($self)) {
+	if (basename($path) !== basename($self)) {
 		return -1;
 	}
 	// Compare directories too, so product/list.php never matches societe/list.php.
-	if (rtrim(dirname($parts['path']), '/') !== rtrim(dirname($self), '/')) {
+	if (rtrim(dirname($path), '/') !== rtrim(dirname($self), '/')) {
 		return -1;
 	}
 
@@ -280,7 +335,14 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 
 	// Prefer the module named on the URL; fall back to the session for deep
 	// links that carry no mainmenu (Dolibarr's own managers behave the same).
-	$currentMain = GETPOSTISSET('mainmenu') ? GETPOST('mainmenu', 'aZ09') : (isset($_SESSION['mainmenu']) ? $_SESSION['mainmenu'] : '');
+	$currentMain = GETPOSTISSET('mainmenu') ? GETPOST('mainmenu', 'aZ09') : command_infer_current_main($tree);
+	if ($currentMain === '') {
+		$currentMain = isset($_SESSION['mainmenu']) ? $_SESSION['mainmenu'] : '';
+	} elseif (!GETPOSTISSET('mainmenu') && (!isset($_SESSION['mainmenu']) || $_SESSION['mainmenu'] !== $currentMain)) {
+		// Rebuild once so the inferred module receives its own complete submenu,
+		// not the stale module's leftmenu context.
+		$tree = command_build_tree($db, $tabMenu, $atarget, $type_user, $currentMain, '');
+	}
 	$currentTitle = '';
 	foreach ($tree as $g) {
 		if ($g['key'] === $currentMain) {
