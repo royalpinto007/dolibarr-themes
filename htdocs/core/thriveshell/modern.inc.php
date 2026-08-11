@@ -1450,6 +1450,9 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	box-shadow: none;
 	overflow-x: auto;
 }
+.ts-list-card tr.liste_titre > th:not(:first-child),
+.ts-list-card tr.liste_titre > td:not(:first-child) { text-align: center !important; }
+.ts-list-card td a.opacitymedium:is(.customer-back, .vendor-back, .prospect-back) { opacity: 1; }
 .ts-results-footer {
 	display: flex;
 	align-items: center;
@@ -1480,11 +1483,21 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	background: var(--c-surface);
 }
 .ts-results-nav li.paginationcombolimit .select2-container { width: 100% !important; }
+.ts-results-nav li.paginationcombolimit .selection {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
 .ts-results-nav li.paginationcombolimit .select2-selection--single {
+	box-sizing: border-box;
+	width: 100% !important;
+	min-width: 100% !important;
+	max-width: none !important;
 	height: 36px;
 	min-height: 36px;
 	padding: 0 30px 0 12px;
 	border: 0 !important;
+	border-radius: 0 !important;
 	background: transparent;
 	box-shadow: none !important;
 }
