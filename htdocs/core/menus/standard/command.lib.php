@@ -185,8 +185,7 @@ function command_build_tree($db, &$tabMenu, $atarget, $type_user, $forceMain = '
  */
 function command_infer_current_main($tree)
 {
-	$selfDir = rtrim(dirname((string) $_SERVER['PHP_SELF']), '/');
-	$urlRoot = rtrim((string) DOL_URL_ROOT, '/');
+	$selfDir = rtrim(dirname(command_normalize_path((string) $_SERVER['PHP_SELF'])), '/');
 	$bestKey = '';
 	$bestScore = 0;
 	foreach ($tree as $group) {
@@ -202,10 +201,7 @@ function command_infer_current_main($tree)
 				continue;
 			}
 			$parts = parse_url($url);
-			$urlPath = !empty($parts['path']) ? $parts['path'] : '';
-			if ($urlRoot !== '' && strpos($urlPath, $urlRoot.'/') === 0) {
-				$urlPath = substr($urlPath, strlen($urlRoot));
-			}
+			$urlPath = !empty($parts['path']) ? command_normalize_path($parts['path']) : '';
 			if ($urlPath !== '' && rtrim(dirname($urlPath), '/') === $selfDir) {
 				$score = max($score, 10);
 			}
@@ -216,6 +212,24 @@ function command_infer_current_main($tree)
 		}
 	}
 	return $bestKey;
+}
+
+
+/**
+ * Normalize a request/menu path against Dolibarr's configured URL root.
+ * Both aliased web-root requests and canonical /dolibarr requests must compare
+ * identically.
+ *
+ * @param string $path Request or menu path
+ * @return string
+ */
+function command_normalize_path($path)
+{
+	$urlRoot = rtrim((string) DOL_URL_ROOT, '/');
+	if ($urlRoot !== '' && ($path === $urlRoot || strpos($path, $urlRoot.'/') === 0)) {
+		$path = substr($path, strlen($urlRoot));
+	}
+	return $path === '' ? '/' : $path;
 }
 
 
@@ -283,12 +297,8 @@ function command_match_score($url)
 	if (empty($parts['path'])) {
 		return -1;
 	}
-	$path = $parts['path'];
-	$urlRoot = rtrim((string) DOL_URL_ROOT, '/');
-	if ($urlRoot !== '' && strpos($path, $urlRoot.'/') === 0) {
-		$path = substr($path, strlen($urlRoot));
-	}
-	$self = (string) $_SERVER['PHP_SELF'];
+	$path = command_normalize_path($parts['path']);
+	$self = command_normalize_path((string) $_SERVER['PHP_SELF']);
 	if (basename($path) !== basename($self)) {
 		return -1;
 	}

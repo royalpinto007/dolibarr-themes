@@ -233,12 +233,13 @@ function thriveshell_match_score($url)
 	if (empty($parts['path'])) {
 		return -1;
 	}
-	$self = (string) $_SERVER['PHP_SELF'];
-	if (basename($parts['path']) !== basename($self)) {
+	$path = thriveshell_normalize_path($parts['path']);
+	$self = thriveshell_normalize_path((string) $_SERVER['PHP_SELF']);
+	if (basename($path) !== basename($self)) {
 		return -1;
 	}
 	// Compare directories too, so product/list.php never matches societe/list.php.
-	if (rtrim(dirname($parts['path']), '/') !== rtrim(dirname($self), '/')) {
+	if (rtrim(dirname($path), '/') !== rtrim(dirname($self), '/')) {
 		return -1;
 	}
 
@@ -258,6 +259,17 @@ function thriveshell_match_score($url)
 		}
 	}
 	return $score;
+}
+
+
+/** Normalize request and menu paths against DOL_URL_ROOT. */
+function thriveshell_normalize_path($path)
+{
+	$urlRoot = rtrim((string) DOL_URL_ROOT, '/');
+	if ($urlRoot !== '' && ($path === $urlRoot || strpos($path, $urlRoot.'/') === 0)) {
+		$path = substr($path, strlen($urlRoot));
+	}
+	return $path === '' ? '/' : $path;
 }
 
 
