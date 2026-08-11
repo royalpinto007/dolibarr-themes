@@ -484,6 +484,212 @@
 		observer.observe(document.body, {childList: true, subtree: true});
 	}
 
+	/* Dolibarr's Kanban mode emits a real card container, but each Third Party
+	   card contains only icon links and a code while the useful entity metadata
+	   remains available through the same authorised AJAX tooltip used by the name
+	   link. Enhance that native container rather than reshaping table rows: every
+	   record, telephone and email href is moved intact, and the field mapping from
+	   the tooltip response is deliberately isolated to this reference card type. */
+	function enhanceThirdPartyKanban() {
+		var grid = document.querySelector('.ts-list-composition div.box-flex-container.kanban');
+		if (!grid || grid.getAttribute('data-ts-kanban') === 'thirdparty') { return false; }
+		var cards = Array.from(grid.querySelectorAll(':scope > .box-flex-item'));
+		if (!cards.length || !cards.every(function (item) {
+			return Boolean(item.querySelector('a[data-params*="societe"][href*="/societe/card.php"]'));
+		})) { return false; }
+
+		var table = grid.closest('table.liste');
+		var listCard = table && table.closest('.ts-list-card');
+		grid.setAttribute('data-ts-kanban', 'thirdparty');
+		grid.classList.add('ts-command-kanban', 'ts-thirdparty-kanban');
+		if (table) { table.classList.add('ts-kanban-table'); }
+		if (listCard) { listCard.classList.add('ts-kanban-card-surface'); }
+
+		function element(tag, className, text) {
+			var node = document.createElement(tag);
+			if (className) { node.className = className; }
+			if (text) { node.textContent = text; }
+			return node;
+		}
+		function icon(className) {
+			var node = element('span', className);
+			node.setAttribute('aria-hidden', 'true');
+			return node;
+		}
+		var thirdPartyFieldMap = {
+			'name': 'name',
+			'address': 'location',
+			'customer code': 'customerCode',
+			'vendor code': 'vendorCode',
+			'supplier code': 'vendorCode'
+		};
+		function tooltipData(html) {
+			var documentFragment = new DOMParser().parseFromString(html, 'text/html');
+			var content = documentFragment.querySelector('.centpercent');
+			var data = {natures: []};
+			if (!content) { return data; }
+			content.querySelectorAll('.customer-back, .prospect-back, .vendor-back').forEach(function (badge) {
+				var label = (badge.getAttribute('title') || badge.textContent || '').replace(/\s+/g, ' ').trim();
+				if (label && data.natures.indexOf(label) === -1) { data.natures.push(label); }
+			});
+			var lines = [[]];
+			Array.from(content.childNodes).forEach(function (node) {
+				if (node.nodeName === 'BR') { lines.push([]); return; }
+				lines[lines.length - 1].push(node);
+			});
+			lines.forEach(function (line) {
+				var text = line.map(function (node) { return node.textContent || ''; }).join('').replace(/\s+/g, ' ').trim();
+				if (!text) { return; }
+				var separator = text.indexOf(':');
+				if (separator > 0) {
+					var label = text.slice(0, separator).trim().toLowerCase();
+					var value = text.slice(separator + 1).trim();
+					var field = thirdPartyFieldMap[label];
+					if (field) { data[field] = value; }
+					return;
+				}
+				if (text.indexOf('@') !== -1) { data.email = text; }
+			});
+			return data;
+		}
+		function addDetail(details, className, iconClass, value) {
+			if (!value) { return; }
+			var row = element('div', 'ts-kanban-detail ' + className);
+			row.appendChild(icon('fas ' + iconClass));
+			var valueNode = element('span', 'ts-kanban-detail-value', value);
+			valueNode.setAttribute('title', value);
+			row.appendChild(valueNode);
+			details.appendChild(row);
+		}
+
+		var enrichQueue = [];
+		cards.forEach(function (item) {
+			var card = item.querySelector('.info-box');
+			var content = card && card.querySelector('.info-box-content');
+			var nameWrap = content && content.querySelector('.info-box-ref');
+			var nameLink = nameWrap && nameWrap.querySelector('a[data-params]');
+			if (!card || !content || !nameWrap || !nameLink) { return; }
+
+			item.classList.add('ts-kanban-item');
+			card.classList.add('ts-kanban-card');
+			var tile = card.querySelector('.info-box-icon');
+			if (tile) { tile.classList.add('ts-kanban-icon-tile'); }
+			var duplicateIcon = nameLink.querySelector('[class*="fa-"]');
+			if (duplicateIcon) { duplicateIcon.remove(); }
+
+			var rawName = (nameLink.textContent || '').replace(/\s+/g, ' ').trim();
+			nameLink.replaceChildren(document.createTextNode(rawName));
+			nameLink.classList.add('ts-kanban-name');
+			nameWrap.className = 'ts-kanban-identity';
+
+			var head = element('div', 'ts-kanban-head');
+			var identity = element('div', 'ts-kanban-title-block');
+			identity.appendChild(nameWrap);
+			var badges = element('div', 'ts-kanban-natures');
+			identity.appendChild(badges);
+			head.appendChild(identity);
+
+			var emailAction = content.querySelector('a[href*="action=presend"]');
+			if (emailAction) {
+				var menu = element('details', 'ts-kanban-actions');
+				var trigger = element('summary', 'ts-kanban-actions-trigger');
+				trigger.setAttribute('aria-label', 'More actions');
+				trigger.appendChild(icon('fas fa-ellipsis-h'));
+				var menuPanel = element('div', 'ts-kanban-actions-menu');
+				emailAction.className = 'ts-kanban-action';
+				var emailGlyph = emailAction.querySelector('[class*="fa-"]');
+				if (emailGlyph) { emailGlyph.removeAttribute('title'); }
+				emailAction.appendChild(document.createTextNode('Send email'));
+				menuPanel.appendChild(emailAction);
+				menu.appendChild(trigger);
+				menu.appendChild(menuPanel);
+				head.appendChild(menu);
+			}
+
+			var code = content.querySelector('.info-box-label');
+			if (code) {
+				code.className = 'ts-kanban-code';
+				if ((code.textContent || '').trim()) { identity.appendChild(code); }
+				else { code.remove(); }
+			}
+
+			var details = element('div', 'ts-kanban-details');
+			var phoneLink = content.querySelector('a[href^="tel:"]');
+			if (phoneLink) {
+				var phoneGlyph = phoneLink.querySelector('[class*="fa-"]');
+				var phone = phoneGlyph && (phoneGlyph.getAttribute('title') || '').trim();
+				phoneLink.className = 'ts-kanban-detail ts-kanban-phone';
+				if (phoneGlyph) { phoneGlyph.removeAttribute('title'); phoneGlyph.setAttribute('aria-hidden', 'true'); }
+				if (phone) {
+					var phoneValue = element('span', 'ts-kanban-detail-value', phone);
+					phoneValue.setAttribute('title', phone);
+					phoneLink.appendChild(phoneValue);
+					details.appendChild(phoneLink);
+				}
+			}
+
+			var status = content.querySelector('.info-box-status');
+			var statusBadge = status && status.querySelector('.badge-status');
+			if (statusBadge) {
+				var statusText = (statusBadge.getAttribute('aria-label') || statusBadge.getAttribute('title') || '').trim();
+				statusBadge.classList.remove('badge-dot');
+				if (!(statusBadge.textContent || '').trim()) { statusBadge.textContent = statusText; }
+				status.classList.add('ts-kanban-status');
+			}
+
+			var selection = content.querySelector('input.checkforselect');
+			if (selection) { selection.classList.add('ts-kanban-bulk-selection'); selection.setAttribute('tabindex', '-1'); }
+			Array.from(content.children).forEach(function (child) {
+				if (child.tagName === 'BR' || child.classList.contains('inline-block')) { child.remove(); }
+			});
+			content.replaceChildren(head, details);
+			if (status) { content.appendChild(status); }
+			if (selection) { content.appendChild(selection); }
+
+			var params;
+			try { params = JSON.parse(nameLink.getAttribute('data-params') || '{}'); } catch (error) { params = null; }
+			if (params && params.id) { enrichQueue.push({nameLink: nameLink, identity: identity, badges: badges, details: details, params: params}); }
+		});
+
+		var tokenNode = document.querySelector('meta[name="anti-csrf-currenttoken"]');
+		var token = tokenNode && tokenNode.getAttribute('content');
+		var cursor = 0;
+		function enrichNext() {
+			if (cursor >= enrichQueue.length) { grid.setAttribute('data-ts-enriched', '1'); return Promise.resolve(); }
+			var entry = enrichQueue[cursor++];
+			var params = Object.assign({}, entry.params, {token: token || ''});
+			return window.fetch((window.DOL_URL_ROOT || '') + '/core/ajax/ajaxtooltip.php', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+				body: new URLSearchParams(params).toString(),
+				credentials: 'same-origin'
+			}).then(function (response) { return response.ok ? response.text() : ''; }).then(function (html) {
+				var data = tooltipData(html);
+				entry.badges.replaceChildren();
+				data.natures.forEach(function (nature) {
+					var key = nature.toLowerCase();
+					var badge = element('span', 'ts-kanban-nature ts-kanban-nature-' + key.replace(/[^a-z]+/g, '-'), nature);
+					entry.badges.appendChild(badge);
+				});
+				if (data.name) {
+					var match = data.name.match(/^(.*?)\s+\((.+)\)$/);
+					entry.nameLink.textContent = match ? match[1] : data.name;
+					if (match) { entry.identity.insertBefore(element('span', 'ts-kanban-alias', match[2]), entry.badges); }
+				}
+				addDetail(entry.details, 'ts-kanban-email', 'fa-envelope', data.email);
+				addDetail(entry.details, 'ts-kanban-location', 'fa-map-marker-alt', data.location);
+				var nativeCode = entry.identity.querySelector('.ts-kanban-code');
+				if ((!nativeCode || !(nativeCode.textContent || '').trim()) && (data.customerCode || data.vendorCode)) {
+					entry.identity.appendChild(element('span', 'ts-kanban-code', data.customerCode || data.vendorCode));
+				}
+			}).catch(function () { /* the native core card remains usable */ }).then(enrichNext);
+		}
+		var workers = [];
+		for (var worker = 0; worker < Math.min(4, enrichQueue.length); worker++) { workers.push(enrichNext()); }
+		Promise.all(workers).then(function () { grid.setAttribute('data-ts-enriched', '1'); });
+		return true;
+	}
+
 	/* Turn Dolibarr's native create/edit table into the shared COMMAND form grid.
 	   Controls never leave their form or their row, so names, values, hooks,
 	   validation and dependent-field handlers remain attached. The field-name map
@@ -847,7 +1053,8 @@
 		var pageInput = form.querySelector('input[name="pageplusone"], .pageplusone input');
 		var current = pageInput ? parseInt(pageInput.value, 10) : 1;
 		if (!current || current < 1) { current = 1; }
-		var visibleRows = list.querySelectorAll('tbody tr.oddeven').length;
+		var kanbanItems = list.querySelectorAll('tr.trkanban .box-flex-container.kanban > .box-flex-item').length;
+		var visibleRows = kanbanItems || list.querySelectorAll('tbody tr.oddeven').length;
 		if (!limit || limit < 1) { limit = visibleRows || total || 0; }
 		var first = total === 0 ? 0 : ((current - 1) * limit) + 1;
 		var last = Number.isNaN(total) ? first + Math.max(visibleRows - 1, 0) : Math.min(total, first + Math.max(visibleRows - 1, 0));
@@ -1025,6 +1232,7 @@
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
+		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
 		try { enhanceThirdPartyForm(); } catch (e) { /* retain Dolibarr's native edit table */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
