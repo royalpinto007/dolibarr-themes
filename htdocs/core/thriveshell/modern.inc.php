@@ -543,3 +543,80 @@ div.fichecenter tr.oddeven td.opacitymedium {
 .col-title ~ td a.btnTitle::after, tr:has(> td.col-title) a.btnTitle::after { content: none; }
 .col-title ~ td a.btnTitle span[class*="fa-"],
 tr:has(> td.col-title) a.btnTitle span[class*="fa-"] { color: var(--c-accent-ink); }
+
+/* ==========================================================================
+   Record header: place the pager deliberately
+   The banner is a flex row, and the pager block comes first in Dolibarr's markup,
+   so once its "back to list" label was hidden the bare arrows wrapped above the
+   title. Ordering the row puts the identity first and groups the pager with the
+   actions on the right, where it reads as navigation for this record. No markup
+   is moved: only the visual order changes, so prev/next keep their hrefs.
+   ========================================================================== */
+div.arearef.ts-has-actions > *:not(.ts-header-actions):not(.pagination) {
+	order: 1;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+div.arearef.ts-has-actions .ts-header-actions { order: 2; align-self: center; }
+div.arearef.ts-has-actions .paginationref {
+	order: 3;
+	align-self: center;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-1);
+	flex: 0 0 auto;
+}
+div.arearef.ts-has-actions .paginationref a {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-width: 28px; min-height: 28px;
+	border-radius: var(--r-sm);
+	color: var(--c-muted);
+	transition: background var(--t), color var(--t);
+}
+div.arearef.ts-has-actions .paginationref a:hover { background: var(--c-sunken); color: var(--c-ink); }
+
+/* ==========================================================================
+   List filters as one surface
+   Dolibarr splits filtering across a block above the table and a filter row
+   inside it. Both are given the same surface treatment so they read as one
+   control area, without moving either out of the form they post from.
+   ========================================================================== */
+div.liste_titre.liste_titre_bydiv {
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	padding: var(--sp-3);
+	margin-bottom: var(--sp-3);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sp-2);
+}
+div.liste_titre.liste_titre_bydiv .select2-container,
+div.liste_titre.liste_titre_bydiv select,
+div.liste_titre.liste_titre_bydiv input { max-width: 100%; }
+@media only screen and (max-width: 900px) {
+	div.liste_titre.liste_titre_bydiv > * { flex: 1 1 100%; }
+}
+
+/* ==========================================================================
+   Results footer
+   Dolibarr prints the row range, the page-size select and the pager separately
+   at the foot of a list. They are laid out as one row so the foot of every list
+   reads the same. Nothing is added that Dolibarr does not already render.
+   ========================================================================== */
+div.div-table-responsive + div.pagination,
+.paginationatbottom,
+div.fichecenter > form > div.pagination:last-child {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-3);
+	padding: var(--sp-3) var(--sp-1);
+	margin-top: var(--sp-2);
+	border-top: 1px solid var(--c-hairline);
+	font-size: 0.8125rem;
+	color: var(--c-muted);
+}
