@@ -727,15 +727,24 @@
 		}
 
 		var halfWidthFields = new Set([
-			'status', 'barcode', 'fax', 'url', 'forme_juridique_code', 'capital'
+			'status', 'barcode', 'fax', 'url'
 		]);
 		var fullWidthFields = new Set([
 			'name', 'name_alias', 'address', 'country_id', 'state_id', 'email',
 			'cond_reglement_id', 'mode_reglement_id', 'incoterm_id', 'custcats[]',
-			'suppcats[]', 'parent_company_id', 'commercial[]', 'photo'
+			'suppcats[]', 'parent_company_id', 'commercial[]', 'photo', 'capital',
+			'forme_juridique_code'
 		]);
 
 		Array.from(body.rows).forEach(function (row) {
+			/* Some edit templates leave a third, completely empty cell after an
+			   optional professional ID. It creates a phantom grid track and a 40px
+			   blank band, but carries no field, hook output or accessible content. */
+			while (row.cells.length > 2) {
+				var trailingCell = row.cells[row.cells.length - 1];
+				if ((trailingCell.textContent || '').trim() || trailingCell.children.length) { break; }
+				trailingCell.remove();
+			}
 			var controls = Array.from(row.querySelectorAll('input, select, textarea')).filter(function (control) {
 				return control.type !== 'hidden' && !control.classList.contains('select2-search__field');
 			});
@@ -760,6 +769,12 @@
 
 			Array.from(row.cells).forEach(function (cell, index) {
 				cell.classList.add(index % 2 === 0 ? 'ts-form-label' : 'ts-form-value');
+				if (index % 2 === 1) {
+					Array.from(cell.children).forEach(function (child) {
+						if (!child.matches('span[class*="fa-"], img.pictofixedwidth')) { return; }
+						child.classList.add(child.classList.contains('fa-info-circle') ? 'ts-form-help' : 'ts-form-leading-icon');
+					});
+				}
 			});
 
 			/* Dolibarr leaves the nature-choice label cell blank. The controls and
@@ -795,11 +810,74 @@
 				return (row.getAttribute('data-ts-fields') || '').split(' ').indexOf(fieldName) !== -1;
 			});
 		}
+		function setRowFields(row, fields) {
+			row.setAttribute('data-ts-fields', fields.join(' '));
+		}
+		function pairSeparateRows(firstField, secondField) {
+			var firstRow = rowFor(firstField);
+			var secondRow = rowFor(secondField);
+			if (!firstRow || !secondRow || firstRow === secondRow || firstRow.cells.length !== 2 || secondRow.cells.length !== 2) { return firstRow; }
+			while (secondRow.cells.length) { firstRow.appendChild(secondRow.cells[0]); }
+			setRowFields(firstRow, [firstField, secondField]);
+			firstRow.classList.remove('ts-form-row-half');
+			firstRow.classList.add('ts-form-row-paired', 'ts-form-row-full');
+			secondRow.remove();
+			return firstRow;
+		}
 		var statusRow = rowFor('status');
 		var barcodeRow = rowFor('barcode');
 		if (statusRow && barcodeRow && statusRow.nextElementSibling !== barcodeRow) {
 			body.insertBefore(statusRow, barcodeRow);
 		}
+
+		/* Create already prints this relationship as four cells, while edit prints
+		   two independent rows. Pair the edit nodes to the same native structure. */
+		pairSeparateRows('assujtva_value', 'tva_intra');
+
+		/* Workforce arrives as the second half of the generic Third-party type row.
+		   The intended business composition pairs it with Business entity type. Move
+		   those two existing cells, leaving the extra Third-party type as a safe full
+		   row instead of dropping a configured field. */
+		var typeRow = rowFor('typent_id');
+		var businessRow = rowFor('forme_juridique_code');
+		if (typeRow && businessRow && typeRow !== businessRow && typeRow.cells.length >= 4 && businessRow.cells.length === 2) {
+			businessRow.appendChild(typeRow.cells[2]);
+			businessRow.appendChild(typeRow.cells[2]);
+			setRowFields(typeRow, ['typent_id']);
+			setRowFields(businessRow, ['forme_juridique_code', 'effectif_id']);
+			typeRow.classList.remove('ts-form-row-paired');
+			typeRow.classList.add('ts-form-row-full');
+			businessRow.classList.remove('ts-form-row-half');
+			businessRow.classList.add('ts-form-row-paired', 'ts-form-row-full');
+		}
+
+		var capitalRow = rowFor('capital');
+		if (capitalRow) {
+			capitalRow.classList.remove('ts-form-row-half');
+			capitalRow.classList.add('ts-form-row-full', 'ts-form-compound-capital');
+		}
+		var incotermsRow = rowFor('incoterm_id');
+		if (incotermsRow) {
+			incotermsRow.classList.add('ts-form-compound-incoterms');
+			var incotermsSelect = incotermsRow.querySelector('select[name="incoterm_id"]');
+			var emptyIncoterm = incotermsSelect && Array.from(incotermsSelect.options).find(function (option) { return !option.value || option.value === '0'; });
+			if (emptyIncoterm && !(emptyIncoterm.textContent || '').replace(/\u00a0/g, ' ').trim()) {
+				emptyIncoterm.textContent = 'Select Incoterms';
+				var renderedIncoterm = incotermsRow.querySelector('.select2-selection__rendered');
+				if (renderedIncoterm && incotermsSelect.value === emptyIncoterm.value) {
+					renderedIncoterm.textContent = emptyIncoterm.textContent;
+					renderedIncoterm.setAttribute('title', emptyIncoterm.textContent);
+				}
+			}
+			var incotermLocation = incotermsRow.querySelector('input[name="location_incoterms"]');
+			if (incotermLocation) { incotermLocation.setAttribute('placeholder', 'Location (optional)'); }
+		}
+		if (capitalRow) {
+			var capitalInput = capitalRow.querySelector('input[name="capital"]');
+			if (capitalInput) { capitalInput.setAttribute('placeholder', '0.00'); }
+		}
+		var photoRow = rowFor('photo');
+		if (photoRow) { photoRow.classList.add('ts-form-file-row'); }
 		var commercialRow = rowFor('commercial[]');
 		var logoRow = rowFor('photo');
 		if (commercialRow && logoRow && commercialRow.nextElementSibling !== logoRow) {
@@ -810,6 +888,24 @@
 			return child.matches('div.center') && child.querySelector('input[type="submit"]');
 		});
 		if (actions) { actions.classList.add('ts-modern-form-actions'); }
+
+		/* Select2 dropdowns are body-mounted, so descendant selectors cannot give
+		   them the form control's width. Mark only surfaces whose expanded source is
+		   inside this form and anchor them to that live trigger. */
+		var syncFormSelect2 = function () {
+			window.requestAnimationFrame(function () {
+				var selection = form.querySelector('.select2-selection[aria-expanded="true"]');
+				var container = selection && selection.closest('.select2-container');
+				var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
+				if (!container || !dropdown) { return; }
+				var rect = container.getBoundingClientRect();
+				dropdown.classList.add('ts-form-select2-dropdown');
+				dropdown.style.setProperty('width', Math.min(rect.width, window.innerWidth - 24) + 'px', 'important');
+				dropdown.style.setProperty('min-width', Math.min(rect.width, window.innerWidth - 24) + 'px');
+			});
+		};
+		var formSelect2Observer = new MutationObserver(syncFormSelect2);
+		formSelect2Observer.observe(document.body, {childList: true, subtree: true});
 		return true;
 	}
 
