@@ -1854,3 +1854,374 @@ div.arearef.ts-has-actions .paginationref { opacity: .58; margin-<?php echo $lef
 		padding: 11px var(--sp-4);
 	}
 }
+
+/* ==========================================================================
+   Shared COMMAND form composition
+
+   modern.js adds these classes only after recognising a supported native form.
+   The table, rows, controls, Select2 instances and action inputs are the original
+   Dolibarr nodes; CSS changes their layout without changing submission semantics.
+   ========================================================================== */
+
+form.ts-modern-form {
+	width: 100%;
+	max-width: 1180px;
+	margin: 0 auto;
+}
+form.ts-modern-form .ts-modern-form-card {
+	margin: 0;
+	padding: 22px 24px 24px;
+	background: var(--c-surface);
+	border: 1px solid #e4e8ef;
+	border-radius: 12px;
+	box-shadow: 0 6px 24px rgba(20, 31, 56, 0.055);
+}
+
+form.ts-modern-form table.ts-modern-form-header {
+	width: 100%;
+	margin: 0 0 10px;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid var(--c-hairline);
+	border-radius: 0;
+	box-shadow: none;
+}
+form.ts-modern-form table.ts-modern-form-header td {
+	padding: 0 0 20px;
+	border: 0;
+}
+form.ts-modern-form table.ts-modern-form-header tr.toptitle {
+	display: flex;
+	align-items: center;
+}
+form.ts-modern-form table.ts-modern-form-header td.col-picto {
+	display: flex;
+	align-items: center;
+	width: 38px !important;
+	min-width: 38px;
+}
+form.ts-modern-form table.ts-modern-form-header td.col-title {
+	display: block;
+	flex: 1 1 auto;
+	width: auto !important;
+}
+form.ts-modern-form table.ts-modern-form-header div.titre {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 1.5rem;
+	font-weight: 650;
+	line-height: 1.25;
+	letter-spacing: -0.025em;
+}
+form.ts-modern-form table.ts-modern-form-header td.col-picto [class*="fa-"] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	margin: 0;
+	border-radius: 7px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent) !important;
+	font-size: 0.875rem;
+}
+
+form.ts-modern-form table.ts-modern-form-table {
+	display: block;
+	width: 100%;
+	margin: 0;
+	border: 0;
+	background: transparent;
+}
+form.ts-modern-form table.ts-modern-form-table > tbody {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 28px;
+	width: 100%;
+}
+form.ts-modern-form table.ts-modern-form-table tr.ts-form-row {
+	display: grid;
+	grid-template-columns: minmax(150px, 0.72fr) minmax(0, 1.28fr);
+	align-items: center;
+	min-width: 0;
+	min-height: 56px;
+	box-sizing: border-box;
+	padding: 8px 0;
+	border: 0;
+	border-bottom: 1px solid #eef1f5;
+	background: transparent;
+}
+form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full {
+	grid-column: 1 / -1;
+	grid-template-columns: minmax(190px, 0.45fr) minmax(0, 1.55fr);
+}
+form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
+	grid-template-columns: minmax(150px, 0.72fr) minmax(0, 1.28fr) minmax(150px, 0.72fr) minmax(0, 1.28fr);
+	column-gap: 18px;
+}
+form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-empty { display: none; }
+
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
+	display: flex;
+	align-items: center;
+	width: auto !important;
+	max-width: none !important;
+	min-width: 0;
+	min-height: 40px;
+	padding: 0;
+	border: 0;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label {
+	padding-<?php echo $right; ?>: 16px;
+	color: var(--c-ink-2);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1.35;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
+	position: relative;
+	gap: 8px;
+	color: var(--c-ink);
+	font-size: 0.8125rem;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea) td {
+	align-items: flex-start;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea) td.ts-form-label {
+	padding-top: 11px;
+}
+
+/* Components' generic form alignment reserves an absolute icon gutter. The
+   structured grid has a real flex gap, so the original pictogram can return to
+   normal flow and remain predictably attached to its control. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span[class*="fa-"]:first-child,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child {
+	position: static;
+	flex: 0 0 18px;
+	width: 18px;
+	margin: 0;
+	text-align: center;
+}
+
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > textarea,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > select,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > table.nobordernopadding,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span:not([class*="fa-"]):has(> .select2-container) {
+	width: 100% !important;
+	max-width: none !important;
+	min-width: 0 !important;
+	box-sizing: border-box;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span:has(> .select2-container) {
+	display: block;
+	flex: 1 1 auto;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span > .select2-container {
+	width: 100% !important;
+	max-width: none !important;
+	min-width: 0 !important;
+}
+form.ts-modern-form table.ts-modern-form-table td.ts-form-value > table.nobordernopadding input {
+	width: 100% !important;
+	max-width: none !important;
+	box-sizing: border-box;
+}
+form.ts-modern-form table.ts-modern-form-table input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+form.ts-modern-form table.ts-modern-form-table select {
+	height: 40px;
+	padding-top: 0;
+	padding-bottom: 0;
+	border-color: #e0e6ef;
+	border-radius: 8px;
+	font-size: 0.875rem;
+}
+form.ts-modern-form table.ts-modern-form-table textarea {
+	min-height: 104px;
+	padding: 10px 12px;
+	border-color: #e0e6ef;
+	border-radius: 8px;
+	font-size: 0.875rem;
+	resize: vertical;
+}
+form.ts-modern-form table.ts-modern-form-table input:focus,
+form.ts-modern-form table.ts-modern-form-table textarea:focus,
+form.ts-modern-form table.ts-modern-form-table select:focus {
+	border-color: var(--c-accent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent) 14%, transparent);
+}
+
+form.ts-modern-form .select2-container--default .select2-selection--single {
+	height: 40px;
+	padding: 0 10px;
+	border-color: #e0e6ef !important;
+	border-radius: 8px !important;
+}
+form.ts-modern-form .select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height: 38px;
+	font-size: 0.875rem;
+}
+form.ts-modern-form .select2-container--default .select2-selection--single .select2-selection__arrow {
+	width: 36px;
+}
+form.ts-modern-form .select2-container--default .select2-selection--multiple {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	min-height: 40px;
+	padding: 3px 6px;
+	border-color: #e0e6ef !important;
+	border-radius: 8px !important;
+}
+form.ts-modern-form .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+	width: 100%;
+}
+form.ts-modern-form .select2-container--default .select2-selection--multiple .select2-selection__choice {
+	margin: 0;
+	padding: 3px 7px;
+	border-radius: 6px;
+}
+
+form.ts-modern-form tr.ts-form-choice-row td.ts-form-value {
+	gap: 18px;
+	flex-wrap: wrap;
+}
+form.ts-modern-form tr.ts-form-choice-row td.ts-form-value > label {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	margin: 0;
+	font-size: 0.8125rem;
+	font-weight: 520;
+}
+form.ts-modern-form input[type="checkbox"],
+form.ts-modern-form input[type="radio"] {
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+
+body#mainbody form.ts-modern-form input[type="file"] {
+	width: 100%;
+	max-width: none !important;
+	height: 40px;
+	padding: 4px;
+	border-color: #e0e6ef;
+	border-radius: 8px;
+	font-size: 0.8125rem;
+}
+form.ts-modern-form input[type="file"]::file-selector-button {
+	height: 30px;
+	margin-<?php echo $right; ?>: 10px;
+	padding: 0 12px;
+	border-radius: 6px;
+}
+
+form.ts-modern-form .ts-modern-form-actions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin: 24px 0 0;
+	padding: 0 0 8px;
+}
+form.ts-modern-form .ts-modern-form-actions input.button {
+	height: 40px;
+	min-width: 110px;
+	margin: 0;
+	padding: 0 18px;
+	border-radius: 8px;
+	font-size: 0.8125rem;
+	font-weight: 600;
+}
+form.ts-modern-form .ts-modern-form-actions input.button-save {
+	background: var(--c-accent);
+	border-color: var(--c-accent);
+	color: #fff;
+	box-shadow: 0 2px 5px var(--c-accent-ring);
+}
+form.ts-modern-form .ts-modern-form-actions input.button-save:hover {
+	background: var(--c-accent-hover);
+	border-color: var(--c-accent-hover);
+}
+
+@media only screen and (max-width: 900px) {
+	form.ts-modern-form .ts-modern-form-card { padding: 20px; }
+	form.ts-modern-form table.ts-modern-form-table > tbody { column-gap: 20px; }
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row,
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full {
+		grid-template-columns: minmax(135px, 0.65fr) minmax(0, 1.35fr);
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
+		grid-template-columns: minmax(120px, 0.6fr) minmax(0, 1.4fr) minmax(120px, 0.6fr) minmax(0, 1.4fr);
+		column-gap: 14px;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+	form.ts-modern-form .ts-modern-form-card {
+		padding: 18px 16px;
+		border-radius: 10px;
+	}
+	form.ts-modern-form table.ts-modern-form-header div.titre { font-size: 1.375rem; }
+	form.ts-modern-form table.ts-modern-form-table > tbody {
+		display: block;
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row,
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full,
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-half,
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 5px;
+		min-height: 0;
+		padding: 12px 0;
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		column-gap: 12px;
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-label,
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value {
+		grid-column: auto;
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-label:nth-child(1),
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-label:nth-child(3) {
+		grid-row: 1;
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value:nth-child(2),
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value:nth-child(4) {
+		grid-row: 2;
+	}
+	form.ts-modern-form table.ts-modern-form-table td.ts-form-label,
+	form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
+		display: flex;
+		width: 100% !important;
+		min-height: 0;
+		padding: 0;
+	}
+	form.ts-modern-form table.ts-modern-form-table td.ts-form-label { padding-top: 0; }
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row.hideonsmartphone { display: grid !important; }
+	form.ts-modern-form .ts-modern-form-actions { align-items: stretch; }
+	form.ts-modern-form .ts-modern-form-actions input.button { flex: 1 1 0; min-width: 0; }
+}
+
+@media only screen and (max-width: 520px) {
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-label,
+	form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value {
+		grid-row: auto !important;
+	}
+}

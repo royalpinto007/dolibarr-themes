@@ -484,6 +484,129 @@
 		observer.observe(document.body, {childList: true, subtree: true});
 	}
 
+	/* Turn Dolibarr's native create/edit table into the shared COMMAND form grid.
+	   Controls never leave their form or their row, so names, values, hooks,
+	   validation and dependent-field handlers remain attached. The field-name map
+	   only describes visual span: unknown/module-provided rows deliberately fall
+	   back to full width instead of being guessed into a fragile pairing. */
+	function enhanceThirdPartyForm() {
+		var forms = Array.from(document.querySelectorAll('form'));
+		var form = forms.find(function (candidate) {
+			return candidate.querySelector('input[name="name"]') &&
+				candidate.querySelector('input[name="customer_code"]') &&
+				candidate.querySelector('input[name="supplier_code"]') &&
+				candidate.querySelector('select[name="country_id"]');
+		});
+		if (!form || form.getAttribute('data-ts-form') === 'thirdparty') { return false; }
+		var card = form.querySelector('div.tabBar');
+		var table = card && card.querySelector('table.border:not(.liste)');
+		var body = table && table.tBodies[0];
+		if (!card || !table || !body) { return false; }
+		var surface = card;
+
+		form.classList.add('ts-modern-form', 'ts-thirdparty-form');
+		form.setAttribute('data-ts-form', 'thirdparty');
+		surface.classList.add('ts-modern-form-card');
+		table.classList.add('ts-modern-form-table');
+
+		/* The translated Dolibarr page title, icon and hook output are moved intact
+		   into the card. This removes the detached duplicate-looking title surface
+		   without synthesising another heading. */
+		var titleTable = Array.from(form.parentElement.querySelectorAll(':scope > table.table-fiche-title')).find(function (candidate) {
+			return candidate.querySelector('div.titre');
+		});
+		if (titleTable) {
+			titleTable.classList.add('ts-modern-form-header');
+			surface.insertBefore(titleTable, table);
+		}
+
+		var halfWidthFields = new Set([
+			'status', 'barcode', 'fax', 'url', 'forme_juridique_code', 'capital'
+		]);
+		var fullWidthFields = new Set([
+			'name', 'name_alias', 'address', 'country_id', 'state_id', 'email',
+			'cond_reglement_id', 'mode_reglement_id', 'incoterm_id', 'custcats[]',
+			'suppcats[]', 'parent_company_id', 'commercial[]', 'photo'
+		]);
+
+		Array.from(body.rows).forEach(function (row) {
+			var controls = Array.from(row.querySelectorAll('input, select, textarea')).filter(function (control) {
+				return control.type !== 'hidden' && !control.classList.contains('select2-search__field');
+			});
+			var names = controls.map(function (control) { return control.name || control.id || ''; }).filter(Boolean);
+			row.classList.add('ts-form-row');
+			row.setAttribute('data-ts-fields', names.join(' '));
+
+			if (!controls.length && !(row.textContent || '').trim()) {
+				row.classList.add('ts-form-row-empty');
+				return;
+			}
+			if (row.cells.length >= 4) {
+				row.classList.add('ts-form-row-paired', 'ts-form-row-full');
+			} else if (names.some(function (name) { return halfWidthFields.has(name); })) {
+				row.classList.add('ts-form-row-half');
+			} else if (names.some(function (name) { return fullWidthFields.has(name); }) || controls.length > 1) {
+				row.classList.add('ts-form-row-full');
+			} else {
+				/* Safe extension point for hook/module fields. */
+				row.classList.add('ts-form-row-full');
+			}
+
+			Array.from(row.cells).forEach(function (cell, index) {
+				cell.classList.add(index % 2 === 0 ? 'ts-form-label' : 'ts-form-value');
+			});
+
+			/* Dolibarr leaves the nature-choice label cell blank. The controls and
+			   their bound labels remain untouched; only the missing visual caption is
+			   supplied for the English UI used by this install. */
+			if (names.indexOf('prospect') !== -1 && names.indexOf('customer') !== -1 && names.indexOf('supplier') !== -1) {
+				row.classList.add('ts-form-choice-row', 'ts-form-row-full');
+				if (row.cells[0] && !(row.cells[0].textContent || '').trim()) {
+					row.cells[0].textContent = 'Third-party type';
+				}
+				controls.forEach(function (control) {
+					var label = control.closest('label');
+					if (label && label.firstChild !== control) { label.insertBefore(control, label.firstChild); }
+				});
+			}
+
+			/* Existing labels provide useful, locale-aware placeholders. Do not add
+			   one to populated/generated codes or non-text controls. */
+			for (var pair = 0; pair + 1 < row.cells.length; pair += 2) {
+				var label = (row.cells[pair].textContent || '').replace(/\s+/g, ' ').trim().replace(/\s*\*$/, '');
+				if (!label) { continue; }
+				row.cells[pair + 1].querySelectorAll('input:not([type]), input[type="text"], input[type="email"], textarea').forEach(function (control) {
+					if (!control.value && !control.getAttribute('placeholder')) { control.setAttribute('placeholder', label); }
+				});
+			}
+		});
+
+		/* Create and edit templates do not emit every field in the same order.
+		   Normalise the two requested visual relationships by moving their existing
+		   rows, which keeps every control and handler intact. */
+		function rowFor(fieldName) {
+			return Array.from(body.rows).find(function (row) {
+				return (row.getAttribute('data-ts-fields') || '').split(' ').indexOf(fieldName) !== -1;
+			});
+		}
+		var statusRow = rowFor('status');
+		var barcodeRow = rowFor('barcode');
+		if (statusRow && barcodeRow && statusRow.nextElementSibling !== barcodeRow) {
+			body.insertBefore(statusRow, barcodeRow);
+		}
+		var commercialRow = rowFor('commercial[]');
+		var logoRow = rowFor('photo');
+		if (commercialRow && logoRow && commercialRow.nextElementSibling !== logoRow) {
+			body.insertBefore(commercialRow, logoRow);
+		}
+
+		var actions = Array.from(form.children).find(function (child) {
+			return child.matches('div.center') && child.querySelector('input[type="submit"]');
+		});
+		if (actions) { actions.classList.add('ts-modern-form-actions'); }
+		return true;
+	}
+
 	/* Compose the filters, table and result navigation as one list surface. All
 	   form controls remain inside their original form and the real table wrapper
 	   is moved rather than copied. Only the footer pager is a navigation-only copy
@@ -902,6 +1025,7 @@
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
+		try { enhanceThirdPartyForm(); } catch (e) { /* retain Dolibarr's native edit table */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
