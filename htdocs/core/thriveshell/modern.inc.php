@@ -235,3 +235,48 @@ tr td.center.opacitymedium[colspan] {
 	div.tabsAction > * { flex: 1 1 auto; }
 	.pagination select, select.flat.selectlimit { width: auto; }
 }
+
+/* ==========================================================================
+   Record header (paired with thriveshell/modern.js)
+   The JS moves Dolibarr's own action bar into the banner and derives a
+   breadcrumb from its "Back to list" link. These rules only apply once that has
+   happened -- .ts-has-actions is set by the script -- so a page the script
+   skipped keeps Dolibarr's original layout untouched.
+   ========================================================================== */
+.ts-breadcrumb {
+	display: flex; align-items: center; gap: var(--sp-2);
+	margin: 0 0 var(--sp-3);
+	font-size: 0.8125rem; color: var(--c-muted);
+}
+.ts-breadcrumb a { color: var(--c-accent-ink); font-weight: 500; text-decoration: none; }
+.ts-breadcrumb a:hover { text-decoration: underline; }
+.ts-breadcrumb-sep { color: var(--c-faint); }
+.ts-breadcrumb-current { color: var(--c-ink); font-weight: 600; }
+
+div.arearef.ts-has-actions {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--sp-4);
+	flex-wrap: wrap;
+}
+.ts-header-actions { margin-<?php echo $left; ?>: auto; flex: 0 0 auto; }
+.ts-header-actions div.tabsAction { margin: 0; justify-content: flex-end; }
+@media only screen and (max-width: 900px) {
+	div.arearef.ts-has-actions { flex-direction: column; }
+	.ts-header-actions { margin-<?php echo $left; ?>: 0; width: 100%; }
+}
+
+/* Dolibarr pins its record pager ("Back to list", prev/next) to the top-right of
+   the banner, which is exactly where the relocated actions now sit -- the two
+   painted over each other. Returning it to normal flow lets the flex row lay both
+   out. The pager keeps its arrows: the breadcrumb repeats the "Back to list"
+   target but not the record-to-record navigation, so nothing is lost. */
+div.arearef.ts-has-actions .pagination.paginationref {
+	position: static;
+	float: none;
+	order: 3;
+	margin-<?php echo $left; ?>: var(--sp-3);
+	white-space: nowrap;
+}
+div.arearef.ts-has-actions .ts-header-actions { order: 2; }
