@@ -1215,6 +1215,64 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-column-filter-control input,
 .ts-column-filter-control select,
 .ts-column-filter-control .select2-container { width: 100% !important; max-width: none !important; }
+.ts-column-filter-control .select2-selection--single {
+	width: 100% !important;
+	height: 40px;
+	min-height: 40px;
+	padding: 0 34px 0 var(--sp-3);
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-surface);
+	box-shadow: none;
+}
+.ts-column-filter-control .select2-selection--single .select2-selection__rendered {
+	padding: 0;
+	line-height: 38px;
+}
+.ts-column-filter-control .select2-selection--single .select2-selection__arrow {
+	top: 0;
+	right: 2px;
+	height: 38px;
+}
+.ts-column-filter-control .select2-container--default.select2-container--focus .select2-selection--single,
+.ts-column-filter-control .select2-container--default.select2-container--open .select2-selection--single {
+	border-color: var(--c-accent) !important;
+	box-shadow: 0 0 0 1px var(--c-accent-ring);
+}
+.select2-dropdown.ts-column-filter-dropdown {
+	box-sizing: border-box;
+	width: var(--ts-column-filter-width) !important;
+	min-width: var(--ts-column-filter-width) !important;
+	padding: 0 !important;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-md);
+	overflow: hidden;
+}
+.select2-dropdown.ts-column-filter-dropdown .select2-search--dropdown { padding: var(--sp-2); }
+.select2-dropdown.ts-column-filter-dropdown .select2-search__field {
+	width: 100% !important;
+	height: 38px;
+	padding: 0 var(--sp-3) !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-surface) !important;
+	box-shadow: none !important;
+}
+.select2-dropdown.ts-column-filter-dropdown .select2-search__field:focus {
+	border-color: var(--c-accent) !important;
+	box-shadow: 0 0 0 1px var(--c-accent-ring) !important;
+}
+.select2-dropdown.ts-column-filter-dropdown .select2-results__options { padding: var(--sp-1); }
+.select2-dropdown.ts-column-filter-dropdown .select2-results__option {
+	display: flex;
+	align-items: center;
+	min-height: 36px;
+	padding: 0 var(--sp-3);
+	border-radius: var(--r-sm);
+	font-size: 0.8125rem;
+}
 .ts-column-filters-source { display: none; }
 .ts-list-card {
 	min-width: 0;

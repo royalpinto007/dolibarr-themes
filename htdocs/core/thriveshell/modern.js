@@ -479,6 +479,48 @@
 					details.appendChild(disclosure);
 					details.appendChild(panel);
 					filter.appendChild(details);
+
+					/* Details provides the native button toggle but deliberately has no
+					   outside-click dismissal. Treat Select2's body-mounted dropdown as
+					   part of the panel so choosing an option cannot close its parent. */
+					document.addEventListener('click', function (event) {
+						if (!details.open || details.contains(event.target)) { return; }
+						var externalWidget = event.target.closest && event.target.closest('.select2-container, .select2-dropdown');
+						if (externalWidget) { return; }
+						details.removeAttribute('open');
+					});
+					document.addEventListener('keydown', function (event) {
+						if (event.key !== 'Escape' || !details.open) { return; }
+						/* Let an open Select2 consume the first Escape itself. */
+						if (document.querySelector('.select2-container--open')) { return; }
+						details.removeAttribute('open');
+						disclosure.focus();
+					});
+
+					/* These Select2 instances were initialised before Dolibarr's controls
+					   were moved into the panel. Their dropdown adapter retained the old
+					   table-cell measure, so synchronise each open surface to its current
+					   grid control and add one shared styling hook. */
+					var syncOpenSelect2 = function () {
+						if (!details.open) { return; }
+						window.requestAnimationFrame(function () {
+							var selection = panel.querySelector('.select2-selection[aria-expanded="true"]');
+							var container = selection && selection.closest('.select2-container');
+							var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
+							if (!container || !dropdown) { return; }
+							var width = container.getBoundingClientRect().width;
+							dropdown.classList.add('ts-column-filter-dropdown');
+							dropdown.style.setProperty('--ts-column-filter-width', width + 'px');
+							dropdown.style.setProperty('width', width + 'px', 'important');
+							dropdown.style.setProperty('min-width', width + 'px');
+							dropdown.style.setProperty('max-width', 'calc(100vw - 24px)');
+						});
+					};
+					/* Select2 may load after this file and mounts its dropdown under body.
+					   Observing added nodes is independent of plugin load order and covers
+					   mouse, touch and keyboard opens through the same path. */
+					var select2Observer = new MutationObserver(syncOpenSelect2);
+					select2Observer.observe(document.body, {childList: true, subtree: true});
 				}
 				filterRow.classList.add('ts-column-filters-source');
 			}
