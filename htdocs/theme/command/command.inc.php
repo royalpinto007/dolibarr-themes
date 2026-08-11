@@ -575,6 +575,188 @@ body.cmd-nav-collapsed .cmd-nav-toggle-icon { transform: rotate(-135deg); margin
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/components.inc.php'; ?>
 
 /* ==========================================================================
+   COMMAND application bar
+
+   This final shell layer intentionally follows the shared Thrive components:
+   palette.inc.php also styles the search trigger and components.inc.php owns
+   the relocated Dolibarr login block. Keep these rules scoped to .cmd-bar so
+   other Dolibarr toolbars retain their native sizing and behaviour.
+   ========================================================================== */
+
+header.cmd-bar {
+	gap: 16px;
+	height: 60px;
+	padding: 0 24px;
+	background: var(--c-surface);
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	border-bottom-color: #e7e9ee;
+	box-shadow: none;
+}
+
+header.cmd-bar .cmd-brand {
+	gap: 10px;
+	font-size: 0.90625rem;
+	font-weight: 600;
+}
+header.cmd-bar .cmd-brand-mark {
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	font-size: 0.875rem;
+}
+header.cmd-bar .cmd-crumbs { display: none; }
+
+header.cmd-bar .cmd-trigger {
+	gap: 10px;
+	height: 40px;
+	padding: 0 8px 0 14px;
+	background: #f8f9fb;
+	border-color: #e1e5eb;
+	border-radius: 8px;
+	box-shadow: none;
+	color: var(--c-muted);
+	font-size: 0.8125rem;
+}
+header.cmd-bar .cmd-trigger:hover {
+	background: var(--c-surface);
+	border-color: var(--c-border-strong);
+}
+header.cmd-bar .cmd-trigger:focus-visible {
+	outline: 0;
+	border-color: var(--c-accent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent) 16%, transparent);
+}
+header.cmd-bar .cmd-trigger-icon {
+	font-size: 0.9375rem;
+	color: var(--c-faint);
+}
+header.cmd-bar .cmd-trigger-label { font-size: 0.8125rem; }
+header.cmd-bar .cmd-kbd {
+	min-width: 21px;
+	height: 21px;
+	padding: 0 5px;
+	background: var(--c-surface);
+	border-color: #e1e5eb;
+	border-radius: 6px;
+	font-size: 0.6875rem;
+}
+
+header.cmd-bar #cmd-bar-tools div.login_block {
+	gap: 8px;
+	font-size: 0.8125rem;
+}
+header.cmd-bar #cmd-bar-tools .login_block_other,
+header.cmd-bar #cmd-bar-tools .login_block_tools {
+	gap: 8px;
+}
+header.cmd-bar #cmd-bar-tools .login_block_user { gap: 0; }
+
+/* Each existing Dolibarr utility keeps its own anchor, title and permission
+   checks. Only its visual hit area changes. */
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem {
+	width: 36px;
+	min-width: 36px;
+	max-width: 36px;
+	height: 36px;
+	padding: 0 !important;
+	border-radius: 8px;
+}
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem > a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border-radius: 8px;
+}
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem > a > .atoplogin {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border-radius: 8px;
+}
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem i,
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem .fa,
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem .fas,
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem .far {
+	font-size: 0.9375rem;
+}
+
+/* Version is informational, not an action. It should not inherit the square
+   icon slot used by its siblings. */
+header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem:has(.aversion) {
+	width: auto;
+	min-width: 0;
+	max-width: none;
+	padding: 0 4px !important;
+	background: transparent;
+}
+header.cmd-bar #cmd-bar-tools .aversion {
+	color: var(--c-faint);
+	font-size: 0.6875rem;
+	font-weight: 450;
+	line-height: 1;
+}
+
+header.cmd-bar #cmd-bar-tools .login_block_elem_name {
+	height: 36px;
+	min-width: 0;
+	padding: 0 !important;
+	background: transparent;
+}
+header.cmd-bar #topmenu-login-dropdown { height: 36px; }
+header.cmd-bar #topmenu-login-dropdown > .dropdown-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 36px;
+	padding: 2px 8px 2px 2px;
+	border: 0;
+	border-radius: 8px;
+	color: var(--c-ink-2);
+	font-size: 0.8125rem;
+	font-weight: 550;
+}
+header.cmd-bar #topmenu-login-dropdown > .dropdown-toggle:hover,
+header.cmd-bar #topmenu-login-dropdown.open > .dropdown-toggle {
+	background: var(--c-sunken);
+	color: var(--c-ink);
+}
+header.cmd-bar #topmenu-login-dropdown > .dropdown-toggle::after {
+	content: '';
+	width: 5px;
+	height: 5px;
+	margin-<?php echo $left; ?>: 1px;
+	border-<?php echo $right; ?>: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: translateY(-1px) rotate(45deg);
+	opacity: 0.72;
+}
+header.cmd-bar #cmd-bar-tools img.userphoto {
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 32px;
+	margin: 0 !important;
+}
+header.cmd-bar #topmenu-login-dropdown .atoploginusername {
+	padding: 0;
+	font-size: 0.8125rem;
+	font-weight: 550;
+}
+
+@media only screen and (min-width: 993px) {
+	header.cmd-bar .cmd-trigger {
+		width: clamp(420px, 34vw, 520px);
+	}
+}
+
+/* ==========================================================================
    Responsive and print
    ========================================================================== */
 
@@ -585,6 +767,8 @@ body.cmd-nav-collapsed .cmd-nav-toggle-icon { transform: rotate(-135deg); margin
 	.cmd-nav-scroll { padding: var(--sp-2) var(--sp-1); }
 	.cmd-nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
 	.cmd-brand-text, .cmd-crumbs { display: none; }
+	header.cmd-bar { gap: 12px; padding: 0 16px; }
+	header.cmd-bar .cmd-bar-spacer { display: none; }
 	.cmd-trigger { min-width: 0; flex: 1; }
 	.fichehalfleft, .fichehalfright, .fichethirdleft, .fichetwothirdright { float: none; width: 100%; }
 }
@@ -593,6 +777,11 @@ body.cmd-nav-collapsed .cmd-nav-toggle-icon { transform: rotate(-135deg); margin
 	.boxhalfleft, .boxhalfright, .box-flex-item { float: none; width: 100%; min-width: 100%; }
 	.hideonsmartphone { display: none !important; }
 	.cmd-trigger-label, .cmd-kbd { display: none; }
+	header.cmd-bar { gap: 10px; padding: 0 12px; }
+	header.cmd-bar #cmd-bar-tools div.login_block,
+	header.cmd-bar #cmd-bar-tools .login_block_other,
+	header.cmd-bar #cmd-bar-tools .login_block_tools { gap: 6px; }
+	header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem:has(.aversion) { display: none; }
 	.cmd-palette-panel { margin-top: var(--sp-4); }
 }
 @media print {
