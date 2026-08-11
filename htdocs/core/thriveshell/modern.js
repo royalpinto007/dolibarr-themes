@@ -97,7 +97,30 @@
 		return true;
 	}
 
+	/* Dolibarr already wraps a list's row count in its own span inside div.titre
+	   ("(39)"), so nothing needs parsing out of the title: that span is tagged for
+	   the badge styling and its parentheses dropped, since the badge shape now
+	   carries that meaning. Only a span whose whole text is parenthesised digits is
+	   touched, so a title without a count is left alone. */
+	function markCount() {
+		var titles = document.querySelectorAll('div.titre');
+		if (!titles.length) { return false; }
+		var done = false;
+		titles.forEach(function (t) {
+			t.querySelectorAll('span').forEach(function (sp) {
+				if (sp.classList.contains('ts-count')) { return; }
+				var m = (sp.textContent || '').trim().match(/^\((\d[\d\s.,]*)\)$/);
+				if (!m) { return; }
+				sp.textContent = m[1].trim();
+				sp.classList.add('ts-count');
+				done = true;
+			});
+		});
+		return done;
+	}
+
 	ready(function () {
+		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 	});

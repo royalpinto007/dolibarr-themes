@@ -303,3 +303,126 @@ div.tabsAction a.butActionDelete[href*="action=confirm_merge"]:hover {
 	border-color: var(--c-border-strong);
 	color: var(--c-ink);
 }
+
+/* ==========================================================================
+   List page header
+   Dolibarr prints "Third parties(39)" as one string in div.titre and renders the
+   page actions as icon-only a.btnTitle links whose label lives in @title.
+   modern.js splits the count into .ts-count; the label is drawn from the title
+   attribute, so it stays translated and no text is invented here.
+   ========================================================================== */
+div.titre {
+	font-size: 1.375rem;
+	font-weight: 650;
+	letter-spacing: -0.02em;
+	color: var(--c-ink);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+}
+.ts-count {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-width: 24px; height: 22px; padding: 0 var(--sp-2);
+	border-radius: var(--r-pill);
+	background: var(--c-sunken); color: var(--c-muted);
+	font-size: 0.75rem; font-weight: 600; letter-spacing: 0;
+}
+/* The create action is the only btnTitle carrying a plus glyph. Promoting it to a
+   labelled primary button uses @title, which Dolibarr has already translated. */
+a.btnTitle:has(.fa-plus-circle), a.btnTitle:has(.fa-plus) {
+	display: inline-flex; align-items: center; gap: var(--sp-2);
+	min-height: 34px; padding: 0 var(--sp-4);
+	border-radius: var(--r);
+	background: var(--c-accent); border: 1px solid var(--c-accent); color: #fff;
+	font-size: 0.8125rem; font-weight: 600; line-height: 1;
+	box-shadow: 0 1px 2px var(--c-accent-ring);
+	transition: background var(--t), border-color var(--t);
+}
+a.btnTitle:has(.fa-plus-circle):hover, a.btnTitle:has(.fa-plus):hover {
+	background: var(--c-accent-hover); border-color: var(--c-accent-hover);
+}
+a.btnTitle:has(.fa-plus-circle)::after, a.btnTitle:has(.fa-plus)::after {
+	content: attr(title);
+	font: inherit;
+}
+a.btnTitle:has(.fa-plus-circle) .btnTitle-label,
+a.btnTitle:has(.fa-plus) .btnTitle-label { display: none; }   /* @title already prints it */
+a.btnTitle:has(.fa-plus-circle) span[class*="fa-"],
+a.btnTitle:has(.fa-plus) span[class*="fa-"] { color: #fff; }
+/* Secondary title actions (view mode, tools) stay quiet next to it. */
+a.btnTitle:not(:has(.fa-plus-circle)):not(:has(.fa-plus)) {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-width: 32px; min-height: 32px;
+	border-radius: var(--r-sm); color: var(--c-muted);
+	transition: background var(--t), color var(--t);
+}
+a.btnTitle:not(:has(.fa-plus-circle)):not(:has(.fa-plus)):hover {
+	background: var(--c-sunken); color: var(--c-ink);
+}
+
+/* ==========================================================================
+   Record detail sections as cards (generic)
+   Dolibarr's own left/right split is the only structure it reliably provides, so
+   each half becomes a card. No group titles are invented: the markup carries no
+   dependable per-field semantics, so naming them would be guesswork.
+   ========================================================================== */
+div.fichehalfleft, div.fichehalfright {
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	padding: var(--sp-2) var(--sp-4);
+	box-sizing: border-box;
+}
+div.fichehalfleft table td, div.fichehalfright table td {
+	padding-top: var(--sp-3);
+	padding-bottom: var(--sp-3);
+}
+/* Borrowed from the Novo review: one deliberate breakpoint, so the two halves
+   stack instead of the page acquiring a horizontal scrollbar. */
+@media only screen and (max-width: 1100px) {
+	div.fichehalfleft, div.fichehalfright { width: 100%; float: none; margin-bottom: var(--sp-4); }
+}
+
+/* ==========================================================================
+   Linked files / events blocks as cards, with a considered empty state
+   ========================================================================== */
+div.fichecenter div.fichehalfleft .div-table-responsive,
+div.fichecenter div.fichehalfright .div-table-responsive { box-shadow: none; border: 0; }
+.ts-emptybox {
+	border: 1px dashed var(--c-border-strong);
+	border-radius: var(--r-lg);
+	background: var(--c-canvas);
+	padding: var(--sp-7) var(--sp-4);
+	text-align: center;
+	color: var(--c-faint);
+	font-size: 0.875rem;
+}
+
+/* The title-bar actions share div.pagination with the pager. Adding a label to the
+   create button widened that row, and as a rigid row it pushed the button past the
+   viewport. It wraps instead -- and below 1200px the label is dropped back to the
+   icon, which is a chosen breakpoint rather than an accidental scrollbar. */
+div.pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--sp-2);
+	max-width: 100%;
+}
+@media only screen and (max-width: 1200px) {
+	a.btnTitle:has(.fa-plus-circle)::after, a.btnTitle:has(.fa-plus)::after { content: none; }
+	a.btnTitle:has(.fa-plus-circle), a.btnTitle:has(.fa-plus) { padding: 0 var(--sp-3); }
+}
+
+/* At phone widths the title bar is a table row, so the actions cell cannot wrap
+   under the heading and the pager ran off the side (clipped, and out of reach).
+   Letting those cells become blocks stacks the heading and its actions instead. */
+@media only screen and (max-width: 768px) {
+	div.titre_list > table, table.centpercent.notopnoleftnoright { display: block; width: 100%; }
+	table.centpercent.notopnoleftnoright > tbody,
+	table.centpercent.notopnoleftnoright > tbody > tr { display: block; width: 100%; }
+	table.centpercent.notopnoleftnoright > tbody > tr > td { display: block; width: 100%; text-align: <?php echo $left; ?>; }
+	div.pagination { justify-content: flex-<?php echo $left; ?>; }
+}
