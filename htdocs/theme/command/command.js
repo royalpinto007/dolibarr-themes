@@ -276,3 +276,21 @@
 		boot();
 	}
 })();
+
+/* Load the shared thriveshell record-header layer. The path is resolved from this
+   file's own <script src>, so it follows DOL_URL_ROOT wherever Dolibarr is mounted
+   (subdirectory installs included) without needing a global. Failure to load is
+   silent: the page keeps Dolibarr's own layout. */
+(function () {
+	try {
+		var me = document.currentScript ||
+			(function () { var s = document.getElementsByTagName('script'); return s[s.length - 1]; })();
+		if (!me || !me.src) { return; }
+		var url = me.src.split('?')[0].replace(/\/theme\/[^/]+\/[^/]+\.js$/, '/core/thriveshell/modern.js');
+		if (url === me.src.split('?')[0]) { return; }   // unexpected path: do nothing
+		var s = document.createElement('script');
+		s.src = url;
+		s.defer = true;
+		document.head.appendChild(s);
+	} catch (e) { /* keep Dolibarr's layout */ }
+})();

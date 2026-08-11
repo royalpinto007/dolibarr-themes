@@ -70,6 +70,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .table-fiche-title { width: 100%; margin-bottom: var(--sp-5); border: 0; border-spacing: 0; }
 .table-fiche-title td { padding: 0; border: 0; vertical-align: middle; }
 .table-fiche-title td.col-picto { width: 34px; }
+.table-fiche-title.ts-empty-title { display: none !important; }
 .widthpictotitle { width: 26px; }
 .pictotitle { margin-<?php echo $right; ?>: var(--sp-2); color: var(--c-accent) !important; opacity: 0.9; }
 /* .print-barre-liste is a span inside the list title (it marks what survives
@@ -424,6 +425,19 @@ table.boxtable td.center, table.boxtable tr.oddeven td[colspan] {
 }
 tr.box_impair td, tr.box_pair td { padding: var(--sp-3) var(--sp-5); border-bottom: 1px solid var(--c-hairline); }
 table.boxtable tr:last-child td { border-bottom: 0; }
+/* Summary cards often reserve several empty result columns even when their
+   empty state contains one message row. Fixed distribution keeps the semantic
+   title column readable instead of collapsing it to the first few letters. */
+.fichecenter table.noborder:not(.boxtable):has(th[colspan]) {
+	table-layout: fixed;
+}
+.fichecenter table.noborder:not(.boxtable):has(th[colspan]) tr:first-child > th:first-child {
+	width: 42%;
+	min-width: 12rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .boxclose, .boxhandle, .boxfilter { color: var(--c-faint); cursor: pointer; opacity: 0; transition: color var(--t), opacity var(--t); }
 table.boxtable:hover .boxclose, table.boxtable:hover .boxhandle, table.boxtable:hover .boxfilter { opacity: 1; }
 .boxclose:hover { color: var(--c-danger); }
@@ -1104,17 +1118,20 @@ img.ui-datepicker-trigger:hover, .ui-datepicker-trigger:hover {
 
 /* Toolbar */
 .cke_top {
-	background: var(--c-sunken) !important;
+	background: color-mix(in srgb, var(--c-sunken) 72%, var(--c-surface)) !important;
 	border-bottom: 1px solid var(--c-hairline) !important;
 	box-shadow: none !important;
-	padding: var(--sp-2) !important;
+	padding: var(--sp-2) var(--sp-2) var(--sp-1) !important;
 }
 .cke_toolgroup, .cke_combo_button {
-	background: transparent !important;
-	border: 0 !important;
+	background: var(--c-surface) !important;
+	border: 1px solid var(--c-hairline) !important;
+	border-radius: var(--r-sm) !important;
 	box-shadow: none !important;
-	margin: 1px var(--sp-1) 1px 0 !important;
+	margin: 0 var(--sp-1) var(--sp-1) 0 !important;
 }
+.cke_toolgroup { padding: 1px !important; }
+.cke_button_label { display: none !important; }
 .cke_button {
 	border-radius: var(--r-sm) !important;
 	transition: background var(--t);
@@ -1133,7 +1150,7 @@ img.ui-datepicker-trigger:hover, .ui-datepicker-trigger:hover {
 }
 .cke_toolbar_separator {
 	background: var(--c-border) !important;
-	margin: var(--sp-1) var(--sp-2) !important;
+	margin: var(--sp-1) !important;
 }
 
 /* Editing surface and status bar */
