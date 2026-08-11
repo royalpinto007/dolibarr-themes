@@ -333,14 +333,20 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 
 	$tree = command_build_tree($db, $tabMenu, $atarget, $type_user);
 
-	// Prefer the module named on the URL; fall back to the session for deep
-	// links that carry no mainmenu (Dolibarr's own managers behave the same).
-	$currentMain = GETPOSTISSET('mainmenu') ? GETPOST('mainmenu', 'aZ09') : command_infer_current_main($tree);
+	// The route/menu tree is authoritative. mainmenu is frequently missing on
+	// deep links and can also be stale (for example a Setup session followed by
+	// a direct Third Party URL). Use the requested/session value only when no
+	// menu-tree destination matches the current route at all.
+	$requestedMain = GETPOSTISSET('mainmenu') ? GETPOST('mainmenu', 'aZ09') : '';
+	$inferredMain = command_infer_current_main($tree);
+	$currentMain = $inferredMain !== '' ? $inferredMain : $requestedMain;
 	if ($currentMain === '') {
 		$currentMain = isset($_SESSION['mainmenu']) ? $_SESSION['mainmenu'] : '';
-	} elseif (!GETPOSTISSET('mainmenu') && (!isset($_SESSION['mainmenu']) || $_SESSION['mainmenu'] !== $currentMain)) {
-		// Rebuild once so the inferred module receives its own complete submenu,
-		// not the stale module's leftmenu context.
+	}
+	$treeMain = $requestedMain !== '' ? $requestedMain : (isset($_SESSION['mainmenu']) ? $_SESSION['mainmenu'] : '');
+	if ($currentMain !== '' && $currentMain !== $treeMain) {
+		// Rebuild so the resolved module receives its own complete submenu rather
+		// than the stale module's left-menu branch.
 		$tree = command_build_tree($db, $tabMenu, $atarget, $type_user, $currentMain, '');
 	}
 	$currentTitle = '';
