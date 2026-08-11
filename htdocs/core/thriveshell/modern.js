@@ -354,6 +354,62 @@
 		if (filter) {
 			filter.classList.add('ts-filter-surface');
 			composition.appendChild(filter);
+
+			/* Promote the native name search into the shared filter surface and put
+			   the remaining per-column controls behind one disclosure. Every original
+			   form control is moved intact, so names, values and submission behaviour
+			   remain Dolibarr's own. */
+			var filterRow = list.querySelector('tr.liste_titre_filter');
+			if (filterRow) {
+				var headingRow = filterRow.nextElementSibling;
+				var quick = document.createElement('div');
+				quick.className = 'ts-quick-search';
+				var searchIcon = document.createElement('span');
+				searchIcon.className = 'fas fa-search';
+				searchIcon.setAttribute('aria-hidden', 'true');
+				quick.appendChild(searchIcon);
+				var nameSearch = filterRow.querySelector('input[name="search_nom"]');
+				if (nameSearch) {
+					nameSearch.classList.add('ts-quick-search-input');
+					nameSearch.setAttribute('placeholder', 'Search third parties…');
+					quick.appendChild(nameSearch);
+				}
+				filterRow.querySelectorAll('button[name="button_search_x"], button[name="button_removefilter_x"]').forEach(function (button) {
+					button.classList.add(button.name === 'button_removefilter_x' ? 'ts-clear-filters' : 'ts-submit-search');
+					quick.appendChild(button);
+				});
+				if (nameSearch) { filter.insertBefore(quick, filter.firstChild); }
+
+				var details = document.createElement('details');
+				details.className = 'ts-column-filters';
+				var disclosure = document.createElement('summary');
+				disclosure.appendChild(document.createTextNode('Filters'));
+				var filterGlyph = document.createElement('span');
+				filterGlyph.className = 'fas fa-filter';
+				filterGlyph.setAttribute('aria-hidden', 'true');
+				disclosure.insertBefore(filterGlyph, disclosure.firstChild);
+				var panel = document.createElement('div');
+				panel.className = 'ts-column-filters-panel';
+				Array.from(filterRow.cells).forEach(function (cell, index) {
+					if (index < 2) { return; }
+					var movable = Array.from(cell.children).filter(function (child) { return child.tagName !== 'SCRIPT'; });
+					if (!movable.some(function (child) { return child.matches('input, select, .select2') || child.querySelector('input, select'); })) { return; }
+					var control = document.createElement('label');
+					control.className = 'ts-column-filter-control';
+					var label = document.createElement('span');
+					label.className = 'ts-column-filter-label';
+					label.textContent = (headingRow && headingRow.cells[index] && headingRow.cells[index].innerText || 'Filter').replace(/\s+/g, ' ').trim();
+					control.appendChild(label);
+					movable.forEach(function (child) { control.appendChild(child); });
+					panel.appendChild(control);
+				});
+				if (panel.children.length) {
+					details.appendChild(disclosure);
+					details.appendChild(panel);
+					filter.appendChild(details);
+				}
+				filterRow.classList.add('ts-column-filters-source');
+			}
 		}
 		var card = document.createElement('div');
 		card.className = 'ts-list-card';
@@ -376,33 +432,16 @@
 		footer.className = 'ts-results-footer';
 		var summary = document.createElement('span');
 		summary.className = 'ts-results-summary';
-		summary.textContent = Number.isNaN(total) ? (first + '\u2013' + last) : (first + '\u2013' + last + ' of ' + total);
+		summary.textContent = Number.isNaN(total)
+			? ('Showing ' + first + ' to ' + last)
+			: ('Showing ' + first + ' to ' + last + ' of ' + total + ' results');
 		footer.appendChild(summary);
 		var topPager = form.querySelector('table.table-fiche-title div.pagination');
-		var pagerList = topPager && topPager.querySelector('ul');
-		if (pagerList) {
+		if (topPager) {
 			var nav = document.createElement('nav');
 			nav.className = 'ts-results-nav';
 			nav.setAttribute('aria-label', 'Results pages');
-			var links = pagerList.cloneNode(true);
-			/* The top pager nests its page-size select and current-page input inside
-			   the same list. A literal clone would introduce duplicate named controls
-			   into this form, so footer copies are inert text while navigation anchors
-			   remain real links. */
-			links.querySelectorAll('select, input, button').forEach(function (control) {
-				var value = control.tagName === 'SELECT'
-					? (control.options[control.selectedIndex] || {}).text
-					: (control.value || control.textContent || '');
-				var display = document.createElement('span');
-				display.className = 'ts-pager-value';
-				display.textContent = (value || '').trim();
-				control.replaceWith(display);
-			});
-			links.querySelectorAll('[id], [accesskey]').forEach(function (n) {
-				n.removeAttribute('id');
-				n.removeAttribute('accesskey');
-			});
-			nav.appendChild(links);
+			nav.appendChild(topPager);
 			footer.appendChild(nav);
 		}
 		card.appendChild(footer);
@@ -411,9 +450,9 @@
 
 	ready(function () {
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
-		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
+		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
