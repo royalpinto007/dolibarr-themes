@@ -722,9 +722,6 @@ function thriveshell_render($shell, $db, &$tabMenu, $atarget, $type_user)
 			thriveshell_render_editorial($tree);
 			break;
 		case 'dense':
-		case 'novo':
-			/* Novo is a top-bar theme; it uses the same shell as dense and
-			   differs by palette, so there is no second DOM to maintain. */
 			thriveshell_render_dense($tree);
 			break;
 		default:
