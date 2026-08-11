@@ -405,4 +405,14 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 	print '<script type="application/json" id="cmd-nav-data">';
 	print json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 	print '</script>'."\n";
+
+	// Core versions theme JavaScript with DOL_VERSION only. A theme deployment
+	// therefore leaves command.js at the same URL and browsers can retain the
+	// pre-modern loader indefinitely. Load the structural layer directly from
+	// server-rendered markup with a content-derived version so every deployed
+	// modern.js revision has a distinct URL. The structural script is idempotent,
+	// so the command.js compatibility loader may safely resolve the same file.
+	$modernFile = DOL_DOCUMENT_ROOT.'/core/thriveshell/modern.js';
+	$modernVersion = is_readable($modernFile) ? substr(sha1_file($modernFile), 0, 12) : DOL_VERSION;
+	print '<script src="'.DOL_URL_ROOT.'/core/thriveshell/modern.js?v='.rawurlencode($modernVersion).'" defer></script>'."\n";
 }
