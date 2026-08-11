@@ -960,6 +960,31 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-filter-surface .divsearchfield > span[class*="fa-"] { display: none; }
 .ts-filter-surface .select2-container { width: 100% !important; min-width: 0 !important; }
 .ts-filter-surface .select2-selection { min-height: 38px; }
+/* Select2's multiple-value control contains a real search input. The global
+   input component styled that nested editor as a second bordered control inside
+   the already-bordered Select2 surface. Keep one frame: the selection owns it. */
+.ts-filter-surface .select2-selection--multiple {
+	height: 40px;
+	min-height: 40px;
+	padding: 2px 28px 2px var(--sp-2) !important;
+	overflow: hidden;
+}
+.ts-filter-surface .select2-selection--multiple .select2-search__field {
+	height: 34px;
+	margin: 0;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+
+/* Dolibarr uses fa-list for the selected-columns dropdown. Its glyph includes
+   three bullet stems that read as stray dividers beside the select-all box.
+   The trigger and dropdown stay intact; only its painted glyph is simplified. */
+.ts-list-card tr.liste_titre > :first-child .dropdown .fa-list::before {
+	content: "\f1de";
+}
 
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-column-filters > summary {
