@@ -986,14 +986,52 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	content: "\f1de";
 }
 
-/* The definition list is the chooser's stable box; make it the popover anchor
-   instead of the empty dd element and turn its existing link into one clear
-   toolbar control beside (rather than on top of) the select-all checkbox. */
-.ts-list-card tr.liste_titre > :first-child dl.dropdown {
-	position: relative;
-	margin: 0 8px 0 0;
-	vertical-align: middle;
+/* This is one utility column in Dolibarr's table, not two table columns. Give
+   it two fixed internal slots so the chooser cannot alter the table algorithm:
+   trigger on the left, select checkbox (and every row checkbox) on the right. */
+.ts-list-card table tr.liste_titre > :first-child,
+.ts-list-card table tr.oddeven > :first-child,
+.ts-list-card table tr.impair > :first-child,
+.ts-list-card table tr.pair > :first-child {
+	box-sizing: border-box;
+	width: 96px;
+	min-width: 96px;
+	max-width: 96px;
 }
+.ts-list-card table tr.liste_titre > :first-child { padding-left: 0; padding-right: 0; }
+.ts-list-card table tr.oddeven > :first-child,
+.ts-list-card table tr.impair > :first-child,
+.ts-list-card table tr.pair > :first-child {
+	padding-right: 15px;
+	text-align: right;
+}
+.ts-list-card table tr.oddeven > :first-child > input.checkforselect,
+.ts-list-card table tr.impair > :first-child > input.checkforselect,
+.ts-list-card table tr.pair > :first-child > input.checkforselect {
+	float: right;
+	margin: 0;
+}
+.ts-list-card tr.liste_titre > :first-child dl.dropdown {
+	position: absolute;
+	top: 50%;
+	left: 12px;
+	width: 34px;
+	height: 34px;
+	margin: 0;
+	transform: translateY(-50%);
+}
+.ts-list-card tr.liste_titre > :first-child div.checkallactions {
+	position: absolute;
+	top: 50%;
+	right: 15px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	transform: translateY(-50%);
+}
+.ts-list-card tr.liste_titre > :first-child div.checkallactions input[type="checkbox"] { margin: 0; }
 .ts-list-card tr.liste_titre > :first-child dl.dropdown dt a {
 	display: inline-flex;
 	align-items: center;
