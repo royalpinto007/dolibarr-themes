@@ -281,6 +281,92 @@ div.arearef.ts-has-actions .pagination.paginationref {
 }
 div.arearef.ts-has-actions .ts-header-actions { order: 2; }
 
+/* Compact entity card: identity and frequent actions share the first row, with
+   record navigation immediately below. The containing tabBar supplies the full
+   content width, rather than mounting this structure in a title-table cell. */
+div.tabBar.ts-entity-card {
+	padding: 0;
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	overflow: visible;
+}
+div.tabBar.ts-entity-card > div.arearef.ts-has-actions {
+	padding: var(--sp-4) var(--sp-5);
+	border-bottom: 0;
+	border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] {
+	margin: 0;
+	padding: 0 var(--sp-4);
+	border-top: 1px solid var(--c-hairline);
+	border-bottom: 1px solid var(--c-hairline);
+	background: var(--c-surface);
+}
+div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] + * { margin-top: var(--sp-4); }
+
+/* Edit stays primary, Send email secondary. The lower-frequency controls are the
+   original Dolibarr nodes inside a disclosure, preserving hooks and tokens. */
+div.tabsAction .ts-record-primary,
+div.tabsAction a.ts-record-primary:first-of-type {
+	background: var(--c-accent);
+	border-color: var(--c-accent);
+	color: #fff;
+}
+div.tabsAction .ts-record-secondary {
+	background: var(--c-surface);
+	border-color: var(--c-border);
+	color: var(--c-ink-2);
+}
+.ts-more-actions { position: relative; flex: 0 0 auto; }
+.ts-more-actions > summary { list-style: none; }
+.ts-more-actions > summary::-webkit-details-marker { display: none; }
+.ts-more-actions-trigger {
+	display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-2);
+	min-height: 34px; padding: 0 var(--sp-3);
+	border: 1px solid var(--c-border); border-radius: var(--r);
+	background: var(--c-surface); color: var(--c-ink-2);
+	font-size: 0.8125rem; font-weight: 600; cursor: pointer;
+	box-shadow: var(--sh-sm);
+}
+.ts-more-actions-trigger:hover,
+.ts-more-actions[open] .ts-more-actions-trigger { background: var(--c-sunken); color: var(--c-ink); }
+.ts-more-actions-trigger:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.ts-more-actions-trigger .fa-chevron-down { font-size: 0.625rem; transition: transform var(--t); }
+.ts-more-actions[open] .fa-chevron-down { transform: rotate(180deg); }
+.ts-more-actions-menu {
+	position: absolute; z-index: 40; top: calc(100% + var(--sp-2)); <?php echo $right; ?>: 0;
+	min-width: 180px; padding: var(--sp-1);
+	background: var(--c-surface); border: 1px solid var(--c-border);
+	border-radius: var(--r); box-shadow: var(--sh-lg);
+}
+.ts-more-actions-menu .ts-more-action-item,
+.ts-more-actions-menu a.ts-more-action-item,
+.ts-more-actions-menu span.ts-more-action-item {
+	display: flex; align-items: center; justify-content: flex-start;
+	width: 100%; min-height: 36px; margin: 0; padding: 0 var(--sp-3);
+	border: 0; border-radius: var(--r-sm); box-shadow: none;
+	background: transparent; color: var(--c-ink-2); cursor: pointer;
+}
+.ts-more-actions-menu .ts-more-action-item:hover { background: var(--c-sunken); color: var(--c-ink); }
+.ts-more-actions-menu .ts-more-action-item.butActionDelete { color: var(--c-danger); }
+
+@media only screen and (max-width: 900px) {
+	div.tabBar.ts-entity-card > div.arearef.ts-has-actions { padding: var(--sp-4); }
+	.ts-header-actions div.tabsAction { width: 100%; }
+	.ts-header-actions div.tabsAction > .ts-record-primary,
+	.ts-header-actions div.tabsAction > .ts-record-secondary { flex: 1 1 160px; }
+	.ts-more-actions { flex: 0 0 auto; }
+}
+@media only screen and (max-width: 640px) {
+	.ts-header-actions div.tabsAction > .ts-record-primary,
+	.ts-header-actions div.tabsAction > .ts-record-secondary { flex: 1 1 calc(50% - var(--sp-2)); }
+	.ts-more-actions { flex: 1 1 100%; }
+	.ts-more-actions-trigger { width: 100%; }
+	.ts-more-actions-menu { <?php echo $left; ?>: 0; <?php echo $right; ?>: 0; }
+}
+
 /* Dolibarr tags Merge with butActionDelete, so it inherited the destructive red
    and sat next to Delete looking equally final -- but merging is not a deletion.
    Only the merge action is exempted, by its own href, and it is exempted *back to*

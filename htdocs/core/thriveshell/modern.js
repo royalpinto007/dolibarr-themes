@@ -51,6 +51,66 @@
 		return true;
 	}
 
+	/* Keep the two frequent actions visible and collect the existing low-frequency
+	   controls in one disclosure. The controls themselves are moved intact: Clone
+	   and Delete are hook-driven spans on current Dolibarr, while Merge is a
+	   tokenised anchor. Recreating any of them would lose behaviour. */
+	function groupRecordActions() {
+		var bar = document.querySelector('div.tabsAction[data-ts-moved="1"]');
+		if (!bar || bar.querySelector('.ts-more-actions')) { return false; }
+
+		var edit = bar.querySelector('a[href*="action=edit"], .butActionNew');
+		var send = bar.querySelector('#btn-send-mail, a[href*="action=presend"], a[href*="action=send"]');
+		if (edit) { edit.classList.add('ts-record-primary'); }
+		if (send) { send.classList.add('ts-record-secondary'); }
+
+		var overflow = [];
+		['#action-clone', 'a[href*="action=clone"]', 'a[href*="action=merge"]',
+		 '#action-delete', 'a[href*="action=delete"]'].forEach(function (selector) {
+			var control = bar.querySelector(selector);
+			if (control && overflow.indexOf(control) === -1) { overflow.push(control); }
+		});
+		if (!overflow.length) { return Boolean(edit || send); }
+
+		var details = document.createElement('details');
+		details.className = 'ts-more-actions';
+		var summary = document.createElement('summary');
+		summary.className = 'ts-more-actions-trigger';
+		summary.setAttribute('aria-label', 'More actions');
+		summary.appendChild(document.createTextNode('More actions'));
+		var chevron = document.createElement('span');
+		chevron.className = 'fas fa-chevron-down';
+		chevron.setAttribute('aria-hidden', 'true');
+		summary.appendChild(chevron);
+		var menu = document.createElement('div');
+		menu.className = 'ts-more-actions-menu';
+		menu.setAttribute('role', 'menu');
+		overflow.forEach(function (control) {
+			control.classList.add('ts-more-action-item');
+			control.setAttribute('role', 'menuitem');
+			menu.appendChild(control);
+		});
+		details.appendChild(summary);
+		details.appendChild(menu);
+		bar.appendChild(details);
+		return true;
+	}
+
+	/* Dolibarr emits the tab strip before the record card. Moving that same node
+	   directly after the banner makes header and navigation one composition, with
+	   all tab hrefs, counters and module-injected entries unchanged. */
+	function placeTabsBelowHeader() {
+		var banner = findBanner();
+		var tabs = document.querySelector('div.tabs');
+		if (!banner || !tabs || tabs.getAttribute('data-ts-placed') === '1') { return false; }
+		var card = banner.closest('div.tabBar');
+		if (!card || !banner.parentNode) { return false; }
+		banner.parentNode.insertBefore(tabs, banner.nextSibling);
+		tabs.setAttribute('data-ts-placed', '1');
+		card.classList.add('ts-entity-card');
+		return true;
+	}
+
 	/* "Back to list" is Dolibarr's own breadcrumb; the mockup shows it as a trail
 	   above the card. Re-using that anchor keeps the URL the module chose. */
 	function buildBreadcrumb() {
@@ -189,6 +249,8 @@
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
+		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
+		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 	});
 })();
