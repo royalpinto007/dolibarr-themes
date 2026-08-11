@@ -367,6 +367,49 @@ div.tabsAction .ts-record-secondary {
 	.ts-more-actions-menu { <?php echo $left; ?>: 0; <?php echo $right; ?>: 0; }
 }
 
+/* ==========================================================================
+   Declarative Third Party field groups
+   The companion hook maps translated labels to stable data-field attributes.
+   Layout only consumes data-group, and activates only when every native row was
+   mapped, so custom or future fields always fall back to Dolibarr's safe layout.
+   ========================================================================== */
+.ts-thirdparty-groups {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: start;
+	gap: var(--sp-4);
+	padding: 0 var(--sp-4) var(--sp-4);
+}
+.ts-field-group {
+	min-width: 0;
+	background: var(--c-surface);
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+.ts-field-group-title {
+	margin: 0;
+	padding: var(--sp-3) var(--sp-4);
+	border-bottom: 1px solid var(--c-hairline);
+	font-size: 0.9375rem;
+	font-weight: 650;
+	line-height: 1.4;
+	color: var(--c-ink);
+}
+.ts-field-group table.tableforfield { margin: 0; border: 0; box-shadow: none; }
+.ts-field-group table.tableforfield td { padding: var(--sp-3) var(--sp-4); }
+.ts-field-group table.tableforfield tr + tr { border-top: 1px solid var(--c-hairline); }
+.ts-field-group table.tableforfield td:first-child { color: var(--c-ink-2); font-weight: 600; }
+@media only screen and (max-width: 1400px) {
+	.ts-thirdparty-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.ts-field-group[data-group="identity"] { grid-row: span 2; }
+}
+@media only screen and (max-width: 900px) {
+	.ts-thirdparty-groups { grid-template-columns: minmax(0, 1fr); padding: 0 var(--sp-3) var(--sp-3); }
+	.ts-field-group[data-group="identity"] { grid-row: auto; }
+}
+
 /* Dolibarr tags Merge with butActionDelete, so it inherited the destructive red
    and sat next to Delete looking equally final -- but merging is not a deletion.
    Only the merge action is exempted, by its own href, and it is exempted *back to*

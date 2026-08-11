@@ -111,6 +111,73 @@
 		return true;
 	}
 
+	/* The companion module publishes translated labels and canonical field keys as
+	   JSON. Annotation is the only label-aware step; layout below consumes stable
+	   data-field/data-group attributes and never guesses from visible text. */
+	function applyThirdPartyFieldSchema() {
+		var source = document.getElementById('ts-thirdparty-field-schema');
+		var card = document.querySelector('div.tabBar.ts-entity-card');
+		if (!source || !card || card.querySelector('.ts-thirdparty-groups')) { return false; }
+		var schema = JSON.parse(source.textContent || '{}');
+		if (!schema.groups) { return false; }
+		var center = card.querySelector('div.fichecenter');
+		if (!center) { return false; }
+
+		function normalized(value) { return (value || '').replace(/\s+/g, ' ').trim(); }
+		var labels = {};
+		Object.keys(schema.groups).forEach(function (groupKey) {
+			var group = schema.groups[groupKey];
+			Object.keys(group.fields || {}).forEach(function (fieldKey) {
+				(group.fields[fieldKey] || []).forEach(function (label) {
+					labels[normalized(label)] = {field: fieldKey, group: groupKey};
+				});
+			});
+		});
+
+		var rows = Array.from(center.querySelectorAll('div.fichehalfleft > table.tableforfield > tbody > tr, div.fichehalfright > table.tableforfield > tbody > tr'));
+		if (!rows.length) { return false; }
+		rows.forEach(function (row) {
+			var match = labels[normalized(row.cells[0] && row.cells[0].innerText)];
+			if (!match) { return; }
+			row.setAttribute('data-field', match.field);
+			row.setAttribute('data-group', match.group);
+		});
+		/* Custom modules may add fields unknown to the companion schema. In that
+		   case keep the native two-column structure rather than dropping or
+		   misclassifying even one row. The stable attributes already applied remain
+		   useful to future schemas and diagnostics. */
+		if (rows.some(function (row) { return !row.hasAttribute('data-field'); })) { return false; }
+
+		var groups = document.createElement('div');
+		groups.className = 'ts-thirdparty-groups';
+		Object.keys(schema.groups).forEach(function (groupKey) {
+			var definition = schema.groups[groupKey];
+			var groupRows = rows.filter(function (row) { return row.getAttribute('data-group') === groupKey; });
+			if (!groupRows.length) { return; }
+			var section = document.createElement('section');
+			section.className = 'ts-field-group';
+			section.setAttribute('data-group', groupKey);
+			var heading = document.createElement('h2');
+			heading.className = 'ts-field-group-title';
+			heading.textContent = definition.title || groupKey;
+			var table = document.createElement('table');
+			table.className = 'border tableforfield centpercent';
+			var body = document.createElement('tbody');
+			groupRows.forEach(function (row) { body.appendChild(row); });
+			table.appendChild(body);
+			section.appendChild(heading);
+			section.appendChild(table);
+			groups.appendChild(section);
+		});
+		if (groups.children.length !== 3) { return false; }
+		center.insertBefore(groups, center.firstChild);
+		center.querySelectorAll(':scope > div.fichehalfleft, :scope > div.fichehalfright').forEach(function (half) {
+			if (!half.querySelector('tr')) { half.remove(); }
+		});
+		center.classList.add('ts-thirdparty-grouped');
+		return true;
+	}
+
 	/* "Back to list" is Dolibarr's own breadcrumb; the mockup shows it as a trail
 	   above the card. Re-using that anchor keeps the URL the module chose. */
 	function buildBreadcrumb() {
@@ -328,6 +395,7 @@
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
+		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 	});
 })();
