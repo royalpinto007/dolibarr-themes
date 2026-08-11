@@ -998,7 +998,26 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	min-width: 96px;
 	max-width: 96px;
 }
-.ts-list-card table tr.liste_titre > :first-child { padding-left: 0; padding-right: 0; }
+/* A sticky layer on every th leaves a compositor seam between otherwise
+   identical backgrounds. Keep one sticky painted surface on the row; only the
+   utility cell needs positioning, as the containing block for its controls. */
+.ts-list-card div.div-table-responsive table.liste tr.liste_titre {
+	position: sticky;
+	top: 0;
+	z-index: 3;
+	background: var(--colorbacktitle1);
+}
+.ts-list-card div.div-table-responsive table.liste tr.liste_titre > th {
+	position: static;
+	top: auto;
+	z-index: auto;
+	background: transparent;
+}
+.ts-list-card div.div-table-responsive table.liste tr.liste_titre > :first-child {
+	position: relative;
+	padding-left: 0;
+	padding-right: 0;
+}
 .ts-list-card table tr.oddeven > :first-child,
 .ts-list-card table tr.impair > :first-child,
 .ts-list-card table tr.pair > :first-child {
