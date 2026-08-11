@@ -620,3 +620,40 @@ div.fichecenter > form > div.pagination:last-child {
 	font-size: 0.8125rem;
 	color: var(--c-muted);
 }
+
+/* ==========================================================================
+   Corrections found by comparing screenshots against the target
+   ========================================================================== */
+/* The status pill was being treated as its own flex item in the banner row and
+   drifted away from the name it belongs to. Only the identity block absorbs the
+   free space; everything else keeps its natural width and stays put. */
+div.arearef.ts-has-actions > *:not(.ts-header-actions):not(.pagination) { flex: 0 0 auto; }
+div.arearef.ts-has-actions > div:first-of-type,
+div.arearef.ts-has-actions > .refid:first-of-type { flex: 1 1 auto; min-width: 0; }
+
+/* The create action shares a fixed-width cell with the pager and the view-mode
+   switches, and as the last item in that row it was the one clipped when the
+   label made it wider. Ordering it first means the least important controls give
+   way instead of the primary action -- and it never shrinks. */
+div.pagination a.btnTitle:has(.fa-plus-circle),
+div.pagination a.btnTitle:has(.fa-plus) {
+	order: -1;
+	flex: 0 0 auto;
+}
+div.pagination { overflow: visible; }
+
+/* The create action keeps the primary treatment but drops the generated label.
+   Drawing it from @title widened the control inside a fixed-width cell it shares
+   with the pager and the view switches, and it clipped -- first at the viewport
+   edge, then inside its own container even after being ordered first. A filled
+   icon button reads as the primary action without depending on how much room
+   that cell happens to have, which varies by module and by how many pager
+   controls a list renders. The label remains available as the tooltip. */
+div.pagination a.btnTitle:has(.fa-plus-circle)::after,
+div.pagination a.btnTitle:has(.fa-plus)::after { content: none; }
+div.pagination a.btnTitle:has(.fa-plus-circle),
+div.pagination a.btnTitle:has(.fa-plus) {
+	min-width: 34px;
+	padding: 0 var(--sp-2);
+	justify-content: center;
+}
