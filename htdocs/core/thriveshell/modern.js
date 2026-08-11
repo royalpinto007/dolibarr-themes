@@ -446,9 +446,18 @@
 					nameSearch.setAttribute('placeholder', 'Search third parties…');
 					quick.appendChild(nameSearch);
 				}
+				var clearFilters = null;
 				filterRow.querySelectorAll('button[name="button_search_x"], button[name="button_removefilter_x"]').forEach(function (button) {
 					button.classList.add(button.name === 'button_removefilter_x' ? 'ts-clear-filters' : 'ts-submit-search');
-					quick.appendChild(button);
+					if (button.name === 'button_removefilter_x') {
+						clearFilters = button;
+						button.classList.add('ts-clear-all-filters');
+						var clearIcon = button.querySelector('[class*="fa-"]');
+						if (clearIcon) { clearIcon.setAttribute('aria-hidden', 'true'); }
+						button.appendChild(document.createTextNode('Clear filters'));
+					} else {
+						quick.appendChild(button);
+					}
 				});
 				if (nameSearch) { filter.insertBefore(quick, filter.firstChild); }
 
@@ -473,12 +482,46 @@
 					label.textContent = (headingRow && headingRow.cells[index] && headingRow.cells[index].innerText || 'Filter').replace(/\s+/g, ' ').trim();
 					control.appendChild(label);
 					movable.forEach(function (child) { control.appendChild(child); });
+					/* Select2 may initialise before or after this deferred script's ready
+					   callback, so detect the real select without depending on its runtime
+					   select2-hidden-accessible class. */
+					var compactSelect = control.querySelector('select');
+					if (compactSelect && compactSelect.options.length <= 5) {
+						compactSelect.setAttribute('data-ts-compact-select2', '1');
+					}
+					if (compactSelect && label.textContent === 'Status') {
+						var emptyStatus = Array.from(compactSelect.options).find(function (option) {
+							return option.value === '-1' && !(option.textContent || '').replace(/\u00a0/g, ' ').trim();
+						});
+						if (emptyStatus) {
+							emptyStatus.textContent = 'All statuses';
+							compactSelect.setAttribute('data-ts-empty-label', 'All statuses');
+							compactSelect.addEventListener('change', function () {
+								window.requestAnimationFrame(function () {
+									if (compactSelect.value !== '-1') { return; }
+									var rendered = control.querySelector('.select2-selection__rendered');
+									if (rendered) { rendered.textContent = 'All statuses'; rendered.setAttribute('title', 'All statuses'); }
+								});
+							});
+						}
+					}
 					panel.appendChild(control);
 				});
 				if (panel.children.length) {
 					details.appendChild(disclosure);
 					details.appendChild(panel);
 					filter.appendChild(details);
+					if (clearFilters) {
+						var hasActiveFilter = Array.from(filter.querySelectorAll('.ts-quick-search-input, .ts-column-filter-control input:not([type="hidden"]), .ts-column-filter-control select')).some(function (field) {
+							if (field.disabled || field.name === 'button_search_x' || field.name === 'button_removefilter_x') { return false; }
+							if (field.type === 'checkbox' || field.type === 'radio') { return field.checked; }
+							var value = window.jQuery && window.jQuery(field).val ? window.jQuery(field).val() : field.value;
+							if (Array.isArray(value)) { return value.length > 0; }
+							return value !== null && String(value).trim() !== '' && String(value) !== '-1';
+						});
+						clearFilters.hidden = !hasActiveFilter;
+						quick.appendChild(clearFilters);
+					}
 
 					/* Details provides the native button toggle but deliberately has no
 					   outside-click dismissal. Treat Select2's body-mounted dropdown as
@@ -509,7 +552,17 @@
 							var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
 							if (!container || !dropdown) { return; }
 							var width = container.getBoundingClientRect().width;
+							var source = container.parentElement && container.parentElement.querySelector('select.select2-hidden-accessible');
 							dropdown.classList.add('ts-column-filter-dropdown');
+							if (source && source.getAttribute('data-ts-compact-select2') === '1') {
+								dropdown.classList.add('ts-compact-select2-dropdown');
+							}
+							var emptyLabel = source && source.getAttribute('data-ts-empty-label');
+							if (emptyLabel) {
+								dropdown.querySelectorAll('.select2-results__option.optiongrey').forEach(function (option) {
+									if (!(option.textContent || '').replace(/\u00a0/g, ' ').trim()) { option.textContent = emptyLabel; }
+								});
+							}
 							dropdown.style.setProperty('--ts-column-filter-width', width + 'px');
 							dropdown.style.setProperty('width', width + 'px', 'important');
 							dropdown.style.setProperty('min-width', width + 'px');
@@ -547,11 +600,58 @@
 		var summary = document.createElement('span');
 		summary.className = 'ts-results-summary';
 		summary.textContent = Number.isNaN(total)
-			? ('Showing ' + first + ' to ' + last)
-			: ('Showing ' + first + ' to ' + last + ' of ' + total + ' results');
+			? ('Showing ' + first + '–' + last)
+			: ('Showing ' + first + '–' + last + ' of ' + total);
 		footer.appendChild(summary);
 		var topPager = form.querySelector('table.table-fiche-title div.pagination');
 		if (topPager) {
+			/* List/Kanban are page modes, not result navigation. Move the original
+			   href-bearing anchors to the page-action toolbar and leave only paging
+			   controls in the footer. */
+			var viewLinks = Array.from(topPager.querySelectorAll('a.btnTitle')).filter(function (link) {
+				return Boolean(link.querySelector('.imgforviewmode'));
+			});
+			var pageActions = document.querySelector('.ts-pagehead-actions');
+			if (viewLinks.length && pageActions) {
+				var viewSwitch = document.createElement('nav');
+				viewSwitch.className = 'ts-view-switch';
+				viewSwitch.setAttribute('aria-label', 'View');
+				viewLinks.forEach(function (link) {
+					var oldParent = link.parentElement;
+					link.classList.add('ts-view-switch-option');
+					if (link.classList.contains('btnTitleSelected')) { link.setAttribute('aria-current', 'page'); }
+					viewSwitch.appendChild(link);
+					if (oldParent && oldParent.tagName === 'LI' && !oldParent.children.length && !(oldParent.textContent || '').trim()) { oldParent.remove(); }
+				});
+				pageActions.insertBefore(viewSwitch, pageActions.firstChild);
+			}
+
+			var pagerList = topPager.querySelector('ul');
+			if (pagerList) {
+				/* Dolibarr prints '/' as a bare text node between current and last. */
+				Array.from(pagerList.childNodes).forEach(function (node) {
+					if (node.nodeType === Node.TEXT_NODE && !(node.textContent || '').replace('/', '').trim()) { node.remove(); }
+				});
+				var currentPage = pagerList.querySelector('li.pageplusone, li.paginationpage');
+				var previous = pagerList.querySelector('.paginationpageleft, .paginationprevious, .paginationleft');
+				if (currentPage && !previous) {
+					previous = document.createElement('li');
+					previous.className = 'pagination ts-pagination-disabled';
+					var previousLabel = document.createElement('span');
+					previousLabel.className = 'inactive';
+					previousLabel.setAttribute('aria-hidden', 'true');
+					previousLabel.textContent = '‹';
+					previous.appendChild(previousLabel);
+					pagerList.insertBefore(previous, currentPage);
+				}
+				var limitItem = pagerList.querySelector('.paginationcombolimit');
+				if (limitItem && !limitItem.querySelector('.ts-per-page-label')) {
+					var perPage = document.createElement('span');
+					perPage.className = 'ts-per-page-label';
+					perPage.textContent = 'per page';
+					limitItem.appendChild(perPage);
+				}
+			}
 			var nav = document.createElement('nav');
 			nav.className = 'ts-results-nav';
 			nav.setAttribute('aria-label', 'Results pages');

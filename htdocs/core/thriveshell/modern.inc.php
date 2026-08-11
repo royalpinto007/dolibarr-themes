@@ -871,6 +871,35 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-pagehead-title { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
 .ts-pagehead-title div.titre { font-size: 1.375rem; font-weight: 650; letter-spacing: -0.02em; }
 .ts-pagehead-actions { display: flex; align-items: center; gap: var(--sp-2); flex: 0 0 auto; }
+.ts-view-switch {
+	display: inline-flex;
+	align-items: center;
+	height: 38px;
+	padding: 3px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+}
+.ts-view-switch a.ts-view-switch-option {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	min-width: 30px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: var(--r-sm);
+	background: transparent;
+	box-shadow: none;
+	color: var(--c-muted);
+}
+.ts-view-switch a.ts-view-switch-option:hover { background: var(--c-sunken); color: var(--c-ink); }
+.ts-view-switch a.ts-view-switch-option[aria-current="page"] {
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+}
 
 /* In the header the create action has room for its label, so it is a full button
    again -- the earlier clipping came from the fixed-width pager cell it used to
@@ -889,8 +918,8 @@ div.pagination a.btnTitle:has(.fa-plus) {
 .ts-action-label { font: inherit; }
 @media only screen and (max-width: 640px) {
 	.ts-pagehead { align-items: stretch; }
-	.ts-pagehead-actions { width: 100%; }
-	.ts-pagehead a.btnTitle.ts-primary-action { width: 100%; justify-content: center; }
+	.ts-pagehead-actions { width: 100%; flex-wrap: wrap; }
+	.ts-pagehead a.btnTitle.ts-primary-action { flex: 1 1 180px; width: auto; justify-content: center; }
 }
 
 /* ==========================================================================
@@ -953,6 +982,26 @@ div.pagination a.btnTitle:has(.fa-plus) {
 }
 .ts-filter-surface .ts-submit-search:hover { background: var(--c-accent-soft); color: var(--c-accent-ink); }
 .ts-filter-surface .ts-clear-filters:hover { background: var(--c-sunken); color: var(--c-ink); }
+.ts-filter-surface .ts-clear-all-filters {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-1);
+	height: 32px;
+	width: auto;
+	flex: 0 0 auto;
+	margin: 0;
+	padding: 0 var(--sp-1);
+	border: 0;
+	border-radius: var(--r);
+	background: transparent;
+	color: var(--c-muted);
+	font-size: 0.8125rem;
+	font-weight: 550;
+	white-space: nowrap;
+}
+.ts-filter-surface .ts-clear-all-filters:hover { background: var(--c-sunken); color: var(--c-ink); }
+.ts-filter-surface .ts-clear-all-filters[hidden] { display: none !important; }
 .ts-filter-surface .divsearchfield {
 	margin: 0;
 	flex: 1 1 220px;
@@ -1273,6 +1322,7 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	border-radius: var(--r-sm);
 	font-size: 0.8125rem;
 }
+.select2-dropdown.ts-column-filter-dropdown.ts-compact-select2-dropdown .select2-search--dropdown { display: none; }
 .ts-column-filters-source { display: none; }
 .ts-list-card {
 	min-width: 0;
@@ -1304,20 +1354,53 @@ div.pagination a.btnTitle:has(.fa-plus) {
 }
 .ts-results-summary { white-space: nowrap; }
 .ts-results-nav ul {
-	display: flex; align-items: center; gap: var(--sp-1);
+	display: flex; align-items: center; gap: 4px;
 	margin: 0; padding: 0; list-style: none;
 }
 .ts-results-nav div.pagination { display: block; }
-.ts-results-nav select.selectlimit { min-width: 74px; }
-.ts-results-nav input.pageplusone { width: 44px; text-align: center; }
-.ts-results-nav li { display: inline-flex; align-items: center; }
+.ts-results-nav li { display: inline-flex; align-items: center; min-height: 38px; }
+.ts-results-nav li.paginationcombolimit {
+	gap: 4px;
+	height: 38px;
+	padding: 0 8px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+}
+.ts-results-nav li.paginationcombolimit .select2-container { width: 44px !important; }
+.ts-results-nav li.paginationcombolimit .select2-selection--single {
+	height: 34px;
+	min-height: 34px;
+	padding: 0 18px 0 2px;
+	border: 0 !important;
+	background: transparent;
+	box-shadow: none !important;
+}
+.ts-results-nav li.paginationcombolimit .select2-selection__rendered { line-height: 34px; }
+.ts-results-nav li.paginationcombolimit .select2-selection__arrow { width: 18px; height: 34px; right: 0; }
+.ts-per-page-label { color: var(--c-muted); white-space: nowrap; }
+.ts-results-nav input.pageplusone {
+	width: 38px;
+	height: 38px;
+	padding: 0;
+	border: 1px solid var(--c-accent) !important;
+	border-radius: var(--r);
+	background: var(--c-accent) !important;
+	box-shadow: none !important;
+	color: #fff !important;
+	font-weight: 620;
+	text-align: center;
+}
 .ts-results-nav a,
 .ts-results-nav .inactive,
 .ts-results-nav .ts-pager-value {
 	display: inline-flex; align-items: center; justify-content: center;
-	min-width: 30px; min-height: 30px; padding: 0 var(--sp-2);
-	border-radius: var(--r-sm); color: var(--c-ink-2);
+	min-width: 38px; min-height: 38px; padding: 0 var(--sp-2);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r); color: var(--c-ink-2);
+	background: var(--c-surface);
 }
+.ts-results-nav .ts-pagination-disabled .inactive { color: var(--c-faint); cursor: default; }
 .ts-results-nav .ts-pager-value { border: 1px solid var(--c-border); background: var(--c-surface); }
 .ts-results-nav a:hover { background: var(--c-sunken); color: var(--c-ink); }
 @media only screen and (max-width: 640px) {

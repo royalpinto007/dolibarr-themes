@@ -305,7 +305,7 @@ header.cmd-bar { display: none; }
 }
 .cmd-brand-text { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
 
-.cmd-crumbs { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.cmd-crumbs { display: none; }
 .cmd-crumb {
 	color: var(--c-muted);
 	font-size: <?php echo $fontsizesmaller; ?>;

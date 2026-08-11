@@ -288,9 +288,20 @@
 		if (!me || !me.src) { return; }
 		var url = me.src.split('?')[0].replace(/\/theme\/[^/]+\/[^/]+\.js$/, '/core/thriveshell/modern.js');
 		if (url === me.src.split('?')[0]) { return; }   // unexpected path: do nothing
-		var s = document.createElement('script');
-		s.src = url;
-		s.defer = true;
-		document.head.appendChild(s);
+		var loadFallback = function () {
+			/* command.lib.php emits a content-versioned modern.js tag. Wait until
+			   parsing is complete so that later tag is visible; only old menu
+			   managers without the direct loader need this compatibility request. */
+			if (document.querySelector('script[src*="/core/thriveshell/modern.js"]')) { return; }
+			var s = document.createElement('script');
+			s.src = url;
+			s.defer = true;
+			document.head.appendChild(s);
+		};
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', loadFallback, {once: true});
+		} else {
+			loadFallback();
+		}
 	} catch (e) { /* keep Dolibarr's layout */ }
 })();
