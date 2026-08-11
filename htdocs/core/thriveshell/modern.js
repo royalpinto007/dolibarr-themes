@@ -636,8 +636,8 @@
 		var summary = document.createElement('span');
 		summary.className = 'ts-results-summary';
 		summary.textContent = Number.isNaN(total)
-			? ('Showing ' + first + ' to ' + last)
-			: ('Showing ' + first + ' to ' + last + ' of ' + total + ' results');
+			? ('Showing ' + first + '\u2013' + last)
+			: ('Showing ' + first + '\u2013' + last + ' of ' + total);
 		footer.appendChild(summary);
 		var topPager = form.querySelector('table.table-fiche-title div.pagination');
 		if (topPager) {
@@ -700,6 +700,25 @@
 							var width = limitItem.getBoundingClientRect().width;
 							dropdown.style.setProperty('width', width + 'px', 'important');
 							dropdown.style.setProperty('min-width', width + 'px');
+							/* Select2 positions its body-mounted wrapper before the compact
+							   option styles settle. Anchor the final-sized popover to the live
+							   trigger instead of retaining that stale vertical calculation. */
+							var portal = dropdown.closest('.select2-container--open');
+							if (portal && portal.parentElement === document.body) {
+								var triggerRect = limitItem.getBoundingClientRect();
+								var dropdownHeight = dropdown.getBoundingClientRect().height;
+								var popoverGap = 8;
+								var openBelow = window.innerHeight - triggerRect.bottom >= dropdownHeight + popoverGap;
+								var top = openBelow
+									? triggerRect.bottom + popoverGap
+									: triggerRect.top - dropdownHeight - popoverGap;
+								var left = Math.min(
+									Math.max(popoverGap, triggerRect.left),
+									window.innerWidth - width - popoverGap
+								);
+								portal.style.top = (top + window.scrollY) + 'px';
+								portal.style.left = (left + window.scrollX) + 'px';
+							}
 						});
 					};
 					var pageSizeObserver = new MutationObserver(syncPageSizeDropdown);
