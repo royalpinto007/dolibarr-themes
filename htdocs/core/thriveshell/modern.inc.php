@@ -280,3 +280,26 @@ div.arearef.ts-has-actions .pagination.paginationref {
 	white-space: nowrap;
 }
 div.arearef.ts-has-actions .ts-header-actions { order: 2; }
+
+/* Dolibarr tags Merge with butActionDelete, so it inherited the destructive red
+   and sat next to Delete looking equally final -- but merging is not a deletion.
+   Only the merge action is exempted, by its own href, and it is exempted *back to*
+   the neutral surface button rather than given a style of its own.
+
+   The exemption is deliberately narrow: anything else Dolibarr or a module tags as
+   destructive keeps the red. Losing a warning on a genuinely destructive action is
+   worse than over-warning on one that is not, so the unknown case stays red. This
+   is presentation only -- the href, its confirmation step and its behaviour are
+   untouched. */
+div.tabsAction a.butActionDelete[href*="action=merge"],
+div.tabsAction a.butActionDelete[href*="action=confirm_merge"] {
+	background: var(--c-surface);
+	border-color: var(--c-border);
+	color: var(--c-ink-2);
+}
+div.tabsAction a.butActionDelete[href*="action=merge"]:hover,
+div.tabsAction a.butActionDelete[href*="action=confirm_merge"]:hover {
+	background: var(--c-sunken);
+	border-color: var(--c-border-strong);
+	color: var(--c-ink);
+}
