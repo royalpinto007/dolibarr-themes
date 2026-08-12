@@ -217,7 +217,22 @@
 			column.querySelectorAll('table.noborder, table.border').forEach(function (table) {
 				table.classList.add('ts-module-index-card');
 				var widestRow = Array.from(table.rows || []).reduce(function (count, row) { return Math.max(count, row.cells.length); }, 0);
-				table.classList.toggle('ts-module-index-card-dense', widestRow >= 5);
+				table.classList.toggle('ts-module-index-data-card', widestRow >= 4);
+				/* Many index widgets render one title cell followed by structural empty
+				   cells. Collapse only that exact pattern so the header remains one flat
+				   surface without altering the table's data-column geometry. */
+				var header = table.querySelector('tr.liste_titre');
+				if (!header) { return; }
+				var cells = Array.from(header.cells || []);
+				var meaningful = cells.filter(function (cell) { return (cell.textContent || '').replace(/\s+/g, '').length; });
+				if (meaningful.length !== 1 || cells.length < 2) { return; }
+				var dataColumns = Array.from(table.rows || []).reduce(function (widest, row) {
+					if (row === header) { return widest; }
+					return Math.max(widest, Array.from(row.cells || []).reduce(function (sum, cell) { return sum + (cell.colSpan || 1); }, 0));
+				}, 0);
+				if (!dataColumns) { return; }
+				meaningful[0].colSpan = dataColumns;
+				cells.filter(function (cell) { return cell !== meaningful[0]; }).forEach(function (cell) { cell.remove(); });
 			});
 		});
 		return true;

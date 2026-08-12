@@ -4659,13 +4659,6 @@ body.ts-command-module-index .ts-module-index-column {
 	background: transparent;
 	box-shadow: none;
 }
-body.ts-command-module-index .ts-module-index-column > .div-table-responsive,
-body.ts-command-module-index .ts-module-index-column > .div-table-responsive-no-min {
-	max-width: 100%;
-	overflow-x: auto;
-	border-radius: 12px;
-	scrollbar-width: thin;
-}
 body.ts-command-module-index .ts-module-index-empty { display: none; }
 body.ts-command-module-index .ts-module-index-card {
 	width: 100%;
@@ -4677,9 +4670,18 @@ body.ts-command-module-index .ts-module-index-card {
 	overflow: hidden;
 	table-layout: auto !important;
 }
-body.ts-command-module-index .ts-module-index-card-dense { min-width: 620px; }
+body.ts-command-module-index .ts-module-index-data-card { table-layout: fixed !important; }
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td {
+	max-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > th,
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
+	display: table-cell !important;
+	width: auto !important;
+	min-width: 0 !important;
 	height: auto;
 	min-height: 48px;
 	padding: 12px 16px !important;
@@ -4692,10 +4694,8 @@ body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
 	line-height: 1.35;
 	vertical-align: middle;
 }
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > :empty {
-	width: 0 !important;
-	padding-inline: 0 !important;
-}
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > th > a:has(.badge),
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > td > a:has(.badge) { float: right; margin-left: 10px; }
 body.ts-command-module-index .ts-module-index-card tr:not(.liste_titre) > td {
 	height: 48px;
 	padding: 10px 16px !important;
@@ -4707,6 +4707,14 @@ body.ts-command-module-index .ts-module-index-card tr:not(.liste_titre) > td {
 }
 @media (max-width: 640px) {
 	body.ts-command-module-index .fiche { padding: 18px 12px 36px !important; }
+	body.ts-command-module-index .ts-module-index-column > .div-table-responsive:has(.ts-module-index-data-card),
+	body.ts-command-module-index .ts-module-index-column > .div-table-responsive-no-min:has(.ts-module-index-data-card) {
+		max-width: 100%;
+		overflow-x: auto;
+		border-radius: 12px;
+		scrollbar-width: thin;
+	}
+	body.ts-command-module-index .ts-module-index-data-card { min-width: 600px; }
 }
 body.ts-command-form-page .ts-command-form-fields {
 	width: 100% !important;
