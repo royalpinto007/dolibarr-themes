@@ -286,6 +286,24 @@
 		return Boolean(summary || document.body.matches('.ts-thirdparty-notes-tab,.ts-thirdparty-margins-tab,.ts-thirdparty-documents-tab'));
 	}
 
+	function polishThirdPartyCustomerTab() {
+		if (!/\/comm\/card\.php$/.test(window.location.pathname) || !document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
+		var shell = document.querySelector('.ts-thirdparty-record-shell');
+		var content = shell && Array.from(shell.children).find(function (node) {
+			return node.matches && node.matches('.fichecenter') && node.querySelector('.fichehalfleft, .fichehalfright');
+		});
+		if (!content) { return false; }
+		document.body.classList.add('ts-thirdparty-customer-tab');
+		content.classList.remove('ts-record-context-summary');
+		content.classList.add('ts-customer-overview-grid');
+		content.querySelectorAll(':scope > .fichehalfleft, :scope > .fichehalfright').forEach(function (column) {
+			column.classList.add('ts-customer-overview-card');
+		});
+		var actions = shell.nextElementSibling;
+		if (actions && actions.matches('.tabsAction')) { actions.classList.add('ts-customer-actions'); }
+		return true;
+	}
+
 	function polishShipmentStatistics() {
 		if (!/\/expedition\/stats\/index\.php$/.test(window.location.pathname)) { return false; }
 		var card = document.querySelector('.fiche > .tabBar');
@@ -2749,5 +2767,6 @@
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
+		try { polishThirdPartyCustomerTab(); } catch (e) { /* retain the native customer tab */ }
 	});
 })();
