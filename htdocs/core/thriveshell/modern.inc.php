@@ -3420,6 +3420,13 @@ body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon i,
 body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon span {
 	font-size: 20px !important;
 }
+/* The weather/global-view glyph has materially less painted area than the
+   other Font Awesome module icons at the same nominal size. Compensate only
+   that glyph while retaining the shared 44px dashboard tile geometry. */
+body.ts-command-dashboard .ts-dashboard-summary-card.info-box-weather .info-box-icon i,
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon i.fa-weather-level1 {
+	font-size: 25px !important;
+}
 body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-violet .info-box-icon { background: #f1edff !important; color: #7047eb !important; }
 body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-blue .info-box-icon { background: #eaf1ff !important; color: #3474e8 !important; }
 body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-green .info-box-icon { background: #eaf8ee !important; color: #24a65a !important; }
