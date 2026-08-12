@@ -2925,37 +2925,60 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:ha
    so Capital and Incoterms cannot be split back into separate visual rows. */
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value {
 	display: grid !important;
-	grid-template-columns: minmax(0, 1fr) 64px !important;
+	grid-template-columns: var(--tsf-adorn) minmax(0, 1fr) 64px !important;
 	gap: 0 !important;
 }
+body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value.ts-form-control--compound {
+	width: min(100%, calc(380px + var(--tsf-adorn))) !important;
+	max-width: calc(380px + var(--tsf-adorn)) !important;
+	justify-self: start;
+}
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > input[name="capital"] {
-	grid-column: 1 !important;
+	grid-column: 2 !important;
 	grid-row: 1;
 	width: 100% !important;
 	border-radius: 8px 0 0 8px;
 }
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > span:not([class*="fa-"]) {
-	grid-column: 2 !important;
+	grid-column: 3 !important;
 	grid-row: 1;
 	width: 64px;
 	height: 40px;
 }
 body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value {
 	display: grid !important;
-	grid-template-columns: minmax(0, .42fr) minmax(0, .58fr) !important;
-	column-gap: 8px !important;
+	grid-template-columns: var(--tsf-adorn) minmax(0, .42fr) 8px minmax(0, .58fr) !important;
+	column-gap: 0 !important;
 	row-gap: 0 !important;
 }
+body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value.ts-form-control--paired {
+	width: min(100%, calc(720px + var(--tsf-adorn))) !important;
+	max-width: calc(720px + var(--tsf-adorn)) !important;
+	justify-self: start;
+}
 body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > .select2-container {
-	grid-column: 1 !important;
+	grid-column: 2 !important;
 	grid-row: 1;
 	width: 100% !important;
 	max-width: none !important;
 }
 body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > input[name="location_incoterms"] {
-	grid-column: 2 !important;
+	grid-column: 4 !important;
 	grid-row: 1;
 	width: 100% !important;
+}
+
+/* Semantic exceptions inside the existing paired grid. Zip is intentionally
+   short while City retains its native half-track width; VAT is a medium value
+   aligned on the right-hand control axis. Neither rule changes table tracks. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-control--short > input#zipcode[name="zipcode"] {
+	width: min(100%, 210px) !important;
+	max-width: 210px !important;
+	text-align: left !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-control--medium-intent > input#intra_vat[name="tva_intra"] {
+	width: min(100%, 300px) !important;
+	max-width: 300px !important;
 }
 
 /* Category selectors keep the shared adornment and control axes, then reserve a

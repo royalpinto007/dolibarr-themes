@@ -869,6 +869,18 @@
 		   two independent rows. Pair the edit nodes to the same native structure. */
 		pairSeparateRows('assujtva_value', 'tva_intra');
 
+		/* Width is a property of the control's meaning, not of whether its row
+		   spans one or two form tracks. Keep the established row axes intact and
+		   expose only the exceptional visual proportions requested by the form
+		   system. */
+		function markControlProportion(fieldName, modifier) {
+			var control = body.querySelector('[name="' + fieldName + '"]');
+			var valueCell = control && control.closest('td.ts-form-value');
+			if (valueCell) { valueCell.classList.add('ts-form-control--' + modifier); }
+		}
+		markControlProportion('zipcode', 'short');
+		markControlProportion('tva_intra', 'medium-intent');
+
 		/* Workforce arrives as the second half of the generic Third-party type row.
 		   The intended business composition pairs it with Business entity type. Move
 		   those two existing cells, leaving the extra Third-party type as a safe full
@@ -890,10 +902,12 @@
 		if (capitalRow) {
 			capitalRow.classList.remove('ts-form-row-half');
 			capitalRow.classList.add('ts-form-row-full', 'ts-form-compound-capital');
+			if (capitalRow.cells[1]) { capitalRow.cells[1].classList.add('ts-form-control--compound'); }
 		}
 		var incotermsRow = rowFor('incoterm_id');
 		if (incotermsRow) {
 			incotermsRow.classList.add('ts-form-compound-incoterms');
+			if (incotermsRow.cells[1]) { incotermsRow.cells[1].classList.add('ts-form-control--paired'); }
 			var incotermsSelect = incotermsRow.querySelector('select[name="incoterm_id"]');
 			var emptyIncoterm = incotermsSelect && Array.from(incotermsSelect.options).find(function (option) { return !option.value || option.value === '0'; });
 			if (emptyIncoterm && !(emptyIncoterm.textContent || '').replace(/\u00a0/g, ' ').trim()) {
