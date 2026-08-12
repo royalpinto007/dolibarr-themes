@@ -1750,6 +1750,176 @@ div.tabBar.ts-entity-card > div.arearef.ts-has-actions {
 	border-radius: var(--r-lg);
 	box-shadow: var(--sh);
 }
+/* Some Third Party tabs emit .arearefnobottom instead of .arearef and omit an
+   action bar entirely. The canonical overview-tab context marks both variants
+   as the same entity surface, so the shell cannot fall back to the legacy
+   banner merely because a tab has no actions. */
+body.ts-thirdparty-record-context div.tabBar.ts-entity-card > .ts-entity-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--sp-4);
+	min-height: 112px;
+	margin: 0 0 var(--sp-3);
+	padding: 20px var(--sp-5);
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh);
+	overflow: visible;
+}
+body.ts-thirdparty-record-context div.tabBar.ts-entity-card > .ts-entity-banner.arearefnobottom > div:first-child {
+	display: contents;
+}
+body.ts-thirdparty-record-context div.tabBar.ts-entity-card > .ts-entity-banner.arearefnobottom > .underrefbanner {
+	display: none;
+}
+body.ts-thirdparty-record-context .ts-entity-banner > .ts-entity-identity {
+	display: grid;
+	grid-template-columns: 56px minmax(0, 1fr);
+	align-items: center;
+	gap: var(--sp-4);
+	flex: 1 1 430px;
+	min-width: 0;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .ts-entity-identity > .divphotoref {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 56px !important;
+	height: 56px !important;
+	min-width: 56px;
+	margin: 0 !important;
+	border-radius: var(--r-lg);
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+}
+body.ts-thirdparty-record-context .ts-entity-banner .ts-entity-identity > .refid {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr);
+	align-items: center;
+	column-gap: var(--sp-2);
+	row-gap: 3px;
+	width: auto !important;
+	max-width: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .ts-entity-identity > .refid > .refidno {
+	grid-column: 1 / -1;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .ts-entity-identity > .refid > .statusref {
+	grid-column: 2;
+	grid-row: 1;
+	display: inline-flex;
+	justify-self: start;
+	margin: 0;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .ts-legacy-identity-source,
+body.ts-thirdparty-record-context .ts-entity-banner .ts-entity-photo-unused {
+	display: none !important;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .refid {
+	min-width: 0;
+	font-size: 1.625rem;
+	font-weight: 650;
+	line-height: 1.25;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .refidno,
+body.ts-thirdparty-record-context .ts-entity-banner .refaddress {
+	font-size: .8125rem;
+	font-weight: 400;
+	line-height: 1.55;
+	color: var(--c-muted);
+}
+body.ts-thirdparty-record-context .ts-entity-banner .refaddress .address,
+body.ts-thirdparty-record-context .ts-entity-banner .refaddress .paddingright,
+body.ts-thirdparty-record-context .ts-entity-banner .refaddress > a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	max-width: 100%;
+	margin: 2px var(--sp-3) 2px 0;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .refaddress [class*="fa-"] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 17px;
+	min-width: 17px;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .pagination.paginationref {
+	position: static;
+	float: none;
+	margin-left: auto;
+	white-space: nowrap;
+	opacity: .58;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .paginationref a.ts-crumb-source {
+	display: none !important;
+}
+body.ts-thirdparty-record-context .ts-entity-banner .statusref {
+	margin-left: var(--sp-2);
+}
+body.ts-thirdparty-record-context div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] {
+	width: 100%;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+	scrollbar-width: none;
+}
+body.ts-thirdparty-record-context div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"]::-webkit-scrollbar {
+	display: none;
+}
+body.ts-thirdparty-record-context div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] > * {
+	flex: 0 0 auto;
+}
+body.ts-thirdparty-record-context .ts-record-tab-surface {
+	margin: var(--sp-3) 0 var(--sp-4);
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow-x: auto;
+}
+body.ts-thirdparty-record-context .ts-record-tab-surface > table {
+	margin: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+}
+body.ts-thirdparty-record-context .ts-record-tab-surface tr.liste_titre th,
+body.ts-thirdparty-record-context .ts-record-tab-surface tr.liste_titre td {
+	height: 48px;
+	background: #f7f9fc !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+}
+body.ts-thirdparty-record-context .ts-record-tab-surface tr.oddeven td,
+body.ts-thirdparty-record-context .ts-record-tab-surface tr.pair td,
+body.ts-thirdparty-record-context .ts-record-tab-surface tr.impair td {
+	height: 48px;
+	border-bottom: 1px solid var(--c-hairline) !important;
+}
+body.ts-thirdparty-record-context td.ts-record-tab-empty {
+	height: 112px !important;
+	padding: 28px !important;
+	text-align: center !important;
+	vertical-align: middle !important;
+	color: var(--c-muted) !important;
+	font-size: .875rem;
+}
+body.ts-thirdparty-record-context td.ts-record-tab-empty::before {
+	display: block;
+	margin: 0 auto 9px;
+	color: var(--c-faint);
+	font-family: "Font Awesome 5 Free";
+	font-size: 20px;
+	font-weight: 900;
+	content: "\f1ea";
+}
 div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] {
 	margin: 0 0 var(--sp-4);
 	padding: 0 var(--sp-3);
@@ -1837,6 +2007,13 @@ div.arearef.ts-has-actions .paginationref { opacity: .58; margin-<?php echo $lef
 	.fiche { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
 	.ts-pagehead-title div.titre, div.titre { font-size: 1.375rem; }
 	div.tabBar.ts-entity-card > div.arearef.ts-has-actions { padding: var(--sp-4); }
+	body.ts-thirdparty-record-context div.tabBar.ts-entity-card > .ts-entity-banner {
+		align-items: flex-start;
+		padding: var(--sp-4);
+	}
+	body.ts-thirdparty-record-context .ts-entity-banner .pagination.paginationref {
+		margin-left: 0;
+	}
 	.ts-list-composition { gap: var(--sp-4); }
 }
 @media only screen and (max-width: 767px) {

@@ -28,7 +28,52 @@
 	/* The banner Dolibarr puts a record's title in. Both spellings exist across
 	   versions and modules, so accept either and bail if neither is present. */
 	function findBanner() {
-		return document.querySelector('div.arearef, div.tabBar > div.arearef, .arearefnoborder');
+		return document.querySelector('div.arearef, div.tabBar > div.arearef, .arearefnoborder, div.tabBar > .arearefnobottom');
+	}
+
+	/* Every third-party tab carries the canonical overview tab, even when the
+	   active page belongs to another module (Commerce, Tickets, Margins, etc.).
+	   That tab is a more reliable record-context signal than pathname or mainmenu.
+	   Mark the shared nodes once so header, breadcrumb and tabs can be normalized
+	   without maintaining a list of module URLs. */
+	function normalizeThirdPartyRecordContext() {
+		var tabs = document.querySelector('div.tabs');
+		var overview = tabs && Array.from(tabs.querySelectorAll('a.tab[href]')).find(function (link) {
+			return /\/societe\/card\.php(?:\?|$)/.test(link.getAttribute('href') || '');
+		});
+		var banner = findBanner();
+		if (!tabs || !overview || !banner) { return false; }
+		document.body.classList.add('ts-thirdparty-record-context');
+		banner.classList.add('ts-entity-banner');
+		var card = banner.closest('div.tabBar');
+		if (card) { card.classList.add('ts-thirdparty-record-shell'); }
+
+		/* Banner variants float the photo, status and reference in different source
+		   wrappers. Move those exact nodes into one identity group; their links and
+		   tooltip handlers remain intact, while empty barcode/photo placeholders no
+		   longer create phantom icon columns. */
+		if (!banner.querySelector(':scope > .ts-entity-identity')) {
+			var title = Array.from(banner.querySelectorAll('div.refid')).find(function (node) {
+				return !node.closest('a.refid');
+			});
+			var photos = Array.from(banner.querySelectorAll('.divphotoref'));
+			var photo = photos.find(function (node) {
+				return Boolean(node.querySelector('img, [class*="fa-"]'));
+			});
+			if (title) {
+				var identity = document.createElement('div');
+				identity.className = 'ts-entity-identity';
+				var photoSource = photo && photo.parentElement;
+				if (photo) { identity.appendChild(photo); }
+				identity.appendChild(title);
+				banner.insertBefore(identity, banner.firstChild);
+				photos.forEach(function (node) {
+					if (node !== photo) { node.classList.add('ts-entity-photo-unused'); }
+				});
+				if (photoSource && photoSource !== banner) { photoSource.classList.add('ts-legacy-identity-source'); }
+			}
+		}
+		return true;
 	}
 
 	function moveActionsIntoHeader() {
@@ -39,6 +84,13 @@
 		/* Only relocate a bar that actually holds actions. An empty one on a
 		   read-only record would otherwise leave a stray flex row in the header. */
 		if (!bar.querySelector('a, input, button, div.inline-block')) { return false; }
+		/* Module tabs often print a second action row containing only tab-specific
+		   creation actions. Those belong with the active content and must not change
+		   the permanent entity header's height. Move only a bar that contains a real
+		   record-level edit/send/clone/merge/delete control. */
+		if (document.body.classList.contains('ts-thirdparty-record-context') && !bar.querySelector(
+			'a[href*="action=edit"], #btn-send-mail, a[href*="action=presend"], #action-clone, a[href*="action=clone"], a[href*="action=merge"], #action-delete, a[href*="action=delete"]'
+		)) { return false; }
 
 		var host = document.createElement('div');
 		host.className = 'ts-header-actions';
@@ -220,7 +272,15 @@
 		var parent = document.createElement('a');
 		parent.href = back.getAttribute('href');
 		var activeNav = document.querySelector('.cmd-nav-group.is-active .cmd-nav-label');
-		parent.textContent = activeNav ? (activeNav.textContent || '').trim() : (back.textContent || '').trim();
+		if (document.body.classList.contains('ts-thirdparty-record-context')) {
+			var thirdPartyNav = Array.from(document.querySelectorAll('a.cmd-nav-label[href], a.cmd-nav-item[href]')).find(function (link) {
+				return /^Third parties$/i.test((link.textContent || '').replace(/\s+/g, ' ').trim());
+			});
+			parent.textContent = thirdPartyNav ? (thirdPartyNav.textContent || '').trim() : 'Third parties';
+			if (thirdPartyNav && thirdPartyNav.getAttribute('href')) { parent.href = thirdPartyNav.getAttribute('href'); }
+		} else {
+			parent.textContent = activeNav ? (activeNav.textContent || '').trim() : (back.textContent || '').trim();
+		}
 		crumb.appendChild(parent);
 
 		if (title) {
@@ -296,6 +356,35 @@
 				}
 			}
 			changed = true;
+		});
+		return changed;
+	}
+
+	/* Active-tab content varies by module, but list/table wrappers are stable.
+	   Add presentation hooks only after the permanent Third Party shell exists;
+	   native forms, controls, tables and pagination remain exactly where their
+	   module rendered them. */
+	function polishThirdPartyTabContent() {
+		if (!document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
+		var shell = document.querySelector('.ts-thirdparty-record-shell');
+		var changed = false;
+		document.querySelectorAll('.fiche .div-table-responsive, .fiche .div-table-responsive-no-min').forEach(function (surface) {
+			if (shell && shell.contains(surface)) { return; }
+			surface.classList.add('ts-record-tab-surface');
+			changed = true;
+		});
+		document.querySelectorAll('.fiche form').forEach(function (form) {
+			if (shell && shell.contains(form)) { return; }
+			if (form.querySelector('table.liste, .div-table-responsive, .div-table-responsive-no-min')) {
+				form.classList.add('ts-record-tab-list');
+			}
+		});
+		document.querySelectorAll('.fiche table.liste td, .fiche .ts-record-tab-surface td').forEach(function (cell) {
+			if (cell.children.length > 1) { return; }
+			var text = (cell.textContent || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+			if (/^(None|No .+)$/i.test(text) && (cell.colSpan > 1 || cell.closest('tr').children.length === 1)) {
+				cell.classList.add('ts-record-tab-empty');
+			}
 		});
 		return changed;
 	}
@@ -1787,6 +1876,7 @@
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
+		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
@@ -1804,5 +1894,6 @@
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
+		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 	});
 })();
