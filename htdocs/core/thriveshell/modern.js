@@ -276,26 +276,27 @@
 			emptyText.textContent = message;
 			cells[0].append(emptyIcon, emptyText);
 		});
-		if (document.body.classList.contains('ts-products-module-index')) {
-			var chartCard = layout.querySelector('.ts-module-index-card .dolgraph');
-			chartCard = chartCard && chartCard.closest('.ts-module-index-card');
+		layout.querySelectorAll('.ts-module-index-card .dolgraph').forEach(function (chartNode) {
+			var chartCard = chartNode.closest('.ts-module-index-card');
 			var canvas = chartCard && chartCard.querySelector('canvas');
 			var chart = canvas && window.Chart && typeof window.Chart.getChart === 'function' ? window.Chart.getChart(canvas) : null;
 			var values = chart && chart.data && chart.data.datasets && chart.data.datasets[0] && chart.data.datasets[0].data;
 			var labels = chart && chart.data && chart.data.labels;
-			if (chartCard && labels && values && !chartCard.nextElementSibling?.classList.contains('ts-product-stat-summary')) {
+			if (chartCard && labels && values && !chartCard.nextElementSibling?.classList.contains('ts-module-stat-summary')) {
 				var summary = document.createElement('section');
-				summary.className = 'ts-product-stat-summary';
+				summary.className = 'ts-module-stat-summary';
 				var total = values.reduce(function (sum, value) { return sum + (Number(value) || 0); }, 0);
 				var totalRow = document.createElement('div');
-				totalRow.className = 'ts-product-stat-total';
-				totalRow.innerHTML = '<span class="ts-module-index-heading-icon"><span class="fas fa-cubes"></span></span><strong>Total products and services</strong><b></b>';
+				totalRow.className = 'ts-module-stat-total';
+				var moduleTitle = (document.querySelector('.fiche > .ts-pagehead .titre')?.textContent || 'Records').trim().replace(/\s+area$/i, '');
+				totalRow.innerHTML = '<span class="ts-module-index-heading-icon"><span class="fas fa-chart-simple"></span></span><strong></strong><b></b>';
+				totalRow.querySelector('strong').textContent = 'Total ' + moduleTitle.toLowerCase();
 				totalRow.querySelector('b').textContent = String(total);
 				var tiles = document.createElement('div');
-				tiles.className = 'ts-product-stat-tiles';
+				tiles.className = 'ts-module-stat-tiles';
 				labels.forEach(function (label, index) {
 					var tile = document.createElement('div');
-					tile.className = 'ts-product-stat-tile ts-product-stat-tile-' + ((index % 4) + 1);
+					tile.className = 'ts-module-stat-tile ts-module-stat-tile-' + ((index % 4) + 1);
 					var icon = document.createElement('span'); icon.className = 'fas fa-cube';
 					var copy = document.createElement('span'); copy.textContent = label;
 					var count = document.createElement('b'); count.textContent = String(values[index] || 0);
@@ -304,7 +305,7 @@
 				summary.append(totalRow, tiles);
 				chartCard.insertAdjacentElement('afterend', summary);
 			}
-		}
+		});
 		return true;
 	}
 
