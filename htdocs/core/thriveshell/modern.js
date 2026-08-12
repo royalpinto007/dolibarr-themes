@@ -1393,6 +1393,38 @@
 		return true;
 	}
 
+	/* Enum vs relational selects.
+	   A status or a business-entity type is a short fixed list and does not need
+	   the full width of the form, a search box, or a tall panel. A parent company
+	   or a tag list is a lookup and does need them. Nothing here is keyed to a
+	   field name: the option count is what separates the two, so any module's
+	   selects are classified the same way. Selects that load remotely report no
+	   options and are treated as lookups, which is the safe direction. */
+	function classifySelects() {
+		var form = document.querySelector('form.ts-modern-form');
+		if (!form) { return false; }
+		var COMPACT_MAX = 25;
+		form.querySelectorAll('select').forEach(function (sel) {
+			if (sel.multiple) { return; }
+			if (sel.classList.contains('ts-enum') || sel.classList.contains('ts-lookup')) { return; }
+			var n = sel.options ? sel.options.length : 0;
+			var ajax = sel.getAttribute('data-ajax-url') || sel.className.indexOf('ajax') >= 0;
+			var compact = !ajax && n > 0 && n <= COMPACT_MAX;
+			sel.classList.add(compact ? 'ts-enum' : 'ts-lookup');
+			/* select2 renders its own control next to the original, so the class has
+			   to reach that too for the CSS to see it. */
+			/* select2 does not always leave its container as the next sibling -- the
+			   form enhancement can wrap or reorder it -- so it is looked up within the
+			   field's own cell, which is where it has to be either way. */
+			var scope = sel.closest('td') || sel.parentElement;
+			var container = scope ? scope.querySelector('.select2-container, .select2') : null;
+			if (container && container.classList) {
+				container.classList.add(compact ? 'ts-enum-c' : 'ts-lookup-c');
+			}
+		});
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
@@ -1400,6 +1432,9 @@
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
 		try { enhanceThirdPartyForm(); } catch (e) { /* retain Dolibarr's native edit table */ }
+		/* After the form is rebuilt, not before: enhanceThirdPartyForm replaces the
+		   select containers, which discarded the classification when it ran first. */
+		try { classifySelects(); } catch (e) { /* leave selects as they are */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }

@@ -1929,6 +1929,12 @@ form.ts-modern-form table.ts-modern-form-header td.col-picto [class*="fa-"] {
 }
 
 form.ts-modern-form table.ts-modern-form-table {
+	/* One grid for the whole form. Every row -- paired or full width -- uses the
+	   same three slots, so a control's x depends on the grid and never on whether
+	   its field happens to own an icon.  label | adornment | control  */
+	--tsf-label: 160px;
+	--tsf-adorn: 26px;
+	--tsf-gap: 28px;
 	display: block;
 	width: 100%;
 	margin: 0;
@@ -1943,7 +1949,7 @@ form.ts-modern-form table.ts-modern-form-table > tbody {
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row {
 	display: grid;
-	grid-template-columns: 170px minmax(0, 1fr);
+	grid-template-columns: var(--tsf-label) minmax(0, 1fr);
 	align-items: center;
 	min-width: 0;
 	min-height: 64px;
@@ -1955,12 +1961,20 @@ form.ts-modern-form table.ts-modern-form-table tr.ts-form-row {
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full {
 	grid-column: 1 / -1;
-	grid-template-columns: 200px minmax(0, 1fr);
+	/* Same label slot as a paired row: this is what puts a full-width control on
+	   the same axis as the left-hand control of the row above it. The 200px here
+	   was the reason the two axes were 11px apart. */
+	grid-template-columns: var(--tsf-label) minmax(0, 1fr);
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
-	grid-template-columns: 145px minmax(0, 1fr) 145px minmax(0, 1fr);
-	column-gap: 16px;
+	grid-column: 1 / -1;
+	grid-template-columns: var(--tsf-label) minmax(0, 1fr) var(--tsf-gap) var(--tsf-label) minmax(0, 1fr);
+	column-gap: 0;
 }
+/* The centre gap is a real column, so the right-hand half starts at a stated
+   position instead of wherever the left half happened to end. */
+form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td:nth-child(3) { grid-column: 4; }
+form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td:nth-child(4) { grid-column: 5; }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-empty { display: none; }
 
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label,
@@ -1981,9 +1995,9 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label {
 	font-weight: 600;
 	line-height: 1.35;
 }
-body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-label:has(+ td.ts-form-value-has-leading) {
-	padding-<?php echo $right; ?>: 36px;
-}
+/* Removed: the label used to be padded when its field owned an icon, which moved
+   the label instead of giving the icon a slot -- the per-field offset this pass
+   replaces. The adornment column below reserves the space on every row. */
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
 	position: relative;
 	gap: 8px;
@@ -1993,32 +2007,39 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
 /* Every paired value reserves the same leading-icon and trailing-help slots.
    Controls therefore share an x-axis whether a particular field has zero, one,
    or both adornments. The native icons stay associated with their value cell. */
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value {
+/* Applies to EVERY value cell, paired or full width: the adornment column exists
+   whether or not the field has an icon, so the control's x never depends on it. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
 	display: grid;
-	grid-template-columns: 20px minmax(0, 1fr) 16px;
-	column-gap: 8px;
+	grid-template-columns: var(--tsf-adorn) minmax(0, 1fr) 16px;
+	column-gap: 0;
 	align-items: center;
 }
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > *:not([type="hidden"]):not(.ts-form-leading-icon):not(.ts-form-help):not(.pictofixedwidth):not(img) {
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > *:not([type="hidden"]):not(.ts-form-leading-icon):not(.ts-form-help):not(.pictofixedwidth):not(img) {
 	grid-column: 2;
 	min-width: 0;
 }
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > span.ts-form-leading-icon,
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > span.pictofixedwidth:first-child,
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > img.pictofixedwidth:first-child {
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.ts-form-leading-icon,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child {
 	position: static;
 	grid-column: 1;
 	grid-row: 1;
 	justify-self: center;
+	width: auto;
+	height: auto;
+	margin: 0;
+	color: var(--c-muted);
 }
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-value > .ts-form-help {
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
 	position: static;
 	grid-column: 3;
 	grid-row: 1;
 	justify-self: center;
-}
-body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td.ts-form-label:has(+ td.ts-form-value-has-leading) {
-	padding-<?php echo $right; ?>: 12px;
+	width: auto;
+	height: auto;
+	margin: 0;
+	color: var(--c-muted);
 }
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea),
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(.select2-selection--multiple) {
@@ -2031,35 +2052,9 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea) td
 /* Components' generic form alignment reserves an absolute icon gutter. The
    structured grid has a real flex gap, so the original pictogram can return to
    normal flow and remain predictably attached to its control. */
-body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.ts-form-leading-icon,
-body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
-body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child {
-	position: absolute;
-	<?php echo $left; ?>: -28px;
-	top: 0;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 20px;
-	width: 20px;
-	height: 40px;
-	margin: 0;
-	text-align: center;
-	color: var(--c-muted);
-}
-body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
-	position: absolute;
-	<?php echo $right; ?>: -20px;
-	top: 0;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 16px;
-	width: 16px;
-	height: 40px;
-	margin: 0;
-	color: var(--c-muted);
-}
+/* Removed: full-width rows used to hang their icon in an absolute gutter at
+   -28px while paired rows kept theirs in flow, which is why the two row types
+   produced different control axes. Both now use the adornment column above. */
 
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]),
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > textarea,
@@ -2759,4 +2754,136 @@ div.box-flex-container.kanban.ts-command-kanban .info-box-content {
 	div.box-flex-container.kanban.ts-command-kanban { grid-template-columns: minmax(0, 1fr); gap: 12px; }
 	div.box-flex-container.kanban.ts-command-kanban .ts-kanban-card { min-height: 164px; padding: 14px; }
 	.ts-kanban-status { right: 14px; bottom: 12px; }
+}
+
+
+/* ts-form-value > *:first-child leading space
+   Some values wrap their control in a span that carries Dolibarr's own spacing
+   utilities (paddinglarge, marginrightonly, ...). That padding sat before the
+   control and pushed it off the column the grid had just established -- the
+   radio group and the incoterm select were both doing this. The grid owns the
+   leading space now, so the first wrapper inside a value cell contributes none.
+   Trailing spacing is left alone: it separates a control from what follows it. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > *:first-child {
+	margin-<?php echo $left; ?>: 0;
+	padding-<?php echo $left; ?>: 0;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span:first-child > *:first-child {
+	margin-<?php echo $left; ?>: 0;
+}
+
+
+/* deterministic value-cell columns
+   The value cell has to resolve to exactly three columns for every field, or the
+   control's x depends on what the field happens to contain. Two ways it was not:
+   a 24px column-gap inherited from the row pushed controls to cell+26+24, and a
+   cell whose children auto-placed produced a 335px first column instead of the
+   26px adornment slot.
+
+   So the template and gap are stated here, and every child is assigned a column
+   explicitly: adornments to 1, help to 3, and everything else -- including the
+   hidden originals select2 leaves behind -- to 2. Nothing is left to auto
+   placement, which is what made this field-dependent. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value {
+	grid-template-columns: var(--tsf-adorn) minmax(0, 1fr) 16px;
+	column-gap: 0;
+	gap: 0;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > * {
+	grid-column: 2;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.ts-form-leading-icon,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span.pictofixedwidth:first-child,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > img.pictofixedwidth:first-child {
+	grid-column: 1;
+	grid-row: 1;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
+	grid-column: 3;
+	grid-row: 1;
+}
+
+
+/* compact enum selects
+   Sized by what the control is for, not by how much room happens to be free. A
+   short fixed list gets a readable width and stops; a lookup may use the value
+   area. Both are capped so neither stretches across the whole form. */
+/* The generic control rule above sets every control to the full value width from
+   a deeper selector, so the enum cap has to be stated at the same depth to be
+   seen at all -- otherwise a seven-item list keeps stretching the whole form. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > select.ts-enum,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-enum-c,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span:has(> .ts-enum-c) {
+	width: min(100%, 340px) !important;
+	max-width: 340px !important;
+	justify-self: start;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > select.ts-lookup,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-lookup-c {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+/* A menu for a handful of values should be the height of those values. */
+.select2-container--open .select2-dropdown {
+	border-radius: var(--r);
+	border: 1px solid var(--c-border);
+	box-shadow: var(--sh-md);
+	overflow: hidden;
+}
+.select2-container--open .select2-results__option {
+	min-height: 36px;
+	display: flex;
+	align-items: center;
+	font-size: 0.8125rem;
+}
+/* Height follows the content and only scrolls once there is genuinely more than
+   fits; a short list therefore shows no scrollbar and no empty panel. */
+.select2-container--open .select2-results > .select2-results__options {
+	max-height: 320px;
+}
+/* No search box on a list short enough to read at a glance. select2 still renders
+   the field for a single select, so it is removed for the compact ones only. */
+.select2-container--open.ts-enum-open .select2-search--dropdown { display: none; }
+
+
+/* enum width driven by the cell
+   select2 replaces the control with its own container and sizes it inline, so
+   tagging that container from JS meant the width depended on the class landing
+   on the right node. The cell already knows what kind of field it holds -- the
+   original select is still in there -- so the cap is driven from the cell
+   instead. One rule, no class plumbing, and it cannot drift out of sync. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> select.ts-enum) > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(select.ts-enum) > .select2-container {
+	width: min(100%, 340px) !important;
+	max-width: 340px !important;
+	justify-self: start;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(select.ts-lookup) > .select2-container {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+
+/* paired rows stack below
+   Between roughly 700 and 1100px the two halves of a paired row were each too
+   narrow to keep the label and control on one line, so labels wrapped by
+   different amounts and the controls stopped sharing an axis -- six of them at
+   900px. Rather than let the row degrade gradually, the right half moves under
+   the left at a stated width. Both halves then use the single-column template
+   and every control on the form is back on one axis. */
+@media only screen and (max-width: 1100px) {
+	body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired {
+		grid-template-columns: var(--tsf-label) minmax(0, 1fr);
+		/* The centre gap belongs to a two-up row. Once the halves are stacked it is
+		   just 24px of indent that put these controls off the axis the full-width
+		   rows were already using. */
+		column-gap: 0;
+	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td:nth-child(3) {
+		grid-column: 1;
+	}
+	body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td:nth-child(4) {
+		grid-column: 2;
+	}
 }
