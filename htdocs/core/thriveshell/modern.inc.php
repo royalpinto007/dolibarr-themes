@@ -946,6 +946,26 @@ div.pagination a.btnTitle:has(.fa-plus) {
    footer share a single card edge. Wide tables scroll inside that card only.
    ========================================================================== */
 .ts-list-composition { display: grid; gap: var(--sp-3); min-width: 0; }
+.ts-list-composition tr.ts-filter-row-extracted { display: none !important; }
+body.ts-command-record-secondary .ts-list-composition { gap: 16px; }
+body.ts-command-record-secondary .ts-list-composition .ts-filter-surface { padding: 12px; }
+body.ts-command-record-secondary .ts-list-composition .ts-filter-surface .ts-quick-search {
+	flex: 1 1 340px;
+	width: min(100%, 380px);
+	max-width: 380px;
+}
+body.ts-command-record-secondary .ts-list-composition .ts-filter-surface .ts-quick-search-input {
+	width: 100% !important;
+	max-width: none !important;
+}
+body.ts-command-record-secondary .ts-column-filters-panel {
+	left: 0;
+	right: auto;
+	width: min(680px, calc(100vw - var(--nav-w) - 48px));
+}
+body.ts-command-record-secondary .ts-list-card { overflow: visible; }
+body.ts-command-record-secondary .ts-list-card .ts-record-tab-surface { margin: 0 !important; }
+body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radius: 0 0 10px 10px; }
 .ts-list-composition .ts-filter-surface {
 	margin: 0;
 	padding: var(--sp-3);

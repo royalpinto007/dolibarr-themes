@@ -440,11 +440,10 @@
 	   identity, prioritized tabs and overview-card refinements. Existing links and
 	   controls are always moved or annotated, never recreated. */
 	function polishThirdPartyOverview() {
-		var params = new URLSearchParams(window.location.search);
-		if (!/\/societe\/card\.php$/.test(window.location.pathname) || !(params.get('socid') || params.get('id'))) { return false; }
+		if (!document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
 		var banner = document.querySelector('.ts-thirdparty-record-shell > .ts-entity-banner');
 		var groups = document.querySelector('.ts-thirdparty-groups');
-		if (!banner || !groups || document.body.classList.contains('ts-thirdparty-overview')) { return false; }
+		if (!banner || document.body.classList.contains('ts-thirdparty-overview')) { return false; }
 		document.body.classList.add('ts-thirdparty-overview');
 
 		var identity = banner.querySelector('.ts-entity-identity');
@@ -539,6 +538,11 @@
 			var tabIcon = overviewTab.querySelector('[title="Third party"]');
 			if (tabIcon) { tabIcon.setAttribute('title', 'Overview'); }
 		}
+
+		/* Secondary tabs share the permanent identity/header/tab shell but do not
+		   publish the overview's semantic field groups. Stop after shell refinement;
+		   their content adapter remains authoritative below the tabs. */
+		if (!groups) { return true; }
 
 		/* Surface the translated nature already carried by Dolibarr's title instead
 		   of the terse C/P/V glyph, without changing the destination anchor. */
@@ -1794,6 +1798,17 @@
 		if (!list || !form) { return false; }
 
 		var filter = form.querySelector('div.liste_titre.liste_titre_bydiv');
+		var embeddedFilterRow = null;
+		if (!filter && document.body.classList.contains('ts-thirdparty-record-context')) {
+			embeddedFilterRow = Array.from(list.rows || []).find(function (row, index) {
+				return index < 2 && row.querySelector('input:not([type="hidden"]), select, button[name="button_search_x"]');
+			});
+			if (embeddedFilterRow) {
+				filter = document.createElement('div');
+				filter.className = 'liste_titre liste_titre_bydiv ts-secondary-filter-source';
+				form.insertBefore(filter, listWrap);
+			}
+		}
 		var composition = document.createElement('section');
 		composition.className = 'ts-list-composition';
 		composition.setAttribute('aria-label', (title.textContent || '').replace(/\s+/g, ' ').trim());
@@ -1806,7 +1821,7 @@
 			   the remaining per-column controls behind one disclosure. Every original
 			   form control is moved intact, so names, values and submission behaviour
 			   remain Dolibarr's own. */
-			var filterRow = list.querySelector('tr.liste_titre_filter');
+			var filterRow = list.querySelector('tr.liste_titre_filter') || embeddedFilterRow;
 			if (filterRow) {
 				var headingRow = filterRow.nextElementSibling;
 				var quick = document.createElement('div');
@@ -1815,10 +1830,11 @@
 				searchIcon.className = 'fas fa-search';
 				searchIcon.setAttribute('aria-hidden', 'true');
 				quick.appendChild(searchIcon);
-				var nameSearch = filterRow.querySelector('input[name="search_nom"]');
+				var nameSearch = filterRow.querySelector('input[name="search_nom"], input[name="search_name"], input[type="text"]');
 				if (nameSearch) {
 					nameSearch.classList.add('ts-quick-search-input');
-					nameSearch.setAttribute('placeholder', 'Search third parties…');
+					nameSearch.setAttribute('placeholder', document.body.classList.contains('ts-thirdparty-record-context') ? 'Search contacts/addresses…' : 'Search third parties…');
+					nameSearch.classList.remove('maxwidth50', 'maxwidth75', 'maxwidth100', 'maxwidth150');
 					quick.appendChild(nameSearch);
 				}
 				var clearFilters = null;
@@ -1834,6 +1850,15 @@
 						quick.appendChild(button);
 					}
 				});
+				if (nameSearch) {
+					nameSearch.addEventListener('keydown', function (event) {
+						if (event.key !== 'Enter' || event.isComposing) { return; }
+						var submit = quick.querySelector('button[name="button_search_x"]');
+						if (!submit) { return; }
+						event.preventDefault();
+						submit.click();
+					});
+				}
 				if (nameSearch) { filter.insertBefore(quick, filter.firstChild); }
 				/* The first row of Dolibarr's list filter provides the promoted toolbar
 				   controls in display order. Add structural hooks without depending on
@@ -1854,8 +1879,9 @@
 				disclosure.insertBefore(filterGlyph, disclosure.firstChild);
 				var panel = document.createElement('div');
 				panel.className = 'ts-column-filters-panel';
+				var nameCell = nameSearch && nameSearch.closest('td, th');
 				Array.from(filterRow.cells).forEach(function (cell, index) {
-					if (index < 2) { return; }
+					if (index === 0 || cell === nameCell) { return; }
 					var movable = Array.from(cell.children).filter(function (child) { return child.tagName !== 'SCRIPT'; });
 					if (!movable.some(function (child) { return child.matches('input, select, .select2') || child.querySelector('input, select'); })) { return; }
 					var control = document.createElement('label');
@@ -1904,6 +1930,7 @@
 					}
 					panel.appendChild(control);
 				});
+				filterRow.classList.add('ts-filter-row-extracted');
 				if (panel.children.length) {
 					details.appendChild(disclosure);
 					details.appendChild(panel);
