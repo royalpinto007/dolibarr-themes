@@ -4461,6 +4461,11 @@ body.ts-command-form-page .fiche {
 body.ts-command-form-page .fiche > table.table-fiche-title,
 body.ts-command-form-page .fiche > div > table.table-fiche-title {
 	margin: 0 0 16px !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
 }
 body.ts-command-form-page .fiche div.titre {
 	font-size: 26px;
@@ -4485,6 +4490,67 @@ body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actio
 	gap: 16px;
 	min-width: 0;
 }
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-height: 104px;
+	padding: 20px 24px !important;
+	border: 0 !important;
+	background: #fff !important;
+	box-sizing: border-box;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom > div:first-child,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder > div:first-child,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef > div:first-child {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .divphotoref,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .divphotoref {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	margin-right: 16px;
+	border-radius: 10px;
+	background: #f0edff;
+	color: #5846e8;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid {
+	display: inline-grid;
+	grid-template-columns: auto auto;
+	align-items: center;
+	column-gap: 10px;
+	row-gap: 5px;
+	min-width: 0;
+	font-size: 24px;
+	font-weight: 680;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid > .refidno,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid > .refidno {
+	grid-column: 1 / -1;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.55;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid > .statusref,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid > .statusref {
+	grid-column: 2;
+	grid-row: 1;
+	margin: 0;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .paginationref,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .paginationref {
+	position: static !important;
+	flex: 0 0 auto;
+	float: none !important;
+	margin-left: auto;
+}
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions > .refid,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions > .ts-entity-identity {
 	flex: 1 1 320px;
@@ -4504,6 +4570,51 @@ body.ts-command-record-page div.tabs[data-ts-placed="1"] {
 body.ts-command-record-page div.tabs[data-ts-placed="1"] > a.tab {
 	flex: 0 0 auto;
 }
+body.ts-command-record-page div.tabs[data-ts-placed="1"] {
+	min-height: 52px;
+	align-items: center;
+	border-top: 1px solid #eef0f4 !important;
+}
+body.ts-command-record-page div.tabs[data-ts-placed="1"] .tabsElem,
+body.ts-command-record-page div.tabs[data-ts-placed="1"] .tab { min-height: 50px; }
+body.ts-command-record-page div.tabs[data-ts-placed="1"] a.tab {
+	display: inline-flex !important;
+	align-items: center;
+	height: 50px;
+	padding-inline: 14px !important;
+}
+body.ts-command-record-page div.fichehalfleft,
+body.ts-command-record-page div.fichehalfright {
+	padding: 14px 16px;
+}
+body.ts-command-record-page div.fichehalfleft table td,
+body.ts-command-record-page div.fichehalfright table td {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom-color: #f1f3f6 !important;
+}
+body.ts-command-record-secondary .ts-record-tab-native-surface {
+	margin: 16px 0 0 !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 12px !important;
+	background: #fff !important;
+	box-shadow: 0 4px 14px rgba(15, 23, 42, .04) !important;
+	overflow: auto;
+}
+body.ts-command-record-secondary form.ts-record-tab-native-surface { padding: 16px; }
+body.ts-command-record-secondary .ts-record-tab-native-surface table { margin: 0 !important; box-shadow: none !important; }
+body.ts-command-record-secondary .ts-record-tab-native-surface table td,
+body.ts-command-record-secondary .ts-record-tab-native-surface table th {
+	padding: 10px 12px !important;
+	border-color: #f0f2f5 !important;
+}
+body.ts-command-record-secondary .ts-record-tab-native-surface tr.liste_titre td,
+body.ts-command-record-secondary .ts-record-tab-native-surface tr.liste_titre th {
+	height: 44px;
+	background: #f7f9fc !important;
+	font-size: 12px;
+	font-weight: 650;
+}
 @media (max-width: 900px) {
 	body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions { align-items: flex-start; }
 	body.ts-command-record-page .ts-header-actions { flex-basis: 100%; max-width: 100%; }
@@ -4519,6 +4630,69 @@ body.ts-command-record-page div.tabs[data-ts-placed="1"] > a.tab {
 	body.ts-command-record-page .ts-header-actions div.tabsAction > .inline-block {
 		max-width: 100%;
 	}
+}
+
+/* Shared module landing dashboards -------------------------------------- */
+body.ts-command-module-index .fiche { padding: 28px 32px 48px !important; }
+body.ts-command-module-index .fiche > table.table-fiche-title {
+	margin-bottom: 8px !important;
+	border: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+body.ts-command-module-index .fiche > table.table-fiche-title .titre,
+body.ts-command-module-index .ts-pagehead .titre { font-size: 26px; font-weight: 680; }
+body.ts-command-module-index .fiche > .opacitymedium { display: block; margin-bottom: 20px; font-size: 14px; }
+body.ts-command-module-index .ts-module-index-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	align-items: start;
+}
+body.ts-command-module-index .ts-module-index-column {
+	display: grid;
+	gap: 16px;
+	width: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+body.ts-command-module-index .ts-module-index-empty { display: none; }
+body.ts-command-module-index .ts-module-index-card {
+	width: 100%;
+	margin: 0 !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 12px !important;
+	background: #fff !important;
+	box-shadow: 0 4px 14px rgba(15, 23, 42, .04) !important;
+	overflow: hidden;
+	table-layout: auto !important;
+}
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > th,
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
+	height: 48px;
+	padding: 0 16px !important;
+	border: 0 !important;
+	border-bottom: 1px solid #e7e9ee !important;
+	background: #fff !important;
+	font-size: 13px;
+	font-weight: 650;
+	white-space: normal !important;
+	line-height: 1.35;
+}
+body.ts-command-module-index .ts-module-index-card tr:not(.liste_titre) > td {
+	height: 48px;
+	padding: 10px 16px !important;
+	border-bottom-color: #f1f3f6 !important;
+	font-size: 13px;
+}
+@media (max-width: 900px) {
+	body.ts-command-module-index .ts-module-index-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+	body.ts-command-module-index .fiche { padding: 18px 12px 36px !important; }
 }
 body.ts-command-form-page .ts-command-form-fields {
 	width: 100% !important;

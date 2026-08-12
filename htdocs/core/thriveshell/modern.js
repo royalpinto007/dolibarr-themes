@@ -176,6 +176,49 @@
 		return true;
 	}
 
+	/* Secondary record pages often use the same banner and tabs but swap the
+	   overview content for a native form/table. Mark only that content boundary so
+	   it receives the same surface language without changing module semantics. */
+	function polishSharedRecordTabContent() {
+		if (!document.body.classList.contains('ts-command-record-page')) { return false; }
+		var tabs = document.querySelector('div.tabs[data-ts-placed="1"]');
+		var active = tabs && tabs.querySelector('.tabsElemActive, .tabactive');
+		if (!tabs || !active) { return false; }
+		var entries = Array.from(tabs.querySelectorAll(':scope > .tabsElem'));
+		if (entries.length && entries[0].contains(active)) { return false; }
+		document.body.classList.add('ts-command-record-secondary');
+		var card = tabs.closest('.tabBar');
+		var node = card && card.nextElementSibling;
+		while (node) {
+			if (node.matches('br, .underbanner, .underrefbanner') || !(node.textContent || '').trim()) {
+				node = node.nextElementSibling;
+				continue;
+			}
+			if (node.matches('form, .div-table-responsive, .div-table-responsive-no-min, table.border, table.noborder')) {
+				node.classList.add('ts-record-tab-native-surface');
+			}
+			node = node.nextElementSibling;
+		}
+		return true;
+	}
+
+	/* Standard module index pages reuse the same two-column dashboard boxes. The
+	   Home and Third Party dashboards have richer adapters and remain excluded. */
+	function polishSharedModuleIndex() {
+		if (!/(^|\/)index\.php$/.test(window.location.pathname)) { return false; }
+		if (document.body.classList.contains('ts-command-dashboard') || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
+		var layout = document.querySelector('.fiche > .twocolumns, .fiche .fichecenter > .twocolumns');
+		if (!layout) { return false; }
+		document.body.classList.add('ts-command-module-index');
+		layout.classList.add('ts-module-index-grid');
+		layout.querySelectorAll(':scope > .fichehalfleft, :scope > .fichehalfright, :scope > .boxhalfleft, :scope > .boxhalfright').forEach(function (column) {
+			column.classList.add('ts-module-index-column');
+			if (!(column.textContent || '').replace(/\s+/g, '').length) { column.classList.add('ts-module-index-empty'); }
+			column.querySelectorAll('table.noborder, table.border').forEach(function (table) { table.classList.add('ts-module-index-card'); });
+		});
+		return true;
+	}
+
 	/* The companion module publishes translated labels and canonical field keys as
 	   JSON. Annotation is the only label-aware step; layout below consumes stable
 	   data-field/data-group attributes and never guesses from visible text. */
@@ -2539,6 +2582,8 @@
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
+		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
+		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
