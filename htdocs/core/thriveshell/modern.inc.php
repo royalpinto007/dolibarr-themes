@@ -2151,7 +2151,7 @@ form.ts-modern-form table.ts-modern-form-table tr.ts-form-row {
 	box-sizing: border-box;
 	padding: 12px 0;
 	border: 0;
-	border-bottom: 1px solid #f6f7fa;
+	border-bottom: 0;
 	background: transparent;
 }
 form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-full {
@@ -4731,7 +4731,7 @@ body.ts-command-form-page .ts-command-form-fields > tbody > tr > td {
 	padding-top: 8px !important;
 	padding-bottom: 8px !important;
 	border: 0 !important;
-	border-bottom: 1px solid #f1f3f6 !important;
+	border-bottom: 0 !important;
 	background: transparent !important;
 	font-size: 13px;
 	vertical-align: middle;
