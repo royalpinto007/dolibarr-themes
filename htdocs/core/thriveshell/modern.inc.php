@@ -5163,17 +5163,35 @@ body.ts-thirdparty-overview .ts-field-group-title {
 	font-size: 16px;
 }
 body.ts-thirdparty-overview .ts-field-group-icon { width: 22px; font-size: 20px; }
-body.ts-thirdparty-overview .ts-field-group table.tableforfield { flex: 0 0 auto; padding: 10px 20px 16px; }
-body.ts-thirdparty-overview .ts-field-group table.tableforfield td {
+body.ts-thirdparty-overview .ts-field-group > table.tableforfield {
+	flex: 0 0 auto;
+	width: calc(100% - 40px) !important;
+	margin: 10px 20px 16px !important;
+	padding: 0;
+	table-layout: fixed;
+}
+body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td {
 	height: 31px;
-	padding: 5px 2px;
+	padding: 6px 0;
 	border: 0 !important;
 	font-size: 13px;
+	line-height: 1.4;
+	vertical-align: top;
 }
-body.ts-thirdparty-overview .ts-field-group table.tableforfield tr,
-body.ts-thirdparty-overview .ts-field-group table.tableforfield tr + tr { border: 0 !important; }
-body.ts-thirdparty-overview .ts-field-group table.tableforfield td:first-child { width: 62%; color: #273449; font-weight: 550; }
-body.ts-thirdparty-overview .ts-field-group table.tableforfield td:last-child { color: #526176; font-size: 13.5px; }
+body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr,
+body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr + tr { border: 0 !important; }
+body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td:first-child {
+	width: 56%;
+	padding-right: 18px;
+	color: #273449;
+	font-weight: 550;
+}
+body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td:last-child {
+	width: 44%;
+	color: #526176;
+	font-size: 13.5px;
+	overflow-wrap: anywhere;
+}
 body.ts-thirdparty-overview .ts-field-group tr[data-field="nature"] a {
 	display: inline-flex;
 	align-items: center;
@@ -5186,8 +5204,13 @@ body.ts-thirdparty-overview .ts-field-group tr[data-field="nature"] a {
 	font-weight: 650;
 	text-decoration: none;
 }
-body.ts-thirdparty-overview .ts-field-group[data-group="relationships"] table { flex: 0 0 auto !important; }
-body.ts-thirdparty-overview .ts-field-group[data-group="relationships"] td { height: 62px; vertical-align: middle; }
+body.ts-thirdparty-overview .ts-field-group[data-group="relationships"] > table { flex: 0 0 auto !important; }
+body.ts-thirdparty-overview .ts-field-group[data-group="relationships"] > table > tbody > tr > td {
+	height: auto;
+	padding-top: 14px;
+	padding-bottom: 14px;
+	vertical-align: top;
+}
 body.ts-thirdparty-overview .ts-field-group[data-group="relationships"] .userimg img {
 	width: 29px !important;
 	height: 29px !important;
@@ -5277,6 +5300,10 @@ body.ts-thirdparty-overview .ts-overview-redundant-event-action { display: none 
 	body.ts-thirdparty-overview .ts-entity-identity > .refid { font-size: 21px !important; }
 	body.ts-thirdparty-overview .ts-thirdparty-groups { grid-template-columns: minmax(0, 1fr); }
 	body.ts-thirdparty-overview .ts-field-group[data-group="relationships"] { grid-column: auto; }
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield {
+		width: calc(100% - 32px) !important;
+		margin-inline: 16px !important;
+	}
 	body.ts-thirdparty-overview .ts-tabs-more-menu { right: auto; left: 0; }
 }
 
