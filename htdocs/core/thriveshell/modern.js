@@ -228,6 +228,19 @@
 				   surface without altering the table's data-column geometry. */
 				var header = table.querySelector('tr.liste_titre');
 				if (!header) { return; }
+				header.classList.add('ts-module-index-card-header');
+				var headingCell = header.querySelector('th, td');
+				if (headingCell && !headingCell.querySelector('.ts-module-index-heading-icon')) {
+					var sourceIcon = table.querySelector('tr:not(.liste_titre) [class*="fa-"]');
+					var headingIcon = document.createElement('span');
+					headingIcon.className = 'ts-module-index-heading-icon';
+					var glyph = sourceIcon ? sourceIcon.cloneNode(true) : document.createElement('span');
+					if (!sourceIcon) { glyph.className = 'fas fa-chart-pie'; }
+					glyph.removeAttribute('title');
+					glyph.removeAttribute('style');
+					headingIcon.appendChild(glyph);
+					headingCell.insertBefore(headingIcon, headingCell.firstChild);
+				}
 				var cells = Array.from(header.cells || []);
 				var meaningful = cells.filter(function (cell) { return (cell.textContent || '').replace(/\s+/g, '').length; });
 				if (meaningful.length !== 1 || cells.length < 2) { return; }
@@ -240,6 +253,58 @@
 				cells.filter(function (cell) { return cell !== meaningful[0]; }).forEach(function (cell) { cell.remove(); });
 			});
 		});
+		var pagehead = document.querySelector('.fiche > .ts-pagehead');
+		if (pagehead && !pagehead.querySelector('.ts-module-index-subtitle')) {
+			var subtitle = document.createElement('div');
+			subtitle.className = 'ts-module-index-subtitle';
+			subtitle.textContent = document.body.classList.contains('ts-products-module-index')
+				? 'Overview of products, services, warehouses and stock activity.'
+				: 'Overview of current activity and recent transactions.';
+			pagehead.appendChild(subtitle);
+		}
+		layout.querySelectorAll('.ts-module-index-card tr:not(.liste_titre)').forEach(function (row) {
+			var cells = Array.from(row.cells || []);
+			if (!cells.length || cells.some(function (cell) { return (cell.textContent || '').trim().toLowerCase() !== 'none' && (cell.textContent || '').trim(); })) { return; }
+			row.classList.add('ts-module-index-empty-row');
+			cells[0].colSpan = cells.reduce(function (sum, cell) { return sum + (cell.colSpan || 1); }, 0);
+			cells.slice(1).forEach(function (cell) { cell.remove(); });
+			var message = cells[0].textContent.trim();
+			cells[0].textContent = '';
+			var emptyIcon = document.createElement('span');
+			emptyIcon.className = 'ts-module-index-empty-icon fas fa-inbox';
+			var emptyText = document.createElement('span');
+			emptyText.textContent = message;
+			cells[0].append(emptyIcon, emptyText);
+		});
+		if (document.body.classList.contains('ts-products-module-index')) {
+			var chartCard = layout.querySelector('.ts-module-index-card .dolgraph');
+			chartCard = chartCard && chartCard.closest('.ts-module-index-card');
+			var canvas = chartCard && chartCard.querySelector('canvas');
+			var chart = canvas && window.Chart && typeof window.Chart.getChart === 'function' ? window.Chart.getChart(canvas) : null;
+			var values = chart && chart.data && chart.data.datasets && chart.data.datasets[0] && chart.data.datasets[0].data;
+			var labels = chart && chart.data && chart.data.labels;
+			if (chartCard && labels && values && !chartCard.nextElementSibling?.classList.contains('ts-product-stat-summary')) {
+				var summary = document.createElement('section');
+				summary.className = 'ts-product-stat-summary';
+				var total = values.reduce(function (sum, value) { return sum + (Number(value) || 0); }, 0);
+				var totalRow = document.createElement('div');
+				totalRow.className = 'ts-product-stat-total';
+				totalRow.innerHTML = '<span class="ts-module-index-heading-icon"><span class="fas fa-cubes"></span></span><strong>Total products and services</strong><b></b>';
+				totalRow.querySelector('b').textContent = String(total);
+				var tiles = document.createElement('div');
+				tiles.className = 'ts-product-stat-tiles';
+				labels.forEach(function (label, index) {
+					var tile = document.createElement('div');
+					tile.className = 'ts-product-stat-tile ts-product-stat-tile-' + ((index % 4) + 1);
+					var icon = document.createElement('span'); icon.className = 'fas fa-cube';
+					var copy = document.createElement('span'); copy.textContent = label;
+					var count = document.createElement('b'); count.textContent = String(values[index] || 0);
+					tile.append(icon, copy, count); tiles.appendChild(tile);
+				});
+				summary.append(totalRow, tiles);
+				chartCard.insertAdjacentElement('afterend', summary);
+			}
+		}
 		return true;
 	}
 
