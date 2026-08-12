@@ -1700,8 +1700,93 @@
 		return true;
 	}
 
+	/* Home dashboard composition. This is deliberately route and structure gated:
+	   dashboard widgets reuse generic .box/.info-box classes throughout Dolibarr,
+	   so no other module should inherit the dashboard grid or compact card layout. */
+	function polishDashboard() {
+		var summary = document.querySelector('.opened-dash-board-wrap > .box-flex-container');
+		var fiche = summary && summary.closest('.fiche');
+		if (!summary || !fiche || !/(^|\/)index\.php$/.test(window.location.pathname)) { return false; }
+		if (document.body.classList.contains('ts-command-dashboard')) { return true; }
+		document.body.classList.add('ts-command-dashboard');
+		summary.classList.add('ts-dashboard-summary-grid');
+
+		var accentFor = function (icon) {
+			var classes = icon ? icon.className : '';
+			if (/order_supplier|supplier_order|proposal_supplier/.test(classes)) { return 'rose'; }
+			if (/expensereport|supplier_proposal|handshake/.test(classes)) { return 'orange'; }
+			if (/commande|ticket|holiday|umbrella/.test(classes)) { return 'green'; }
+			if (/facture|invoice/.test(classes)) { return 'cyan'; }
+			if (/project|contract|contrat|bank|building-columns/.test(classes)) { return 'blue'; }
+			return 'violet';
+		};
+		summary.querySelectorAll(':scope > .box-flex-item').forEach(function (item) {
+			var box = item.querySelector('.info-box');
+			if (!box) { return; }
+			item.classList.add('ts-dashboard-summary-item');
+			box.classList.add('ts-dashboard-summary-card');
+			box.classList.add('ts-dashboard-accent-' + accentFor(box.querySelector('.info-box-icon i, .info-box-icon .fa, .info-box-icon .fas')));
+		});
+
+		var nativeTitle = fiche.querySelector('table.titleforhome');
+		if (nativeTitle) { nativeTitle.classList.add('ts-dashboard-native-title'); }
+		if (!fiche.querySelector('.ts-dashboard-pagehead')) {
+			var head = document.createElement('header');
+			head.className = 'ts-dashboard-pagehead';
+			var copy = document.createElement('div');
+			copy.className = 'ts-dashboard-pagehead-copy';
+			var title = document.createElement('h1');
+			title.textContent = 'Home';
+			var subtitle = document.createElement('p');
+			var userNode = document.querySelector('.atoploginusername, #topmenu-login-dropdown .dropdown-toggle');
+			var userName = userNode && (userNode.textContent || '').trim();
+			subtitle.textContent = 'Welcome back, ' + (userName || 'admin') + "! Here's what's happening with your business.";
+			copy.appendChild(title);
+			copy.appendChild(subtitle);
+			head.appendChild(copy);
+
+			var customize = document.createElement('button');
+			customize.type = 'button';
+			customize.className = 'ts-dashboard-customize';
+			customize.setAttribute('aria-pressed', 'false');
+			customize.innerHTML = '<span class="fas fa-cog" aria-hidden="true"></span><span>Customize</span>';
+			customize.addEventListener('click', function () {
+				var active = document.body.classList.toggle('ts-dashboard-customizing');
+				customize.setAttribute('aria-pressed', active ? 'true' : 'false');
+				var combo = document.getElementById('boxcombo');
+				if (combo) {
+					combo.style.display = active ? '' : 'none';
+					if (active) { combo.focus(); }
+				}
+			});
+			head.appendChild(customize);
+			fiche.insertBefore(head, nativeTitle || fiche.firstChild);
+		}
+
+		var left = document.getElementById('boxhalfleft');
+		var right = document.getElementById('boxhalfright');
+		if (left && right && left.parentElement === right.parentElement) {
+			var lower = document.createElement('section');
+			lower.className = 'ts-dashboard-lower-grid';
+			left.parentElement.insertBefore(lower, left);
+			lower.appendChild(left);
+			lower.appendChild(right);
+			[left, right].forEach(function (column) {
+				column.querySelectorAll(':scope > .box').forEach(function (widget) {
+					widget.classList.add('ts-dashboard-widget');
+					var heading = widget.querySelector('.box_titre');
+					var label = heading ? (heading.textContent || '').trim() : '';
+					if (/customer invoices/i.test(label)) { widget.classList.add('ts-dashboard-invoices'); }
+					if (/prospects/i.test(label)) { widget.classList.add('ts-dashboard-prospects'); }
+				});
+			});
+		}
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
+		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }

@@ -3312,3 +3312,276 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > 
 	grid-row: 1;
 	justify-self: end;
 }
+
+/* COMMAND Home dashboard --------------------------------------------------
+   Route-gated by modern.js. Dashboard classes such as .box and .info-box are
+   shared by many Dolibarr pages, so every rule remains below this body class. */
+body.ts-command-dashboard .fiche {
+	background: #f7f8fa;
+	padding: 20px !important;
+}
+body.ts-command-dashboard .ts-dashboard-native-title {
+	display: none !important;
+}
+body.ts-command-dashboard .ts-dashboard-pagehead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	margin: 0 0 16px;
+}
+body.ts-command-dashboard .ts-dashboard-pagehead h1 {
+	margin: 0;
+	color: #111827;
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+body.ts-command-dashboard .ts-dashboard-pagehead p {
+	margin: 5px 0 0;
+	color: #64748b;
+	font-size: 14px;
+	line-height: 1.4;
+}
+body.ts-command-dashboard .ts-dashboard-customize {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 9px;
+	min-height: 40px;
+	padding: 0 14px;
+	border: 1px solid #e0e6ef;
+	border-radius: 8px;
+	background: #fff;
+	color: #475569;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+}
+body.ts-command-dashboard .ts-dashboard-customize:hover,
+body.ts-command-dashboard .ts-dashboard-customize[aria-pressed="true"] {
+	border-color: #c7d2fe;
+	background: #f5f3ff;
+	color: #4f46e5;
+}
+body.ts-command-dashboard #boxcombo {
+	margin: 0 0 16px auto;
+	min-height: 40px;
+}
+body.ts-command-dashboard .ts-dashboard-summary-grid {
+	display: grid !important;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 16px !important;
+	margin: 0 0 16px !important;
+	width: 100% !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-grid > .ts-dashboard-summary-item {
+	width: auto !important;
+	min-width: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-item > .box-flex-item-with-margin {
+	height: 100%;
+	margin: 0 !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card {
+	display: grid !important;
+	grid-template-columns: 44px minmax(0, 1fr);
+	align-items: start !important;
+	column-gap: 14px;
+	min-height: 112px !important;
+	height: 100% !important;
+	padding: 16px !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 11px !important;
+	background: #fff !important;
+	box-shadow: 0 3px 12px rgba(15, 23, 42, .035) !important;
+	overflow: hidden;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	grid-column: 1;
+	grid-row: 1;
+	width: 44px !important;
+	height: 44px !important;
+	min-width: 44px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 10px !important;
+	box-shadow: none !important;
+	font-size: 20px !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon i,
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon span {
+	font-size: 20px !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-violet .info-box-icon { background: #f1edff !important; color: #7047eb !important; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-blue .info-box-icon { background: #eaf1ff !important; color: #3474e8 !important; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-green .info-box-icon { background: #eaf8ee !important; color: #24a65a !important; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-cyan .info-box-icon { background: #e8f7fb !important; color: #1597b8 !important; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-orange .info-box-icon { background: #fff1e6 !important; color: #e66a13 !important; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-rose .info-box-icon { background: #fdebf5 !important; color: #d94b91 !important; }
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-content {
+	display: flex !important;
+	flex-direction: column;
+	justify-content: flex-start !important;
+	min-width: 0;
+	min-height: 0 !important;
+	padding: 1px 0 0 !important;
+	text-align: left !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-title {
+	margin: 0 0 7px !important;
+	color: #64748b !important;
+	font-size: 11px !important;
+	font-weight: 700 !important;
+	line-height: 1.25 !important;
+	letter-spacing: .035em;
+	text-transform: uppercase;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-number {
+	margin: 0 !important;
+	color: #111827 !important;
+	font-size: 21px !important;
+	font-weight: 650 !important;
+	line-height: 1.15 !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .progress-description,
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-lines,
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-line {
+	margin: 0 !important;
+	padding: 0 !important;
+	color: #64748b;
+	font-size: 13px !important;
+	line-height: 1.55 !important;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-line {
+	display: flex !important;
+	align-items: center;
+	gap: 6px;
+	min-height: 21px;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card a {
+	font-size: 13px !important;
+	font-weight: 500;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card .badge {
+	min-width: 22px;
+	padding: 2px 7px;
+	border-radius: 999px;
+}
+
+body.ts-command-dashboard .ts-dashboard-lower-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	align-items: start;
+	clear: both;
+}
+body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfleft,
+body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
+	float: none !important;
+	width: auto !important;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+body.ts-command-dashboard .ts-dashboard-widget {
+	margin: 0 0 16px !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 11px !important;
+	background: #fff !important;
+	box-shadow: 0 3px 12px rgba(15, 23, 42, .035) !important;
+	overflow: hidden;
+}
+body.ts-command-dashboard .ts-dashboard-widget > table.boxtable {
+	margin: 0 !important;
+	border: 0 !important;
+	border-collapse: collapse !important;
+	background: #fff !important;
+}
+body.ts-command-dashboard .ts-dashboard-widget tr.box_titre,
+body.ts-command-dashboard .ts-dashboard-widget tr.box_titre > th {
+	height: 48px;
+	padding: 0 14px !important;
+	border: 0 !important;
+	border-bottom: 1px solid #edf0f4 !important;
+	background: #fff !important;
+	color: #1e293b !important;
+	font-size: 13px !important;
+	font-weight: 650 !important;
+	text-transform: none !important;
+}
+body.ts-command-dashboard .ts-dashboard-widget tr.oddeven > td,
+body.ts-command-dashboard .ts-dashboard-widget table.boxtable > tbody > tr:not(.box_titre) > td {
+	height: 46px;
+	padding: 10px 14px !important;
+	border: 0 !important;
+	border-bottom: 1px solid #f0f2f5 !important;
+	background: #fff !important;
+	font-size: 13px !important;
+}
+body.ts-command-dashboard .ts-dashboard-widget tr.oddeven:hover > td {
+	background: #fafbff !important;
+}
+body.ts-command-dashboard .ts-dashboard-widget .boxhandle,
+body.ts-command-dashboard .ts-dashboard-widget .boxclose {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	margin-left: 4px !important;
+	border-radius: 7px;
+}
+body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-widget .boxhandle,
+body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-widget .boxclose {
+	display: none !important;
+}
+body.ts-command-dashboard .ts-dashboard-invoices table.boxtable > tbody > tr:not(.box_titre) > td.center {
+	height: 150px;
+	padding: 28px !important;
+	color: #64748b;
+	font-size: 14px !important;
+}
+body.ts-command-dashboard .ts-dashboard-invoices table.boxtable > tbody > tr:not(.box_titre) > td.center::before {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	margin: 0 auto 12px;
+	border-radius: 50%;
+	background: #f1edff;
+	color: #7047eb;
+	font-family: "Font Awesome 5 Free";
+	font-size: 20px;
+	font-weight: 900;
+	content: "\f571";
+}
+body.ts-command-dashboard .ts-dashboard-prospects table.boxtable > tbody > tr:not(.box_titre) > td:first-child {
+	font-weight: 500;
+}
+
+@media (max-width: 1350px) {
+	body.ts-command-dashboard .ts-dashboard-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 980px) {
+	body.ts-command-dashboard .fiche { padding: 16px !important; }
+	body.ts-command-dashboard .ts-dashboard-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	body.ts-command-dashboard .ts-dashboard-lower-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+	body.ts-command-dashboard .fiche { padding: 12px !important; }
+	body.ts-command-dashboard .ts-dashboard-pagehead { align-items: flex-start; }
+	body.ts-command-dashboard .ts-dashboard-pagehead h1 { font-size: 24px; }
+	body.ts-command-dashboard .ts-dashboard-pagehead p { font-size: 13px; }
+	body.ts-command-dashboard .ts-dashboard-customize { flex: 0 0 auto; }
+	body.ts-command-dashboard .ts-dashboard-summary-grid { grid-template-columns: minmax(0, 1fr); gap: 12px !important; }
+	body.ts-command-dashboard .ts-dashboard-summary-card { min-height: 108px !important; }
+}
