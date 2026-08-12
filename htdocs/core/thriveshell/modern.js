@@ -376,7 +376,10 @@
 		var identity = banner.querySelector('.ts-entity-identity');
 		var title = identity && identity.querySelector(':scope > .refid');
 		var photo = identity && identity.querySelector(':scope > .divphotoref');
-		if (photo) { photo.classList.add('ts-overview-photo-source'); }
+		if (photo) {
+			photo.classList.add('ts-overview-photo-source');
+			if (photo.querySelector('img')) { identity.classList.add('ts-overview-has-logo'); }
+		}
 		if (identity && !identity.querySelector('.ts-overview-icon-tile')) {
 			var tile = document.createElement('span');
 			tile.className = 'ts-overview-icon-tile fas fa-building';
@@ -405,6 +408,11 @@
 				address.classList.add('ts-overview-location');
 				title.appendChild(address);
 			}
+			var email = addressBlock && addressBlock.querySelector('a[href^="mailto:"]');
+			if (email) {
+				email.classList.add('ts-overview-email');
+				title.appendChild(email);
+			}
 			title.querySelectorAll(':scope > .refidno:not(.ts-overview-location)').forEach(function (node) {
 				node.classList.add('ts-overview-secondary-hidden');
 			});
@@ -413,6 +421,16 @@
 		/* Make the existing disclosure behave like a conventional menu and give the
 		   original controls a stable icon slot without changing their handlers. */
 		var actions = banner.querySelector('.ts-more-actions');
+		var editAction = banner.querySelector('.ts-record-primary');
+		var sendAction = banner.querySelector('.ts-record-secondary');
+		[[sendAction, 'far fa-envelope'], [editAction, 'fas fa-pencil-alt']].forEach(function (entry) {
+			var control = entry[0];
+			if (!control || control.querySelector('.ts-overview-button-icon')) { return; }
+			var icon = document.createElement('span');
+			icon.className = 'ts-overview-button-icon ' + entry[1];
+			icon.setAttribute('aria-hidden', 'true');
+			control.insertBefore(icon, control.firstChild);
+		});
 		if (actions) {
 			var actionIcons = {
 				'action-clone': 'fa-copy',
@@ -447,30 +465,6 @@
 			var tabIcon = overviewTab.querySelector('[title="Third party"]');
 			if (tabIcon) { tabIcon.setAttribute('title', 'Overview'); }
 		}
-		if (tabs && !tabs.querySelector('.ts-tabs-more')) {
-			var trailing = ['margin', 'note', 'document', 'agenda'].map(function (id) {
-				var link = tabs.querySelector('a#' + id);
-				return link && link.closest('.tabsElem');
-			}).filter(Boolean);
-			if (trailing.length) {
-				var more = document.createElement('details');
-				more.className = 'ts-tabs-more';
-				var moreTrigger = document.createElement('summary');
-				moreTrigger.innerHTML = 'More <span class="fas fa-chevron-down" aria-hidden="true"></span>';
-				var moreMenu = document.createElement('div');
-				moreMenu.className = 'ts-tabs-more-menu';
-				trailing.forEach(function (item) { moreMenu.appendChild(item); });
-				more.appendChild(moreTrigger);
-				more.appendChild(moreMenu);
-				tabs.appendChild(more);
-				document.addEventListener('click', function (event) {
-					if (more.open && !more.contains(event.target)) { more.removeAttribute('open'); }
-				});
-				document.addEventListener('keydown', function (event) {
-					if (event.key === 'Escape' && more.open) { more.removeAttribute('open'); moreTrigger.focus(); }
-				});
-			}
-		}
 
 		/* Surface the translated nature already carried by Dolibarr's title instead
 		   of the terse C/P/V glyph, without changing the destination anchor. */
@@ -488,13 +482,7 @@
 			var conversation = events.querySelector('a.btnTitle[title="Full conversation"]');
 			if (conversation) { conversation.classList.add('ts-overview-redundant-event-action'); }
 			var createEvent = events.querySelector('a.btnTitle[title="Create event"]');
-			if (createEvent && !createEvent.querySelector('.ts-section-action-label')) {
-				var createLabel = document.createElement('span');
-				createLabel.className = 'ts-section-action-label';
-				createLabel.textContent = 'Create event';
-				createEvent.appendChild(createLabel);
-				createEvent.classList.add('ts-section-labelled-action', 'ts-overview-create-event');
-			}
+			if (createEvent) { createEvent.classList.add('ts-overview-redundant-event-action'); }
 		}
 		return true;
 	}
