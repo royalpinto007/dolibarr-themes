@@ -4635,6 +4635,100 @@ body.ts-command-record-secondary .ts-record-tab-native-surface tr.liste_titre th
 	font-size: 12px;
 	font-weight: 650;
 }
+
+/* Auxiliary Third Party tabs share one calm context summary instead of leaving
+   their record fields as loose rows on the application canvas. */
+body.ts-command-record-secondary .ts-record-context-summary {
+	margin-top: 16px;
+	padding: 8px 20px;
+	border: 1px solid var(--c-border);
+	border-radius: 12px;
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+}
+body.ts-command-record-secondary .ts-record-context-summary table { margin: 0 !important; box-shadow: none !important; }
+body.ts-command-record-secondary .ts-record-context-summary td {
+	height: 38px;
+	padding: 7px 10px !important;
+	border-bottom: 0 !important;
+}
+body.ts-command-record-secondary .ts-record-context-summary td.titlefield { width: 230px; font-weight: 600; }
+body.ts-thirdparty-notes-tab .ts-notes-card {
+	display: grid;
+	gap: 0;
+	margin-top: 16px;
+	padding: 4px 20px;
+	border: 1px solid var(--c-border) !important;
+	border-radius: 12px;
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+}
+body.ts-thirdparty-notes-tab .ts-notes-card .tagtr {
+	display: grid;
+	grid-template-columns: minmax(180px, 260px) minmax(0, 1fr);
+	min-height: 72px;
+	align-items: start;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-thirdparty-notes-tab .ts-notes-card .tagtr:last-child { border-bottom: 0; }
+body.ts-thirdparty-notes-tab .ts-notes-card .tagtd { width: auto !important; padding: 0 12px !important; border: 0 !important; }
+body.ts-thirdparty-notes-tab .ts-notes-card .editfielda {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+}
+body.ts-thirdparty-margins-tab .ts-margin-card { margin-top: 16px !important; }
+body.ts-thirdparty-margins-tab .ts-margin-card .ts-pagehead { margin-bottom: 14px; }
+body.ts-thirdparty-margins-tab .ts-margin-card .ts-pagehead .titre { font-size: 22px; }
+body.ts-thirdparty-margins-tab .ts-margin-card .div-table-responsive {
+	border: 1px solid var(--c-border);
+	border-radius: 10px;
+	overflow: auto;
+}
+body.ts-thirdparty-documents-tab .ts-documents-heading { margin-top: 16px !important; }
+body.ts-thirdparty-documents-tab .ts-documents-card {
+	margin-top: 12px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: 12px !important;
+	background: var(--c-surface) !important;
+	box-shadow: var(--sh-sm) !important;
+	overflow: hidden;
+}
+body.ts-thirdparty-documents-tab .ts-documents-card table { margin: 0 !important; box-shadow: none !important; }
+body.ts-thirdparty-documents-tab .ts-documents-card td[colspan] { min-height: 120px; }
+body.ts-thirdparty-documents-tab table.ts-documents-heading {
+	padding: 0 12px;
+	border: 1px solid var(--c-border) !important;
+	border-radius: 12px;
+	background: var(--c-surface);
+}
+
+/* Title glyphs occupy a deliberate tile rather than colliding with text. */
+.fiche > table.table-fiche-title.ts-command-title-with-icon { margin-bottom: 16px !important; }
+.fiche > table.table-fiche-title.ts-command-title-with-icon td.col-picto {
+	width: 44px !important;
+	min-width: 44px !important;
+	padding: 0 !important;
+	vertical-align: middle;
+}
+.fiche > table.table-fiche-title.ts-command-title-with-icon td.col-picto .pictotitle {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 36px !important;
+	height: 36px;
+	margin: 0 8px 0 0 !important;
+	border-radius: 9px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent) !important;
+	font-size: 16px !important;
+}
+.fiche > table.table-fiche-title.ts-command-title-with-icon td.col-title { padding-left: 8px !important; }
+.fiche > table.table-fiche-title.ts-command-title-with-icon .titre { line-height: 1.2; }
 @media (max-width: 900px) {
 	body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions { align-items: flex-start; }
 	body.ts-command-record-page .ts-header-actions { flex-basis: 100%; max-width: 100%; }
@@ -4668,6 +4762,57 @@ body.ts-command-module-index .ts-module-index-grid {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 16px;
 	align-items: start;
+}
+body.ts-command-module-index .ts-module-index-column > .div-table-responsive,
+body.ts-command-module-index .ts-module-index-column > .div-table-responsive-no-min { min-width: 0; overflow: visible; }
+body.ts-products-module-index .ts-module-index-grid { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
+body.ts-products-module-index .ts-module-index-card td.center:has(.dolgraph) { padding: 16px !important; }
+body.ts-products-module-index .ts-module-index-card .dolgraph { margin-inline: auto; }
+body.ts-shipments-module-index .ts-module-index-grid { grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr); }
+body.ts-shipments-module-index .ts-module-index-column > br { display: none; }
+body.ts-shipments-module-index .ts-module-index-column .div-table-responsive-no-min,
+body.ts-shipments-module-index .ts-module-index-column .div-table-responsive { margin: 0; }
+
+/* Shipment statistics: keep the real form/chart, but present them as two aligned
+   dashboard panels instead of one oversized legacy tab sheet. */
+body.ts-shipment-statistics .fiche > .tabs { margin-top: 12px; }
+body.ts-shipment-statistics .fiche > .tabBar {
+	margin-top: 12px;
+	padding: 20px;
+	border: 1px solid var(--c-border);
+	border-radius: 12px;
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+}
+body.ts-shipment-statistics .fiche > .tabBar > .fichecenter {
+	display: grid;
+	grid-template-columns: minmax(300px, .8fr) minmax(0, 1.2fr);
+	gap: 24px;
+	align-items: start;
+}
+body.ts-shipment-statistics .ts-statistics-column { width: auto !important; margin: 0 !important; padding: 0 !important; }
+body.ts-shipment-statistics .ts-statistics-column table {
+	margin: 0 !important;
+	border: 1px solid var(--c-border);
+	border-radius: 10px;
+	background: var(--c-surface);
+	box-shadow: none !important;
+	overflow: hidden;
+}
+body.ts-shipment-statistics .ts-statistics-column td { padding: 10px 14px !important; }
+body.ts-shipment-statistics .ts-statistics-column tr.liste_titre td { height: 44px; background: var(--c-sunken) !important; }
+body.ts-shipment-statistics .ts-statistics-column select,
+body.ts-shipment-statistics .ts-statistics-column .select2-container { max-width: 100% !important; }
+body.ts-shipment-statistics .ts-statistics-column .dolgraph { margin-inline: auto; }
+@media (max-width: 900px) {
+	body.ts-shipment-statistics .fiche > .tabBar > .fichecenter { grid-template-columns: minmax(0, 1fr); }
+	body.ts-shipments-module-index .ts-module-index-grid,
+	body.ts-products-module-index .ts-module-index-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+	body.ts-thirdparty-notes-tab .ts-notes-card .tagtr { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+	body.ts-command-record-secondary .ts-record-context-summary td.titlefield { width: 46%; }
+	.fiche > table.table-fiche-title.ts-command-title-with-icon td.col-picto { width: 40px !important; min-width: 40px !important; }
 }
 body.ts-command-module-index .ts-module-index-column {
 	display: grid;

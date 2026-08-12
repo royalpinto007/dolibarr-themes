@@ -208,10 +208,15 @@
 		if (!/(^|\/)index\.php$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-command-dashboard') || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
 		var layout = document.querySelector('.fiche .twocolumns');
+		if (!layout && /\/expedition\/index\.php$/.test(window.location.pathname)) {
+			layout = document.querySelector('.fiche > .fichecenter');
+		}
 		if (!layout) { return false; }
 		document.body.classList.add('ts-command-module-index');
+		if (/\/product\/index\.php$/.test(window.location.pathname)) { document.body.classList.add('ts-products-module-index'); }
+		if (/\/expedition\/index\.php$/.test(window.location.pathname)) { document.body.classList.add('ts-shipments-module-index'); }
 		layout.classList.add('ts-module-index-grid');
-		layout.querySelectorAll(':scope > .fichehalfleft, :scope > .fichehalfright, :scope > .boxhalfleft, :scope > .boxhalfright').forEach(function (column) {
+		layout.querySelectorAll(':scope > .fichehalfleft, :scope > .fichehalfright, :scope > .boxhalfleft, :scope > .boxhalfright, :scope > .fichethirdleft, :scope > .fichetwothirdright').forEach(function (column) {
 			column.classList.add('ts-module-index-column');
 			if (!(column.textContent || '').replace(/\s+/g, '').length) { column.classList.add('ts-module-index-empty'); }
 			column.querySelectorAll('table.noborder, table.border').forEach(function (table) {
@@ -235,6 +240,58 @@
 				cells.filter(function (cell) { return cell !== meaningful[0]; }).forEach(function (cell) { cell.remove(); });
 			});
 		});
+		return true;
+	}
+
+	/* Standard title tables reserve one icon cell. Legacy icon rules collapse that
+	   cell into the text, which makes glyphs touch titles on create/empty pages. */
+	function normalizePageTitleIcons() {
+		var changed = false;
+		document.querySelectorAll('.fiche > table.table-fiche-title:not(.ts-empty-title)').forEach(function (table) {
+			var iconCell = table.querySelector('td.col-picto');
+			var title = table.querySelector('div.titre');
+			if (!iconCell || !title || !(title.textContent || '').trim()) { return; }
+			table.classList.add('ts-command-title-with-icon');
+			changed = true;
+		});
+		return changed;
+	}
+
+	/* Normalize the three remaining Third Party information/detail tabs without
+	   changing their forms, links or record data. */
+	function polishThirdPartyAuxiliaryTabs() {
+		if (!document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
+		var path = window.location.pathname;
+		var shell = document.querySelector('.ts-thirdparty-record-shell');
+		if (!shell) { return false; }
+		var summary = Array.from(shell.children).find(function (node) {
+			return node.matches && node.matches('.fichecenter') && node.querySelector('table.tableforfield');
+		});
+		if (summary) { summary.classList.add('ts-record-context-summary'); }
+		if (/\/societe\/note\.php$/.test(path)) {
+			document.body.classList.add('ts-thirdparty-notes-tab');
+			var notes = Array.from(shell.children).find(function (node) { return node.matches && node.matches('.tagtable.tableforfield'); });
+			if (notes) { notes.classList.add('ts-notes-card'); }
+		}
+		if (/\/thirdpartyMargins\.php$/.test(path)) {
+			document.body.classList.add('ts-thirdparty-margins-tab');
+			var marginForm = Array.from(document.querySelectorAll('.fiche > form')).find(function (form) { return form.querySelector('table.liste'); });
+			if (marginForm) { marginForm.classList.add('ts-margin-card'); }
+		}
+		if (/\/societe\/document\.php$/.test(path)) {
+			document.body.classList.add('ts-thirdparty-documents-tab');
+			document.querySelectorAll('.fiche > .ts-pagehead, .fiche > table.table-list-of-links').forEach(function (heading) { heading.classList.add('ts-documents-heading'); });
+			document.querySelectorAll('.fiche > .div-table-responsive-no-min, .fiche > form#formaddlink').forEach(function (surface) { surface.classList.add('ts-documents-card'); });
+		}
+		return Boolean(summary || document.body.matches('.ts-thirdparty-notes-tab,.ts-thirdparty-margins-tab,.ts-thirdparty-documents-tab'));
+	}
+
+	function polishShipmentStatistics() {
+		if (!/\/expedition\/stats\/index\.php$/.test(window.location.pathname)) { return false; }
+		var card = document.querySelector('.fiche > .tabBar');
+		if (!card) { return false; }
+		document.body.classList.add('ts-shipment-statistics');
+		card.querySelectorAll('.fichethirdleft, .fichetwothirdright').forEach(function (column) { column.classList.add('ts-statistics-column'); });
 		return true;
 	}
 
@@ -2343,7 +2400,7 @@
 	   headings and data-derived summary tiles are new presentation. */
 	function polishThirdPartyDashboard() {
 		var params = new URLSearchParams(window.location.search);
-		if (!/\/societe\/index\.php$/.test(window.location.pathname) || params.get('leftmenu') !== 'thirdparties') { return false; }
+		if (!/\/societe\/index\.php$/.test(window.location.pathname)) { return false; }
 		var canvas = document.getElementById('canvas_idgraphthirdparties');
 		var center = document.querySelector('.fichecenter.fichecenterbis');
 		var left = center && center.querySelector('#boxhalfleft');
@@ -2414,7 +2471,7 @@
 			var totalLabel = totalRow.cells[0];
 			if (totalLabel && !totalLabel.querySelector('.ts-total-icon')) {
 				var totalIcon = document.createElement('span');
-				totalIcon.className = 'ts-total-icon fas fa-users';
+				totalIcon.className = 'ts-total-icon fas fa-building';
 				totalIcon.setAttribute('aria-hidden', 'true');
 				totalLabel.insertBefore(totalIcon, totalLabel.firstChild);
 			}
@@ -2675,6 +2732,7 @@
 		   select containers, which discarded the classification when it ran first. */
 		try { classifySelects(); } catch (e) { /* leave selects as they are */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
+		try { normalizePageTitleIcons(); } catch (e) { /* retain Dolibarr's title layout */ }
 		try { polishCategoryDialogPage(); } catch (e) { /* retain the native category dialog page */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
@@ -2682,6 +2740,7 @@
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
 		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
+		try { polishShipmentStatistics(); } catch (e) { /* retain the native shipment statistics */ }
 		try { polishSharedEmptyStates(); } catch (e) { /* retain native empty messages */ }
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
@@ -2689,5 +2748,6 @@
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
+		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
 	});
 })();

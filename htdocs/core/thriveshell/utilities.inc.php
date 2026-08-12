@@ -40,6 +40,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var int $dol_no_mouse_hover
  */
 ?>
+
+
 /* ==========================================================================
    Utilities
    Dolibarr's PHP emits these class names and depends on them for layout, not
@@ -120,7 +122,21 @@ input[title], select[title], textarea[title] { cursor: auto !important; }
 button[title], label[title] { cursor: pointer !important; }
 .pictofixedwidth { width: 1.35em; text-align: center; display: inline-block; }
 .fieldrequired { font-weight: 600; color: var(--fieldrequiredcolor); }
-.fieldrequired::after { content: " *"; color: var(--c-danger); }
+.fieldrequired::after {
+	content: "\00a0*";
+	display: inline;
+	white-space: nowrap;
+	color: var(--c-danger);
+}
+/* Table-based forms often put fieldrequired on a cell containing a block label.
+   Paint the marker beside that label, not after the block at the cell bottom. */
+.fieldrequired:has(> label)::after { display: none; }
+.fieldrequired > label::after {
+	content: "\00a0*";
+	display: inline;
+	white-space: nowrap;
+	color: var(--c-danger);
+}
 .error { color: var(--c-danger) !important; }
 .warning { color: var(--c-warning) !important; }
 .ok, .green { color: var(--c-success) !important; }
@@ -141,5 +157,3 @@ foreach (array(50, 75, 100, 125, 150, 200, 250, 300, 400, 500, 750) as $w) {
 	echo '.width'.$w.' { width: '.$w.'px; }'."\n";
 }
 ?>
-
-
