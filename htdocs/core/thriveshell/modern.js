@@ -740,9 +740,11 @@
 			'status', 'typent_id', 'forme_juridique_code', 'effectif_id',
 			'cond_reglement_id', 'mode_reglement_id'
 		]);
+		var largeControlFields = new Set([
+			'name', 'name_alias', 'country_id', 'state_id', 'email'
+		]);
 		var fullControlFields = new Set([
-			'name', 'name_alias', 'address', 'country_id', 'state_id', 'email',
-			'custcats[]', 'suppcats[]', 'parent_company_id', 'commercial[]', 'photo'
+			'address', 'custcats[]', 'suppcats[]', 'parent_company_id', 'commercial[]', 'photo'
 		]);
 
 		Array.from(body.rows).forEach(function (row) {
@@ -784,8 +786,10 @@
 					});
 					var cellNames = cellControls.map(function (control) { return control.name || control.id || ''; });
 					var widthRole = cellNames.some(function (name) { return compactControlFields.has(name); }) ? 'compact' :
-						(cellNames.some(function (name) { return fullControlFields.has(name); }) ? 'full' : 'medium');
+						(cellNames.some(function (name) { return largeControlFields.has(name); }) ? 'large' :
+							(cellNames.some(function (name) { return fullControlFields.has(name); }) ? 'full' : 'medium'));
 					cell.classList.add('ts-form-width-' + widthRole);
+					if (cellNames.indexOf('email') !== -1) { cell.classList.add('ts-form-control--large-email'); }
 					Array.from(cell.children).forEach(function (child) {
 						if (!child.matches('span[class*="fa-"], img.pictofixedwidth')) { return; }
 						var isHelp = child.classList.contains('fa-info-circle');
@@ -802,6 +806,15 @@
 						cell.appendChild(nestedHelp);
 						cell.classList.add('ts-form-value-has-help');
 						if (nestedHelpCell && !(nestedHelpCell.textContent || '').trim() && !nestedHelpCell.children.length) { nestedHelpCell.remove(); }
+					}
+					/* A few Dolibarr selectors keep their info icon inside the same
+					   wrapper as Select2. Promote that existing icon to the shared help
+					   slot so it follows the control instead of an absolute row edge. */
+					var wrappedHelp = cell.querySelector(':scope > div > .fa-info-circle, :scope > span:not(.select2-container) > .fa-info-circle');
+					if (wrappedHelp) {
+						wrappedHelp.classList.add('ts-form-help');
+						cell.appendChild(wrappedHelp);
+						cell.classList.add('ts-form-value-has-help');
 					}
 				}
 			});
@@ -962,12 +975,18 @@
 				var valueCell = select.closest('td.ts-form-value');
 				if (valueCell) {
 					var compactControl = valueCell.classList.contains('ts-form-width-compact');
+					var largeControl = valueCell.classList.contains('ts-form-width-large');
 					var fullControl = valueCell.classList.contains('ts-form-width-full');
 					container.classList.toggle('ts-form-control-compact', compactControl);
+					container.classList.toggle('ts-form-control-large', largeControl);
 					container.classList.toggle('ts-form-control-full', fullControl);
 					if (compactControl) {
 						container.style.setProperty('width', 'min(100%, 340px)', 'important');
 						container.style.setProperty('max-width', '340px', 'important');
+					} else if (largeControl) {
+						var largeCap = valueCell.classList.contains('ts-form-control--large-email') ? '760px' : '820px';
+						container.style.setProperty('width', 'min(100%, ' + largeCap + ')', 'important');
+						container.style.setProperty('max-width', largeCap, 'important');
 					} else if (fullControl) {
 						container.style.setProperty('width', '100%', 'important');
 						container.style.setProperty('max-width', 'none', 'important');

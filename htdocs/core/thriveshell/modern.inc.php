@@ -2115,6 +2115,8 @@ form.ts-modern-form table.ts-modern-form-table td.ts-form-value > table.noborder
 form.ts-modern-form table.ts-modern-form-table input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not(.select2-search__field),
 form.ts-modern-form table.ts-modern-form-table select {
 	height: 40px;
+	padding-<?php echo $left; ?>: 12px !important;
+	padding-<?php echo $right; ?>: 12px !important;
 	padding-top: 0;
 	padding-bottom: 0;
 	border-color: #e0e6ef;
@@ -2138,7 +2140,7 @@ form.ts-modern-form table.ts-modern-form-table select:focus {
 
 form.ts-modern-form .select2-container--default .select2-selection--single {
 	height: 40px;
-	padding: 0 10px;
+	padding: 0 12px;
 	border-color: #e0e6ef !important;
 	border-radius: 8px !important;
 }
@@ -2336,6 +2338,26 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-co
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-compact .select2-container {
 	width: min(100%, 340px) !important;
 	max-width: 340px !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value.ts-form-width-large > input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-large > select,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-large > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-large > span:has(> .select2-container),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-large .select2-container {
+	width: min(100%, 820px) !important;
+	max-width: 820px !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value.ts-form-width-large.ts-form-control--large-email > input[name="email"]:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]) {
+	width: min(100%, 760px) !important;
+	max-width: 760px !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value.ts-form-width-medium > input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-medium > select,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-medium > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-medium > table.nobordernopadding,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-medium > span:has(> .select2-container) {
+	width: min(100%, 320px) !important;
+	max-width: 320px !important;
 }
 body#mainbody form.ts-modern-form .select2-container.ts-form-control-compact {
 	width: min(100%, 340px) !important;
@@ -2795,7 +2817,9 @@ div.box-flex-container.kanban.ts-command-kanban .info-box-content {
    radio group and the incoterm select were both doing this. The grid owns the
    leading space now, so the first wrapper inside a value cell contributes none.
    Trailing spacing is left alone: it separates a control from what follows it. */
-body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > *:first-child {
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > span:first-child:not(.select2-container),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > div:first-child,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > table:first-child {
 	margin-<?php echo $left; ?>: 0;
 	padding-<?php echo $left; ?>: 0;
 }
@@ -2832,6 +2856,37 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > 
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > .ts-form-help {
 	grid-column: 3;
 	grid-row: 1;
+}
+
+/* Help belongs to the control, not to the value track's far boundary. Only
+   cells that actually contain help use this five-track composition. The row
+   axes and the universal leading-adornment column remain unchanged. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help.ts-form-width-compact {
+	grid-template-columns: var(--tsf-adorn) minmax(0, 340px) 8px 16px minmax(0, 1fr);
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help.ts-form-width-medium {
+	grid-template-columns: var(--tsf-adorn) minmax(0, 320px) 8px 16px minmax(0, 1fr);
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help.ts-form-width-large {
+	grid-template-columns: var(--tsf-adorn) minmax(0, 820px) 8px 16px minmax(0, 1fr);
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help > .ts-form-help {
+	grid-column: 4;
+	justify-self: start;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px !important;
+	height: 40px;
+	margin: 0 !important;
+}
+@media only screen and (max-width: 767px) {
+	body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help > .ts-form-help {
+		position: static !important;
+		<?php echo $left; ?>: auto !important;
+		<?php echo $right; ?>: auto !important;
+		top: auto !important;
+	}
 }
 
 
@@ -2925,12 +2980,12 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:ha
    so Capital and Incoterms cannot be split back into separate visual rows. */
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value {
 	display: grid !important;
-	grid-template-columns: var(--tsf-adorn) minmax(0, 1fr) 64px !important;
+	grid-template-columns: var(--tsf-adorn) minmax(0, 1fr) 60px !important;
 	gap: 0 !important;
 }
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value.ts-form-control--compound {
-	width: min(100%, calc(380px + var(--tsf-adorn))) !important;
-	max-width: calc(380px + var(--tsf-adorn)) !important;
+	width: min(100%, calc(320px + var(--tsf-adorn))) !important;
+	max-width: calc(320px + var(--tsf-adorn)) !important;
 	justify-self: start;
 }
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > input[name="capital"] {
@@ -2942,7 +2997,7 @@ body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value >
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > span:not([class*="fa-"]) {
 	grid-column: 3 !important;
 	grid-row: 1;
-	width: 64px;
+	width: 60px;
 	height: 40px;
 }
 body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value {
