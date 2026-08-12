@@ -499,6 +499,158 @@
 		return true;
 	}
 
+	/* Events/Agenda has stable native data but legacy table geometry. This exact
+	   route pass moves those native nodes into summary, toolbar and timeline
+	   presentation hooks. It does not invent filter fields or event links. */
+	function polishThirdPartyEvents() {
+		var params = new URLSearchParams(window.location.search);
+		if (!/\/societe\/messaging\.php$/.test(window.location.pathname) || !(params.get('socid') || params.get('id'))) { return false; }
+		if (!document.body.classList.contains('ts-thirdparty-record-context') || document.body.classList.contains('ts-thirdparty-events')) { return false; }
+		var shell = document.querySelector('.ts-thirdparty-record-shell');
+		var timeline = document.querySelector('.fiche ul.timeline');
+		if (!shell || !timeline) { return false; }
+		document.body.classList.add('ts-thirdparty-events');
+
+		var activeTab = shell.querySelector('.tabsElemActive a#agenda');
+		if (activeTab) {
+			activeTab.setAttribute('aria-current', 'page');
+			var tabStrip = activeTab.closest('.tabs');
+			if (tabStrip) { tabStrip.scrollLeft = Math.max(0, activeTab.offsetLeft - tabStrip.clientWidth + activeTab.offsetWidth + 12); }
+		}
+
+		var fiche = timeline.closest('.fiche');
+		var center = timeline.closest('.fichecenter') || timeline.parentElement;
+		var metadataTable = fiche && Array.from(fiche.querySelectorAll('table.tableforfield')).find(function (table) {
+			return /Created by/i.test(table.textContent || '') && /Creation date/i.test(table.textContent || '');
+		});
+		if (metadataTable) {
+			var summary = document.createElement('section');
+			summary.className = 'ts-events-summary';
+			metadataTable.querySelectorAll(':scope > tbody > tr').forEach(function (row, index) {
+				var label = row.cells[0];
+				var value = row.cells[1];
+				if (!label || !value) { return; }
+				var item = document.createElement('div');
+				item.className = 'ts-events-summary-item';
+				var icon = document.createElement('span');
+				icon.className = 'ts-events-summary-icon fas ' + (index % 2 ? 'fa-calendar-alt' : 'fa-user');
+				icon.setAttribute('aria-hidden', 'true');
+				var copy = document.createElement('div');
+				copy.className = 'ts-events-summary-copy';
+				label.classList.add('ts-events-summary-label');
+				value.classList.add('ts-events-summary-value');
+				copy.appendChild(label);
+				copy.appendChild(value);
+				item.appendChild(icon);
+				item.appendChild(copy);
+				summary.appendChild(item);
+			});
+			metadataTable.insertAdjacentElement('beforebegin', summary);
+			metadataTable.remove();
+		}
+
+		var pageHead = fiche && Array.from(fiche.querySelectorAll('.ts-pagehead')).find(function (head) {
+			return /Events for this third party/i.test(head.textContent || '');
+		});
+		if (pageHead) { pageHead.classList.add('ts-events-pagehead'); }
+		var create = pageHead && pageHead.querySelector('a[href*="comm/action/card.php"][href*="action=create"]');
+		if (create) { create.classList.add('ts-events-create'); }
+
+		var filterHost = fiche && fiche.querySelector('.filters-container:has(form.listactionsfilter)');
+		var form = filterHost && filterHost.querySelector('form.listactionsfilter');
+		var titleTable = pageHead && pageHead.nextElementSibling && pageHead.nextElementSibling.matches('table.table-fiche-title') ? pageHead.nextElementSibling : null;
+		var viewSwitch = titleTable && titleTable.querySelector('.paginationafterarrows');
+		if (filterHost && form) {
+			filterHost.classList.add('ts-events-toolbar');
+			form.classList.add('ts-events-filter-form');
+			if (viewSwitch) {
+				var switcher = document.createElement('div');
+				switcher.className = 'ts-events-view-switch';
+				viewSwitch.querySelectorAll(':scope > a').forEach(function (link) {
+					link.classList.add('ts-events-view-option');
+					link.setAttribute('aria-label', link.getAttribute('title') || 'Change event view');
+					switcher.appendChild(link);
+				});
+				filterHost.insertBefore(switcher, form);
+			}
+			if (titleTable) { titleTable.classList.add('ts-events-native-title-source'); }
+			var labelInput = form.querySelector('input[name="search_agenda_label"]');
+			if (labelInput) {
+				labelInput.classList.add('ts-events-search-input');
+				labelInput.setAttribute('placeholder', 'Search events…');
+				var searchWrap = document.createElement('div');
+				searchWrap.className = 'ts-events-search-control';
+				var searchIcon = document.createElement('span');
+				searchIcon.className = 'fas fa-search';
+				searchIcon.setAttribute('aria-hidden', 'true');
+				labelInput.parentNode.insertBefore(searchWrap, labelInput);
+				searchWrap.appendChild(searchIcon);
+				searchWrap.appendChild(labelInput);
+			}
+			var dateLink = form.querySelector('a[href*="sortfield=a.datep"]');
+			if (dateLink) {
+				dateLink.classList.add('ts-events-date-control');
+				var dateIcon = document.createElement('span');
+				dateIcon.className = 'far fa-calendar-alt';
+				dateIcon.setAttribute('aria-hidden', 'true');
+				dateLink.insertBefore(dateIcon, dateLink.firstChild);
+			}
+			var type = form.querySelector('select#actioncode');
+			if (type) { type.setAttribute('data-ts-events-select', 'compact'); }
+			var submit = form.querySelector('button.button_search');
+			if (submit && !submit.querySelector('.ts-events-filter-label')) {
+				var submitLabel = document.createElement('span');
+				submitLabel.className = 'ts-events-filter-label';
+				submitLabel.textContent = 'Filters';
+				submit.appendChild(submitLabel);
+			}
+			if (window.jQuery && type) {
+				window.jQuery(type).on('select2:open', function () {
+					window.requestAnimationFrame(function () {
+						var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
+						var trigger = type.parentElement.querySelector('.select2-container');
+						if (!dropdown || !trigger) { return; }
+						dropdown.classList.add('ts-events-select-dropdown');
+						dropdown.style.setProperty('width', trigger.getBoundingClientRect().width + 'px', 'important');
+						dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
+							if (!(option.textContent || '').replace(/\u00a0/g, ' ').trim()) { option.style.display = 'none'; }
+						});
+					});
+				});
+			}
+		}
+		/* Dolibarr nests the result timeline in filters-container after the form.
+		   Once that container becomes a flex toolbar, the timeline must return to
+		   normal document flow or it becomes an accidental toolbar column. */
+		if (filterHost && filterHost.contains(timeline)) { filterHost.insertAdjacentElement('afterend', timeline); }
+
+		timeline.classList.add('ts-events-timeline');
+		timeline.querySelectorAll(':scope > li:not(.time-label)').forEach(function (event) {
+			event.classList.add('ts-events-entry');
+			var outerIcon = event.querySelector(':scope > [class*="fa-"]');
+			if (outerIcon) {
+				outerIcon.classList.remove('fa-cog');
+				outerIcon.classList.add('fa-calendar-alt', 'ts-events-entry-icon');
+			}
+			var item = event.querySelector('.timeline-item');
+			var header = item && item.querySelector('.timeline-header');
+			var author = header && header.querySelector('.messaging-author');
+			var eventTitle = header && header.querySelector('.messaging-title');
+			if (header && eventTitle) {
+				eventTitle.classList.add('ts-events-entry-title');
+				header.insertBefore(eventTitle, header.firstChild);
+			}
+			if (author) { author.classList.add('ts-events-entry-author'); }
+			var reference = item && item.querySelector('.timeline-header-action2');
+			if (reference) { reference.classList.add('ts-events-entry-reference'); }
+			var time = item && Array.from(item.querySelectorAll(':scope > .time')).find(function (node) { return node !== reference && node.querySelector('.fa-clock-o'); });
+			if (time) { time.classList.add('ts-events-entry-time'); }
+			var badge = item && item.querySelector(':scope > .time .badge-status');
+			if (badge && badge.parentElement) { badge.parentElement.classList.add('ts-events-entry-status'); }
+		});
+		return true;
+	}
+
 	/* Active-tab content varies by module, but list/table wrappers are stable.
 	   Add presentation hooks only after the permanent Third Party shell exists;
 	   native forms, controls, tables and pagination remain exactly where their
@@ -2358,6 +2510,7 @@
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
+		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 	});
 })();
