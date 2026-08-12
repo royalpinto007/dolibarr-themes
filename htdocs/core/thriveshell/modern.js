@@ -1873,11 +1873,198 @@
 		return true;
 	}
 
+	/* Third Parties module landing dashboard. The route guard is intentionally
+	   exact because these legacy two-column classes are shared by many modules.
+	   Existing chart/table/link nodes are moved into the COMMAND composition; only
+	   headings and data-derived summary tiles are new presentation. */
+	function polishThirdPartyDashboard() {
+		var params = new URLSearchParams(window.location.search);
+		if (!/\/societe\/index\.php$/.test(window.location.pathname) || params.get('leftmenu') !== 'thirdparties') { return false; }
+		var canvas = document.getElementById('canvas_idgraphthirdparties');
+		var center = document.querySelector('.fichecenter.fichecenterbis');
+		var left = center && center.querySelector('#boxhalfleft');
+		var right = center && center.querySelector('#boxhalfright');
+		if (!canvas || !left || !right || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
+		document.body.classList.add('ts-thirdparty-dashboard');
+
+		var pageHead = document.querySelector('.ts-pagehead');
+		if (pageHead) {
+			var titleHost = pageHead.querySelector('.ts-pagehead-title');
+			if (titleHost && !titleHost.querySelector('.ts-module-subtitle')) {
+				var subtitle = document.createElement('p');
+				subtitle.className = 'ts-module-subtitle';
+				subtitle.textContent = 'Overview of contacts, third parties, and recent activity.';
+				titleHost.appendChild(subtitle);
+			}
+			var actions = pageHead.querySelector('.ts-pagehead-actions');
+			var contactSource = Array.from(document.querySelectorAll('a[href]')).find(function (link) {
+				var href = link.getAttribute('href') || '';
+				return /\/contact\/list\.php/.test(href) && !/[?&]type=/.test(href);
+			});
+			if (actions && contactSource && !actions.querySelector('.ts-view-all-contacts')) {
+				var contacts = contactSource.cloneNode(false);
+				contacts.className = 'ts-view-all-contacts';
+				contacts.removeAttribute('title');
+				contacts.innerHTML = '<span class="fas fa-user-friends" aria-hidden="true"></span><span>View all contacts</span>';
+				actions.appendChild(contacts);
+			}
+		}
+
+		center.classList.add('ts-thirdparty-dashboard-grid');
+		var styleCard = function (column, kind) {
+			column.classList.add('ts-module-dashboard-card', 'ts-module-dashboard-' + kind);
+			var responsive = column.querySelector('.div-table-responsive-no-min, .div-table-responsive');
+			var table = responsive && responsive.querySelector('table');
+			if (!responsive || !table) { return null; }
+			responsive.classList.add('ts-module-dashboard-body');
+			table.classList.add('ts-module-dashboard-table');
+			return {wrap: responsive, table: table};
+		};
+		var stats = styleCard(left, 'stats');
+		var recent = styleCard(right, 'recent');
+		if (!stats || !recent) { return false; }
+
+		var makeHeader = function (title, iconClass) {
+			var header = document.createElement('header');
+			header.className = 'ts-module-card-header';
+			var icon = document.createElement('span');
+			icon.className = 'ts-module-card-icon fas ' + iconClass;
+			icon.setAttribute('aria-hidden', 'true');
+			var heading = document.createElement('h2');
+			heading.textContent = title;
+			header.appendChild(icon);
+			header.appendChild(heading);
+			return header;
+		};
+
+		var statsTitleRow = stats.table.querySelector('tr.liste_titre');
+		if (statsTitleRow) { statsTitleRow.remove(); }
+		var statsHeader = makeHeader('Statistics', 'fa-chart-bar');
+		left.insertBefore(statsHeader, stats.wrap);
+		var chartCell = canvas.closest('td');
+		var chartRow = chartCell && chartCell.closest('tr');
+		if (chartRow) { chartRow.classList.add('ts-statistics-chart-row'); }
+		var totalRow = stats.table.querySelector('tr.liste_total');
+		if (totalRow) {
+			totalRow.classList.add('ts-statistics-total-row');
+			var totalLabel = totalRow.cells[0];
+			if (totalLabel && !totalLabel.querySelector('.ts-total-icon')) {
+				var totalIcon = document.createElement('span');
+				totalIcon.className = 'ts-total-icon fas fa-users';
+				totalIcon.setAttribute('aria-hidden', 'true');
+				totalLabel.insertBefore(totalIcon, totalLabel.firstChild);
+			}
+		}
+
+		var chart = window.chart;
+		var labels = chart && chart.data && chart.data.labels || [];
+		var values = chart && chart.data && chart.data.datasets && chart.data.datasets[0] && chart.data.datasets[0].data || [];
+		if (labels.length && values.length && !left.querySelector('.ts-stat-mini-grid')) {
+			var miniGrid = document.createElement('div');
+			miniGrid.className = 'ts-stat-mini-grid';
+			var iconClasses = ['fa-user', 'fa-user-friends', 'fa-people-carry', 'fa-users'];
+			labels.forEach(function (label, index) {
+				var tile = document.createElement('div');
+				tile.className = 'ts-stat-mini ts-stat-mini-' + (index + 1);
+				var icon = document.createElement('span');
+				icon.className = 'ts-stat-mini-icon fas ' + (iconClasses[index] || 'fa-users');
+				icon.setAttribute('aria-hidden', 'true');
+				var copy = document.createElement('span');
+				copy.className = 'ts-stat-mini-copy';
+				var name = document.createElement('span');
+				name.className = 'ts-stat-mini-label';
+				name.textContent = label;
+				var value = document.createElement('strong');
+				value.textContent = String(values[index] == null ? 0 : values[index]);
+				copy.appendChild(name);
+				copy.appendChild(value);
+				tile.appendChild(icon);
+				tile.appendChild(copy);
+				miniGrid.appendChild(tile);
+			});
+			left.appendChild(miniGrid);
+		}
+		var graph = canvas.closest('.dolgraph');
+		if (graph) { graph.classList.add('ts-thirdparty-donut'); }
+		if (chart) {
+			var legendOptions = chart.options.plugins && chart.options.plugins.legend || chart.options.legend;
+			if (legendOptions) {
+				legendOptions.display = false;
+			}
+			chart.resize();
+			chart.update();
+		}
+		if (graph && chartCell && labels.length && !chartCell.querySelector('.ts-chart-composition')) {
+			var composition = document.createElement('div');
+			composition.className = 'ts-chart-composition';
+			graph.parentNode.insertBefore(composition, graph);
+			composition.appendChild(graph);
+			var legend = document.createElement('div');
+			legend.className = 'ts-chart-legend';
+			var dataset = chart && chart.data.datasets[0];
+			var colors = dataset && dataset.backgroundColor || chart && chart.options.elements && chart.options.elements.arc.backgroundColor || [];
+			labels.forEach(function (label, index) {
+				var item = document.createElement('div');
+				item.className = 'ts-chart-legend-item';
+				var dot = document.createElement('span');
+				dot.className = 'ts-chart-legend-dot';
+				if (colors[index]) { dot.style.backgroundColor = colors[index]; }
+				var name = document.createElement('span');
+				name.className = 'ts-chart-legend-name';
+				name.textContent = label;
+				var count = document.createElement('strong');
+				count.textContent = String(values[index] == null ? 0 : values[index]);
+				item.appendChild(dot); item.appendChild(name); item.appendChild(count); legend.appendChild(item);
+			});
+			composition.appendChild(legend);
+			if (chart) { chart.resize(); chart.update(); }
+		}
+
+		var recentTitleRow = recent.table.querySelector('tr.liste_titre');
+		var listLink = recentTitleRow && recentTitleRow.querySelector('a[href]');
+		var recentHeader = makeHeader('Latest modified third parties', 'fa-clock');
+		if (listLink) {
+			listLink.className = 'ts-module-card-link';
+			listLink.removeAttribute('title');
+			listLink.textContent = 'View all';
+			recentHeader.appendChild(listLink);
+		}
+		if (recentTitleRow) { recentTitleRow.remove(); }
+		right.insertBefore(recentHeader, recent.wrap);
+
+		var body = recent.table.tBodies[0];
+		if (body && !body.querySelector('.ts-recent-columns')) {
+			var headings = document.createElement('tr');
+			headings.className = 'ts-recent-columns';
+			['Third party', 'Type', 'Last modified', 'Status'].forEach(function (label) {
+				var th = document.createElement('th'); th.textContent = label; headings.appendChild(th);
+			});
+			body.insertBefore(headings, body.firstChild);
+		}
+		recent.table.querySelectorAll('tr.oddeven').forEach(function (row) {
+			row.classList.add('ts-recent-thirdparty-row');
+			var nature = row.cells[1] && row.cells[1].querySelector('a');
+			if (nature && nature.getAttribute('title')) { nature.textContent = nature.getAttribute('title'); }
+		});
+		if (listLink && !right.querySelector('.ts-module-card-footer')) {
+			var footer = document.createElement('footer');
+			footer.className = 'ts-module-card-footer';
+			var footerLink = listLink.cloneNode(false);
+			footerLink.className = 'ts-module-footer-link';
+			footerLink.textContent = 'View all third parties';
+			footer.appendChild(footerLink);
+			right.appendChild(footer);
+		}
+		center.querySelectorAll(':scope > .twocolumns > br, #boxhalfleft > br, #boxhalfright > br').forEach(function (node) { node.remove(); });
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
+		try { polishThirdPartyDashboard(); } catch (e) { /* retain the native Third Parties module landing */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
