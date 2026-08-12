@@ -969,6 +969,10 @@
 			return label ? 'Select ' + label : 'Select an option';
 		}
 		function decorateFormSelect2() {
+			var fixedEnumFields = new Set([
+				'status', 'typent_id', 'forme_juridique_code', 'effectif_id',
+				'cond_reglement_id', 'mode_reglement_id', 'incoterm_id'
+			]);
 			form.querySelectorAll('.select2-container').forEach(function (container) {
 				var select = sourceSelectFor(container);
 				if (!select) { return; }
@@ -995,7 +999,7 @@
 				var meaningfulOptions = Array.from(select.options).filter(function (option) {
 					return (option.textContent || '').replace(/\u00a0/g, ' ').trim();
 				});
-				var compact = !select.multiple && meaningfulOptions.length <= 12;
+				var compact = !select.multiple && (fixedEnumFields.has(select.name || select.id || '') || meaningfulOptions.length <= 12);
 				container.classList.toggle('ts-form-select2-compact', compact);
 				container.classList.toggle('ts-form-select2-searchable', !compact);
 				var selected = select.options[select.selectedIndex];
@@ -1025,19 +1029,57 @@
 				var select = sourceSelectFor(container);
 				var compact = container.classList.contains('ts-form-select2-compact');
 				var rect = container.getBoundingClientRect();
+				var popupRoot = dropdown.parentElement;
+				var popupWidth = Math.min(rect.width, window.innerWidth - 24);
 				dropdown.classList.add('ts-form-select2-dropdown', compact ? 'ts-form-select2-dropdown-compact' : 'ts-form-select2-dropdown-searchable');
-				dropdown.style.setProperty('width', Math.min(rect.width, window.innerWidth - 24) + 'px', 'important');
-				dropdown.style.setProperty('min-width', Math.min(rect.width, window.innerWidth - 24) + 'px');
+				dropdown.style.setProperty('width', popupWidth + 'px', 'important');
+				dropdown.style.setProperty('min-width', popupWidth + 'px');
 				dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
 					var blank = !(option.textContent || '').replace(/\u00a0/g, ' ').trim();
 					option.classList.toggle('ts-form-select2-empty-option', blank);
 					if (blank) { option.setAttribute('aria-hidden', 'true'); }
 				});
 				if (select) { dropdown.setAttribute('data-ts-select-name', select.name || select.id || ''); }
+				if (!popupRoot) { return; }
+				var popupHeight = dropdown.getBoundingClientRect().height;
+				var roomBelow = window.innerHeight - rect.bottom;
+				var roomAbove = rect.top;
+				var openAbove = popupHeight > roomBelow && roomAbove > roomBelow;
+				var left = Math.max(12, Math.min(rect.left, window.innerWidth - popupWidth - 12));
+				var top = openAbove ? rect.top - popupHeight : rect.bottom;
+				popupRoot.classList.add('ts-form-select2-root');
+				popupRoot.style.setProperty('position', 'fixed', 'important');
+				popupRoot.style.setProperty('left', left + 'px', 'important');
+				popupRoot.style.setProperty('top', Math.max(12, Math.min(top, window.innerHeight - popupHeight - 12)) + 'px', 'important');
+				popupRoot.style.setProperty('width', popupWidth + 'px', 'important');
+				popupRoot.style.setProperty('z-index', '3600', 'important');
+				dropdown.classList.toggle('select2-dropdown--above', openAbove);
+				dropdown.classList.toggle('select2-dropdown--below', !openAbove);
+				container.classList.toggle('select2-container--above', openAbove);
+				container.classList.toggle('select2-container--below', !openAbove);
 			});
 		};
 		var formSelect2Observer = new MutationObserver(syncFormSelect2);
 		formSelect2Observer.observe(document.body, {childList: true, subtree: true});
+		document.addEventListener('select2:open', syncFormSelect2);
+		window.addEventListener('resize', syncFormSelect2, {passive: true});
+		document.addEventListener('scroll', syncFormSelect2, {passive: true, capture: true});
+		return true;
+	}
+
+	function polishCategoryDialogPage() {
+		if (!document.body.classList.contains('dol_openinpopup') || !/\/categories\/categorie_list\.php$/.test(window.location.pathname)) { return false; }
+		document.body.classList.add('ts-category-dialog-page');
+		try {
+			var hostFrame = Array.from(window.parent.document.querySelectorAll('iframe.iframedialog')).find(function (frame) { return frame.contentWindow === window; });
+			var dialogTitle = hostFrame && hostFrame.closest('.ui-dialog')?.querySelector('.ui-dialog-title');
+			if (dialogTitle && document.title) { dialogTitle.textContent = document.title; }
+		} catch (e) { /* Same-origin iframe is expected; retain native title if not. */ }
+		var list = document.querySelector('table.liste');
+		if (list) { list.closest('.fichecenter')?.classList.add('ts-category-dialog-list'); }
+		var empty = list && list.querySelector('.opacitymedium');
+		var emptyCell = empty && (empty.closest('td[colspan]') || empty.closest('td'));
+		if (emptyCell) { emptyCell.classList.add('ts-category-dialog-empty'); }
 		return true;
 	}
 
@@ -1488,6 +1530,7 @@
 	}
 
 	ready(function () {
+		try { polishCategoryDialogPage(); } catch (e) { /* retain the native category dialog page */ }
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
