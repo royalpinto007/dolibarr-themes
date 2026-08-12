@@ -1096,7 +1096,60 @@
 		} catch (e) { /* Same-origin iframe is expected; retain native title if not. */ }
 		if (isCreate) {
 			var createForm = document.querySelector('form[action*="/categories/card.php"]');
-			if (createForm) { createForm.classList.add('ts-category-create-form'); }
+			if (createForm) {
+				createForm.classList.add('ts-category-create-form');
+				var createTable = createForm.querySelector('.tabBar table.border');
+				if (createTable) {
+					createTable.querySelectorAll(':scope > tbody > tr').forEach(function (row) {
+						var cells = row.querySelectorAll(':scope > td');
+						if (cells.length < 2) { return; }
+						row.classList.add('ts-category-form-row');
+						cells[0].classList.add('ts-category-form-label');
+						cells[1].classList.add('ts-category-form-control');
+					});
+				}
+				var colorInput = createForm.querySelector('#colorpickercolor');
+				var colorPicker = colorInput && colorInput.parentElement.querySelector('.jPicker');
+				if (colorInput && colorPicker && !colorInput.closest('.ts-category-color-control')) {
+					var colorControl = document.createElement('span');
+					colorControl.className = 'ts-category-color-control';
+					colorInput.parentNode.insertBefore(colorControl, colorInput);
+					colorControl.appendChild(colorInput);
+					colorControl.appendChild(colorPicker);
+				}
+				var parentSelect = createForm.querySelector('select#parent');
+				if (parentSelect) {
+					parentSelect.classList.add('ts-category-parent-select');
+					var neutralOption = Array.from(parentSelect.options).find(function (option) { return option.value === '-1' || !option.value; });
+					var parentIcon = parentSelect.parentElement.querySelector('.pictofixedwidth[title]');
+					if (neutralOption && !neutralOption.textContent.trim()) { neutralOption.textContent = parentIcon?.getAttribute('title') || 'Parent tag/category'; }
+					var parentContainer = parentSelect.nextElementSibling?.classList.contains('select2-container') ? parentSelect.nextElementSibling : null;
+					if (parentContainer) {
+						parentContainer.classList.add('ts-category-parent-container');
+						parentContainer.style.removeProperty('width');
+						var rendered = parentContainer.querySelector('.select2-selection__rendered');
+						if (rendered && neutralOption?.selected) { rendered.textContent = neutralOption.textContent; }
+					}
+					if (window.jQuery && !parentSelect.dataset.tsCategorySelectBound) {
+						parentSelect.dataset.tsCategorySelectBound = '1';
+						window.jQuery(parentSelect).on('select2:open.tsCategoryDialog', function () {
+							window.requestAnimationFrame(function () {
+								var trigger = parentSelect.nextElementSibling?.querySelector('.select2-selection');
+								var openContainer = document.querySelector('.select2-container--open:not(.select2)');
+								var dropdown = openContainer?.querySelector('.select2-dropdown');
+								if (!trigger || !dropdown) { return; }
+								dropdown.classList.add('ts-category-select2-dropdown');
+								dropdown.style.setProperty('width', trigger.getBoundingClientRect().width + 'px', 'important');
+								var search = dropdown.querySelector('.select2-search--dropdown');
+								if (search) { search.classList.toggle('ts-category-select2-search-hidden', parentSelect.options.length <= 8); }
+								dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
+									if (!option.textContent.trim() && neutralOption) { option.textContent = neutralOption.textContent; }
+								});
+							});
+						});
+					}
+				}
+			}
 			sizeHostDialog(hostDialog, true);
 			return Boolean(createForm);
 		}
@@ -1106,6 +1159,7 @@
 		if (pageTitle) {
 			var shortTitle = (pageTitle.textContent || '').replace(/\s+/g, ' ').trim().replace(/\s*\(.+\)\d*\s*$/, '').replace(/\d+$/, '').trim();
 			pageTitle.textContent = shortTitle;
+			pageTitle.closest('.ts-pagehead-title')?.classList.add('ts-category-redundant-title');
 		}
 		var viewLinks = Array.from(document.querySelectorAll('a.btnTitle')).filter(function (link) { return /List view|Hierarch/i.test(link.getAttribute('title') || ''); });
 		var viewHost = document.querySelector('.ts-category-view-switch');
@@ -1129,8 +1183,43 @@
 			});
 			viewHost.querySelectorAll('.button-title-separator').forEach(function (node) { node.remove(); });
 		}
+		document.querySelectorAll('.ts-pagehead-actions .button-title-separator, .ts-pagehead-actions .ts-view-switch:empty').forEach(function (node) { node.remove(); });
 		var list = document.querySelector('table.liste');
 		if (list) { list.closest('.fichecenter')?.classList.add('ts-category-dialog-list'); }
+		if (list && !list.querySelector('#iddivjstree')) {
+			list.querySelectorAll('tr.oddeven').forEach(function (row) {
+				var categoryLink = row.querySelector('a.classforajaxtooltip');
+				if (!categoryLink) { return; }
+				var categoryCell = categoryLink.closest('td');
+				var rowContent = document.createElement('div');
+				rowContent.className = 'ts-category-list-row-content';
+				var actions = document.createElement('span');
+				actions.className = 'ts-category-row-actions';
+				row.querySelectorAll('a.editfielda, a.deletefilelink').forEach(function (action) {
+					var titledIcon = action.querySelector('[title]');
+					if (titledIcon) {
+						action.setAttribute('aria-label', titledIcon.getAttribute('title'));
+						titledIcon.removeAttribute('title');
+					}
+					actions.appendChild(action);
+				});
+				if (categoryLink.getAttribute('title') === 'tocomplete') { categoryLink.removeAttribute('title'); }
+				categoryCell.colSpan = 100;
+				categoryCell.classList.add('ts-category-row-main');
+				rowContent.appendChild(categoryLink);
+				rowContent.appendChild(actions);
+				categoryCell.replaceChildren(rowContent);
+				row.querySelectorAll('td').forEach(function (cell) { if (cell !== categoryCell) { cell.classList.add('ts-category-row-hidden'); } });
+				row.classList.add('ts-category-data-row');
+			});
+		}
+		if (list && list.querySelector('#iddivjstree')) {
+			list.querySelectorAll('#iddivjstree a.editfielda, #iddivjstree a.deletefilelink').forEach(function (action) {
+				var titledIcon = action.querySelector('[title]');
+				if (titledIcon) { action.setAttribute('aria-label', titledIcon.getAttribute('title')); titledIcon.removeAttribute('title'); }
+			});
+			list.querySelectorAll('#iddivjstree a[title="tocomplete"]').forEach(function (link) { link.removeAttribute('title'); });
+		}
 		var empty = list && list.querySelector('.opacitymedium');
 		var emptyCell = empty && (empty.closest('td[colspan]') || empty.closest('td'));
 		if (emptyCell) {
