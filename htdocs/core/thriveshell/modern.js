@@ -2059,12 +2059,149 @@
 		return true;
 	}
 
+	/* Partnership create/edit form. Re-parent the four native field rows and the
+	   original submit/cancel controls into a compact form card. Field names,
+	   hidden token/action values, Select2 instances and datepicker inputs are never
+	   recreated, so server validation and widget behaviour remain authoritative. */
+	function polishPartnershipForm() {
+		if (!/\/partnership\/partnership_card\.php$/.test(window.location.pathname)) { return false; }
+		var table = document.querySelector('form table.tableforfieldcreate');
+		var form = table && table.closest('form');
+		var nativeTitle = document.querySelector('.fiche > table.table-fiche-title');
+		if (!form || !table || !nativeTitle || document.body.classList.contains('ts-partnership-form-page')) { return false; }
+		document.body.classList.add('ts-partnership-form-page');
+		form.classList.add('ts-partnership-form');
+		var fiche = form.closest('.fiche');
+		var titleNode = nativeTitle.querySelector('.titre');
+		var titleText = (titleNode && titleNode.textContent || 'Partnership').replace(/\s+/g, ' ').trim();
+		var isCreate = /new|create/i.test(titleText) || form.querySelector('input[name="action"][value="add"]');
+
+		var crumb = document.createElement('nav');
+		crumb.className = 'ts-partnership-breadcrumb';
+		crumb.setAttribute('aria-label', 'Breadcrumb');
+		var sourceLinks = Array.from(document.querySelectorAll('.cmd-nav a[href]'));
+		var thirdPartySource = sourceLinks.find(function (a) { return /^Third parties$/i.test((a.textContent || '').trim()); });
+		var partnershipSource = sourceLinks.find(function (a) { return /^Partnership$/i.test((a.textContent || '').trim()); });
+		var addCrumbLink = function (source, fallbackText, fallbackHref) {
+			var link = document.createElement('a');
+			link.textContent = source ? (source.textContent || '').trim() : fallbackText;
+			link.href = source && source.getAttribute('href') || fallbackHref;
+			crumb.appendChild(link);
+			var sep = document.createElement('span'); sep.textContent = '›'; sep.setAttribute('aria-hidden', 'true'); crumb.appendChild(sep);
+		};
+		addCrumbLink(thirdPartySource, 'Third parties', '/societe/index.php?leftmenu=thirdparties');
+		addCrumbLink(partnershipSource, 'Partnership', '/partnership/partnership_list.php?leftmenu=partnership');
+		var current = document.createElement('span'); current.textContent = titleText; current.setAttribute('aria-current', 'page'); crumb.appendChild(current);
+
+		var pageTitle = document.createElement('h1');
+		pageTitle.className = 'ts-partnership-title';
+		if (titleNode) { pageTitle.textContent = titleText; } else { pageTitle.textContent = isCreate ? 'New Partnership' : 'Partnership'; }
+		var info = document.createElement('div');
+		info.className = 'ts-partnership-info';
+		info.setAttribute('role', 'note');
+		info.innerHTML = '<span class="fas fa-info-circle" aria-hidden="true"></span><span>' + (isCreate
+			? 'Create a new partnership to link your organization with another third party for collaboration, distribution or business relationships.'
+			: 'Review and update the partnership details for this business relationship.') + '</span>';
+		fiche.insertBefore(crumb, nativeTitle);
+		fiche.insertBefore(pageTitle, nativeTitle);
+		fiche.insertBefore(info, nativeTitle);
+		nativeTitle.classList.add('ts-partnership-native-title');
+
+		var tabBar = table.closest('.tabBar');
+		tabBar.classList.add('ts-partnership-card');
+		var cardTitle = document.createElement('h2');
+		cardTitle.className = 'ts-partnership-card-title';
+		cardTitle.textContent = 'Partnership details';
+		tabBar.insertBefore(cardTitle, table);
+		var grid = document.createElement('div');
+		grid.className = 'ts-partnership-field-grid';
+		Array.from(table.querySelectorAll('tbody > tr')).forEach(function (row) {
+			var labelCell = row.cells[0];
+			var valueCell = row.cells[1];
+			if (!labelCell || !valueCell) { return; }
+			var field = document.createElement('div');
+			field.className = 'ts-partnership-field ' + row.className;
+			var label = document.createElement('div');
+			label.className = 'ts-partnership-label';
+			while (labelCell.firstChild) { label.appendChild(labelCell.firstChild); }
+			var control = document.createElement('div');
+			control.className = 'ts-partnership-control';
+			while (valueCell.firstChild) { control.appendChild(valueCell.firstChild); }
+			var relatedCreate = control.querySelector('a.butActionNew');
+			if (relatedCreate) { relatedCreate.classList.add('ts-partnership-related-create'); label.appendChild(relatedCreate); }
+			if (row.matches('.field_fk_type,.field_fk_soc,.field_date_partnership_start')) { field.classList.add('ts-partnership-required'); }
+			if (row.classList.contains('field_date_partnership_start') || row.classList.contains('field_date_partnership_end')) {
+				field.classList.add('ts-partnership-date-field');
+				var help = document.createElement('p');
+				help.className = 'ts-partnership-help';
+				help.textContent = row.classList.contains('field_date_partnership_start')
+					? 'The date the partnership becomes effective.' : 'Optional end date for the partnership.';
+				field.appendChild(label); field.appendChild(control); field.appendChild(help);
+				var now = control.querySelector('.datenowlink');
+				if (now) { now.textContent = 'Today'; now.classList.add('ts-partnership-today'); label.appendChild(now); }
+				var dateInput = control.querySelector('input.hasDatepicker');
+				if (dateInput && !dateInput.getAttribute('placeholder')) { dateInput.setAttribute('placeholder', 'mm/dd/yyyy'); }
+			} else {
+				field.appendChild(label); field.appendChild(control);
+			}
+			grid.appendChild(field);
+		});
+		table.insertAdjacentElement('afterend', grid);
+		table.classList.add('ts-partnership-source-table');
+
+		var type = form.querySelector('#fk_type');
+		var thirdParty = form.querySelector('#fk_soc');
+		var setPlaceholder = function (select, text) {
+			if (!select) { return; }
+			var empty = Array.from(select.options).find(function (option) { return option.value === '-1' || !(option.textContent || '').trim(); });
+			if (empty) { empty.textContent = text; }
+			var rendered = select.parentElement.querySelector('.select2-selection__rendered');
+			if (rendered && (!select.value || select.value === '-1')) { rendered.textContent = text; rendered.setAttribute('title', text); }
+		};
+		setPlaceholder(type, 'Select type');
+		setPlaceholder(thirdParty, 'Search and select a third party…');
+		if (type) { type.setAttribute('data-ts-partnership-select', 'compact'); }
+		if (thirdParty) { thirdParty.setAttribute('data-ts-partnership-select', 'searchable'); }
+		if (window.jQuery) {
+			window.jQuery([type, thirdParty].filter(Boolean)).on('select2:open', function (event) {
+				var source = event.currentTarget;
+				window.requestAnimationFrame(function () {
+					var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
+					if (!dropdown) { return; }
+					dropdown.classList.add('ts-partnership-select-dropdown');
+					if (source.getAttribute('data-ts-partnership-select') === 'compact') { dropdown.classList.add('ts-partnership-compact-dropdown'); }
+					dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
+						if (!(option.textContent || '').replace(/\u00a0/g, ' ').trim()) { option.style.display = 'none'; }
+					});
+					var container = source.parentElement.querySelector('.select2-container');
+					var width = container && container.getBoundingClientRect().width;
+					if (width) { dropdown.style.setProperty('width', width + 'px', 'important'); }
+				});
+			});
+		}
+
+		var nativeActions = Array.from(form.children).find(function (node) {
+			return node.classList && node.classList.contains('center') && node.querySelector('input[type="submit"]');
+		});
+		if (nativeActions) {
+			nativeActions.classList.add('ts-partnership-actions');
+			var create = nativeActions.querySelector('input[name="add"], input[name="save"]');
+			var cancel = nativeActions.querySelector('input[name="cancel"]');
+			if (create && isCreate) { create.value = 'Create partnership'; }
+			if (cancel) { nativeActions.appendChild(cancel); }
+			if (create) { nativeActions.appendChild(create); }
+			tabBar.appendChild(nativeActions);
+		}
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { polishThirdPartyDashboard(); } catch (e) { /* retain the native Third Parties module landing */ }
+		try { polishPartnershipForm(); } catch (e) { /* retain the native Partnership form */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }

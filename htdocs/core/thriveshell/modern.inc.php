@@ -4154,3 +4154,294 @@ body.ts-thirdparty-dashboard .ts-module-card-footer {
 	body.ts-thirdparty-dashboard .ts-module-dashboard-recent .ts-module-dashboard-body { overflow-x: auto !important; }
 	body.ts-thirdparty-dashboard .ts-module-dashboard-recent .ts-module-dashboard-table { min-width: 560px; }
 }
+
+/* Partnership create/edit form ------------------------------------------
+   Exact-route gated by modern.js; existing native controls are re-parented
+   into this shared card/grid rather than replaced. */
+body.ts-partnership-form-page .fiche {
+	max-width: 1320px;
+	margin: 0 auto;
+	padding: 20px 24px 40px !important;
+	background: #f7f8fa;
+}
+body.ts-partnership-form-page .ts-partnership-native-title,
+body.ts-partnership-form-page .ts-partnership-source-table {
+	display: none !important;
+}
+body.ts-partnership-form-page .ts-partnership-breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0 0 14px;
+	color: #94a3b8;
+	font-size: 13px;
+}
+body.ts-partnership-form-page .ts-partnership-breadcrumb a {
+	color: #4f46e5;
+	font-weight: 500;
+	text-decoration: none;
+}
+body.ts-partnership-form-page .ts-partnership-breadcrumb a:hover { text-decoration: underline; }
+body.ts-partnership-form-page .ts-partnership-breadcrumb [aria-current="page"] { color: #64748b; }
+body.ts-partnership-form-page .ts-partnership-title {
+	margin: 0 0 18px;
+	color: #111827;
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+body.ts-partnership-form-page .ts-partnership-info {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 50px;
+	margin: 0 0 24px;
+	padding: 10px 16px;
+	border: 1px solid #cfd4ff;
+	border-radius: 9px;
+	background: #f5f3ff;
+	color: #475569;
+	font-size: 13px;
+	line-height: 1.45;
+}
+body.ts-partnership-form-page .ts-partnership-info > [class*="fa-"] {
+	color: #5b4cf0;
+	font-size: 19px;
+}
+body.ts-partnership-form-page .ts-partnership-card {
+	margin: 0 !important;
+	padding: 24px !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 12px !important;
+	background: #fff !important;
+	box-shadow: 0 5px 18px rgba(15, 23, 42, .045) !important;
+	overflow: visible !important;
+}
+body.ts-partnership-form-page .ts-partnership-card-title {
+	margin: 0 0 24px;
+	color: #1e293b;
+	font-size: 18px;
+	font-weight: 650;
+	line-height: 1.35;
+}
+body.ts-partnership-form-page .ts-partnership-field-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px 28px;
+}
+body.ts-partnership-form-page .ts-partnership-field {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+body.ts-partnership-form-page .ts-partnership-label {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	min-height: 20px;
+	margin: 0 0 8px;
+	color: #1e293b;
+	font-size: 13px;
+	font-weight: 600;
+}
+body.ts-partnership-form-page .ts-partnership-label label { font: inherit; color: inherit; }
+body.ts-partnership-form-page .ts-partnership-required .ts-partnership-label label::after {
+	margin-left: 6px;
+	color: #dc2626;
+	content: "*";
+}
+body.ts-partnership-form-page .ts-partnership-control {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+body.ts-partnership-form-page .ts-partnership-control > select,
+body.ts-partnership-form-page .ts-partnership-control > .select2-container {
+	width: 100% !important;
+	max-width: none !important;
+	min-width: 0 !important;
+}
+body.ts-partnership-form-page .ts-partnership-control > [class*="fa-building"] {
+	display: none !important;
+}
+body.ts-partnership-form-page .ts-partnership-control .select2-selection,
+body.ts-partnership-form-page .ts-partnership-control .select2-selection--single {
+	height: 46px !important;
+	min-height: 46px !important;
+	border: 1px solid #dbe2ec !important;
+	border-radius: 8px !important;
+	background: #fff !important;
+	box-shadow: none !important;
+}
+body.ts-partnership-form-page .ts-partnership-control .select2-selection__rendered {
+	height: 44px !important;
+	padding: 0 42px 0 14px !important;
+	color: #334155 !important;
+	font-size: 13px !important;
+	line-height: 44px !important;
+}
+body.ts-partnership-form-page .ts-partnership-control .select2-selection__arrow {
+	top: 0 !important;
+	right: 10px !important;
+	height: 44px !important;
+}
+body.ts-partnership-form-page .ts-partnership-control .select2-selection:focus,
+body.ts-partnership-form-page .ts-partnership-control .select2-selection[aria-expanded="true"] {
+	border-color: #8b7cf6 !important;
+	box-shadow: 0 0 0 3px rgba(91, 76, 240, .12) !important;
+	outline: 0 !important;
+}
+body.ts-partnership-form-page .ts-partnership-related-create {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	min-width: 26px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 6px;
+	background: #f5f3ff;
+	color: #4f46e5;
+	position: absolute;
+	top: -3px;
+	right: 0;
+}
+body.ts-partnership-form-page .ts-partnership-date-field .ts-partnership-control {
+	position: relative;
+	display: block;
+}
+body.ts-partnership-form-page .ts-partnership-date-field .divfordateinput {
+	position: relative;
+	display: block !important;
+	width: 100%;
+}
+body.ts-partnership-form-page .ts-partnership-date-field input.hasDatepicker {
+	width: 100% !important;
+	height: 46px !important;
+	max-width: none !important;
+	padding: 0 44px 0 14px !important;
+	border: 1px solid #dbe2ec !important;
+	border-radius: 8px !important;
+	background: #fff !important;
+	color: #334155;
+	font-size: 13px;
+	text-align: left !important;
+	box-shadow: none !important;
+}
+body.ts-partnership-form-page .ts-partnership-date-field input.hasDatepicker:focus {
+	border-color: #8b7cf6 !important;
+	box-shadow: 0 0 0 3px rgba(91, 76, 240, .12) !important;
+	outline: 0;
+}
+body.ts-partnership-form-page .ts-partnership-date-field .ui-datepicker-trigger {
+	position: absolute;
+	top: 50%;
+	right: 13px;
+	width: 19px !important;
+	height: 19px !important;
+	margin: 0 !important;
+	transform: translateY(-50%);
+	cursor: pointer;
+	opacity: .68;
+}
+body.ts-partnership-form-page .ts-partnership-today {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	height: 26px;
+	min-width: 48px;
+	padding: 0 8px;
+	border: 0;
+	border-radius: 7px;
+	background: transparent;
+	color: #4f46e5;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	position: absolute;
+	top: -3px;
+	right: 0;
+}
+body.ts-partnership-form-page .ts-partnership-today:hover { background: #f5f3ff; }
+body.ts-partnership-form-page .ts-partnership-help {
+	margin: 8px 0 0;
+	color: #64748b;
+	font-size: 12px;
+	line-height: 1.4;
+}
+body.ts-partnership-form-page .ts-partnership-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	margin: 30px 0 0 !important;
+	padding: 22px 0 0;
+	border-top: 1px solid #e7e9ee;
+	text-align: right !important;
+}
+body.ts-partnership-form-page .ts-partnership-actions input.button {
+	height: 44px !important;
+	min-height: 44px !important;
+	margin: 0 !important;
+	padding: 0 22px !important;
+	border-radius: 8px !important;
+	font-size: 13px !important;
+	font-weight: 650 !important;
+}
+body.ts-partnership-form-page .ts-partnership-actions input[name="cancel"] {
+	min-width: 128px;
+	border: 1px solid #dbe2ec !important;
+	background: #fff !important;
+	color: #334155 !important;
+}
+body.ts-partnership-form-page .ts-partnership-actions input[name="add"],
+body.ts-partnership-form-page .ts-partnership-actions input[name="save"] {
+	min-width: 205px;
+	border: 1px solid #5b4cf0 !important;
+	background: #5b4cf0 !important;
+	color: #fff !important;
+}
+body.ts-partnership-form-page .select2-dropdown.ts-partnership-select-dropdown {
+	border: 1px solid #dbe2ec !important;
+	border-radius: 9px !important;
+	background: #fff !important;
+	box-shadow: 0 12px 28px rgba(15, 23, 42, .14) !important;
+	overflow: hidden;
+}
+body.ts-partnership-form-page .ts-partnership-select-dropdown .select2-search__field {
+	height: 38px;
+	padding: 0 12px !important;
+	border: 1px solid #dbe2ec !important;
+	border-radius: 7px !important;
+	outline: 0;
+}
+body.ts-partnership-form-page .ts-partnership-compact-dropdown .select2-search { display: none !important; }
+body.ts-partnership-form-page .ts-partnership-select-dropdown .select2-results__option {
+	min-height: 38px;
+	padding: 9px 12px !important;
+	font-size: 13px;
+}
+body.ts-partnership-form-page .ts-partnership-select-dropdown .select2-results__option[aria-selected="true"],
+body.ts-partnership-form-page .ts-partnership-select-dropdown .select2-results__option--highlighted {
+	background: #f1efff !important;
+	color: #4338ca !important;
+}
+
+@media (max-width: 900px) {
+	body.ts-partnership-form-page .fiche { padding: 18px 16px 34px !important; }
+	body.ts-partnership-form-page .ts-partnership-field-grid { gap: 22px 20px; }
+}
+@media (max-width: 700px) {
+	body.ts-partnership-form-page .fiche { padding: 16px 12px 28px !important; }
+	body.ts-partnership-form-page .ts-partnership-title { font-size: 24px; }
+	body.ts-partnership-form-page .ts-partnership-info { align-items: flex-start; }
+	body.ts-partnership-form-page .ts-partnership-card { padding: 18px !important; }
+	body.ts-partnership-form-page .ts-partnership-field-grid { grid-template-columns: minmax(0, 1fr); }
+	body.ts-partnership-form-page .ts-partnership-actions { flex-wrap: wrap; }
+	body.ts-partnership-form-page .ts-partnership-actions input.button { flex: 1 1 180px; }
+}
