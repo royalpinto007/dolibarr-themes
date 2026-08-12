@@ -1068,18 +1068,100 @@
 	}
 
 	function polishCategoryDialogPage() {
-		if (!document.body.classList.contains('dol_openinpopup') || !/\/categories\/categorie_list\.php$/.test(window.location.pathname)) { return false; }
+		if (!document.body.classList.contains('dol_openinpopup') || !/\/categories\/(?:categorie_list|card)\.php$/.test(window.location.pathname)) { return false; }
 		document.body.classList.add('ts-category-dialog-page');
+		var isCreate = /\/categories\/card\.php$/.test(window.location.pathname);
+		document.body.classList.toggle('ts-category-dialog-create-page', isCreate);
+		function sizeHostDialog(dialog, createMode) {
+			if (!dialog) { return; }
+			window.requestAnimationFrame(function () {
+				var fiche = document.querySelector('.fiche');
+				var contentHeight = fiche ? fiche.scrollHeight : document.body.scrollHeight;
+				var viewportLimit = Math.floor(window.parent.innerHeight * .84);
+				var desiredHeight = createMode ? Math.min(820, viewportLimit) : Math.min(Math.max(contentHeight + 64, 360), 620, viewportLimit);
+				dialog.style.setProperty('height', desiredHeight + 'px', 'important');
+			});
+		}
 		try {
 			var hostFrame = Array.from(window.parent.document.querySelectorAll('iframe.iframedialog')).find(function (frame) { return frame.contentWindow === window; });
-			var dialogTitle = hostFrame && hostFrame.closest('.ui-dialog')?.querySelector('.ui-dialog-title');
-			if (dialogTitle && document.title) { dialogTitle.textContent = document.title; }
+			var hostDialog = hostFrame && hostFrame.closest('.ui-dialog');
+			var dialogTitle = hostDialog?.querySelector('.ui-dialog-title');
+			var innerTitle = document.querySelector('div.titre');
+			var translatedTitle = ((innerTitle && innerTitle.textContent) || document.title || '').replace(/\s+/g, ' ').trim().replace(/(\))\d+$/, '$1');
+			if (dialogTitle && translatedTitle) { dialogTitle.textContent = translatedTitle; }
+			if (hostDialog) {
+				hostDialog.classList.toggle('ts-category-dialog-create', isCreate);
+				hostDialog.classList.toggle('ts-category-dialog-list-state', !isCreate);
+			}
 		} catch (e) { /* Same-origin iframe is expected; retain native title if not. */ }
+		if (isCreate) {
+			var createForm = document.querySelector('form[action*="/categories/card.php"]');
+			if (createForm) { createForm.classList.add('ts-category-create-form'); }
+			sizeHostDialog(hostDialog, true);
+			return Boolean(createForm);
+		}
+		var content = document.querySelector('.fiche');
+		if (content) { content.classList.add('ts-category-dialog-content'); }
+		var pageTitle = document.querySelector('.ts-pagehead div.titre');
+		if (pageTitle) {
+			var shortTitle = (pageTitle.textContent || '').replace(/\s+/g, ' ').trim().replace(/\s*\(.+\)\d*\s*$/, '').replace(/\d+$/, '').trim();
+			pageTitle.textContent = shortTitle;
+		}
+		var viewLinks = Array.from(document.querySelectorAll('a.btnTitle')).filter(function (link) { return /List view|Hierarch/i.test(link.getAttribute('title') || ''); });
+		var viewHost = document.querySelector('.ts-category-view-switch');
+		if (!viewHost && viewLinks.length) {
+			viewHost = document.createElement('span');
+			viewHost.className = 'ts-category-view-switch';
+			var actions = document.querySelector('.ts-pagehead-actions');
+			if (actions) { actions.insertBefore(viewHost, actions.firstChild); }
+			else { viewLinks[0].parentNode.insertBefore(viewHost, viewLinks[0]); }
+		}
+		if (viewHost) {
+			viewLinks.forEach(function (link) {
+				link.classList.add('ts-category-view-option');
+				if (!link.querySelector('.ts-category-view-label')) {
+					var label = document.createElement('span');
+					label.className = 'ts-category-view-label';
+					label.textContent = (link.getAttribute('title') || '').replace(/([a-z])([A-Z])/g, '$1 $2');
+					link.appendChild(label);
+				}
+				viewHost.appendChild(link);
+			});
+			viewHost.querySelectorAll('.button-title-separator').forEach(function (node) { node.remove(); });
+		}
 		var list = document.querySelector('table.liste');
 		if (list) { list.closest('.fichecenter')?.classList.add('ts-category-dialog-list'); }
 		var empty = list && list.querySelector('.opacitymedium');
 		var emptyCell = empty && (empty.closest('td[colspan]') || empty.closest('td'));
-		if (emptyCell) { emptyCell.classList.add('ts-category-dialog-empty'); }
+		if (emptyCell) {
+			var emptyTable = empty.closest('table');
+			if (emptyTable === list) {
+				var emptyRow = document.createElement('tr');
+				emptyRow.className = 'ts-category-empty-row';
+				var modernEmptyCell = document.createElement('td');
+				/* Dolibarr's filter and label rows do not always expose the same cell count.
+				   A deliberately large colspan lets HTML clamp this presentation row to the
+				   real table width without coupling the empty state to enabled columns. */
+				modernEmptyCell.colSpan = 100;
+				modernEmptyCell.className = 'ts-category-dialog-empty';
+				emptyRow.appendChild(modernEmptyCell);
+				var lastHeading = Array.from(list.querySelectorAll('tr.liste_titre')).pop();
+				(lastHeading || emptyCell.closest('tr')).insertAdjacentElement('afterend', emptyRow);
+				modernEmptyCell.appendChild(empty);
+				emptyCell = modernEmptyCell;
+			} else {
+				emptyCell.classList.add('ts-category-dialog-empty');
+				if (emptyTable) { emptyTable.classList.add('ts-category-empty-content'); }
+			}
+			if (!emptyCell.querySelector('.ts-category-empty-icon')) {
+				var icon = document.createElement('span');
+				icon.className = 'ts-category-empty-icon fas fa-tags';
+				icon.setAttribute('aria-hidden', 'true');
+				emptyCell.insertBefore(icon, emptyCell.firstChild);
+			}
+		}
+		try { hostDialog?.classList.toggle('ts-category-dialog-empty-state', Boolean(emptyCell)); } catch (e) { /* no-op */ }
+		sizeHostDialog(hostDialog, false);
 		return true;
 	}
 
@@ -1530,7 +1612,6 @@
 	}
 
 	ready(function () {
-		try { polishCategoryDialogPage(); } catch (e) { /* retain the native category dialog page */ }
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
@@ -1541,6 +1622,7 @@
 		   select containers, which discarded the classification when it ran first. */
 		try { classifySelects(); } catch (e) { /* leave selects as they are */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
+		try { polishCategoryDialogPage(); } catch (e) { /* retain the native category dialog page */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
