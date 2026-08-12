@@ -4659,6 +4659,13 @@ body.ts-command-module-index .ts-module-index-column {
 	background: transparent;
 	box-shadow: none;
 }
+body.ts-command-module-index .ts-module-index-column > .div-table-responsive,
+body.ts-command-module-index .ts-module-index-column > .div-table-responsive-no-min {
+	max-width: 100%;
+	overflow-x: auto;
+	border-radius: 12px;
+	scrollbar-width: thin;
+}
 body.ts-command-module-index .ts-module-index-empty { display: none; }
 body.ts-command-module-index .ts-module-index-card {
 	width: 100%;
@@ -4670,10 +4677,12 @@ body.ts-command-module-index .ts-module-index-card {
 	overflow: hidden;
 	table-layout: auto !important;
 }
+body.ts-command-module-index .ts-module-index-card-dense { min-width: 620px; }
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > th,
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
-	height: 48px;
-	padding: 0 16px !important;
+	height: auto;
+	min-height: 48px;
+	padding: 12px 16px !important;
 	border: 0 !important;
 	border-bottom: 1px solid #e7e9ee !important;
 	background: #fff !important;
@@ -4681,6 +4690,11 @@ body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
 	font-weight: 650;
 	white-space: normal !important;
 	line-height: 1.35;
+	vertical-align: middle;
+}
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > :empty {
+	width: 0 !important;
+	padding-inline: 0 !important;
 }
 body.ts-command-module-index .ts-module-index-card tr:not(.liste_titre) > td {
 	height: 48px;
@@ -4771,6 +4785,90 @@ body.ts-command-form-page .ts-command-form .select2-selection__arrow {
 	top: 0 !important;
 	right: 9px !important;
 	height: 38px !important;
+}
+body.ts-command-form-page .ts-command-form .ts-command-select-compact {
+	width: min(100%, 340px) !important;
+	max-width: 340px !important;
+}
+body.ts-command-form-page .ts-command-form .select2-selection--multiple {
+	min-height: 40px !important;
+	padding: 3px 38px 3px 8px !important;
+	border: 1px solid #dfe4ec !important;
+	border-radius: 8px !important;
+	background: #fff !important;
+	box-shadow: none !important;
+}
+body.ts-command-form-page .ts-command-form .select2-selection--multiple .select2-search--inline,
+body.ts-command-form-page .ts-command-form .select2-selection--multiple .select2-search__field {
+	border: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	outline: 0 !important;
+}
+body .select2-dropdown.ts-command-form-dropdown {
+	border: 1px solid #e0e6ef !important;
+	border-radius: 9px !important;
+	background: #fff !important;
+	box-shadow: 0 14px 34px rgba(15, 23, 42, .14) !important;
+	overflow: hidden;
+}
+body .ts-command-form-dropdown .select2-search--dropdown { padding: 9px; }
+body .ts-command-form-dropdown .select2-search__field {
+	height: 38px;
+	padding: 0 12px;
+	border: 1px solid #dfe4ec;
+	border-radius: 8px;
+	outline: 0;
+}
+body .ts-command-form-dropdown .select2-results__options { max-height: 300px; padding: 4px; scrollbar-width: thin; }
+body .ts-command-form-dropdown .select2-results__option { min-height: 36px; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+body .ts-command-form-dropdown .select2-results__option--highlighted { background: var(--c-accent-soft) !important; color: var(--c-accent-ink) !important; }
+body .ts-command-form-dropdown-compact .select2-search--dropdown,
+body .ts-command-form-dropdown .ts-command-empty-option { display: none !important; }
+
+/* Shared legacy list fallback: retain Dolibarr's real filter inputs and empty
+   result semantics while giving pages without a richer adapter COMMAND rhythm. */
+body:not(.ts-thirdparty-list) table.liste tr.liste_titre_filter > td,
+body:not(.ts-thirdparty-list) table.liste tr.liste_titre_filter > th {
+	padding: 9px 7px !important;
+	border-bottom: 1px solid #e7e9ee !important;
+	background: #fbfcfe !important;
+}
+body:not(.ts-thirdparty-list) table.liste tr.liste_titre_filter input[type="text"],
+body:not(.ts-thirdparty-list) table.liste tr.liste_titre_filter input[type="number"],
+body:not(.ts-thirdparty-list) table.liste tr.liste_titre_filter select,
+body:not(.ts-thirdparty-list) table.liste tr.liste_titre_filter .select2-selection {
+	min-height: 38px !important;
+	border: 1px solid #dfe4ec !important;
+	border-radius: 8px !important;
+	background: #fff !important;
+	box-shadow: none !important;
+}
+td.ts-command-empty-state {
+	height: 124px !important;
+	padding: 72px 20px 22px !important;
+	position: relative;
+	text-align: center !important;
+	vertical-align: middle !important;
+	color: #7a8497 !important;
+	font-size: 13px !important;
+	font-weight: 500 !important;
+}
+td.ts-command-empty-state::before {
+	content: "\f15c";
+	position: absolute;
+	top: 25px;
+	left: 50%;
+	width: 36px;
+	height: 36px;
+	transform: translateX(-50%);
+	border-radius: 10px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent);
+	font-family: "Font Awesome 5 Free", "Font Awesome 6 Free", FontAwesome;
+	font-size: 16px;
+	font-weight: 900;
+	line-height: 36px;
 }
 body.ts-command-form-page .ts-command-form-actions {
 	display: flex !important;

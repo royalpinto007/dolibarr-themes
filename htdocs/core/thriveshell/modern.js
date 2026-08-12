@@ -207,16 +207,31 @@
 	function polishSharedModuleIndex() {
 		if (!/(^|\/)index\.php$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-command-dashboard') || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
-		var layout = document.querySelector('.fiche > .twocolumns, .fiche .fichecenter > .twocolumns');
+		var layout = document.querySelector('.fiche .twocolumns');
 		if (!layout) { return false; }
 		document.body.classList.add('ts-command-module-index');
 		layout.classList.add('ts-module-index-grid');
 		layout.querySelectorAll(':scope > .fichehalfleft, :scope > .fichehalfright, :scope > .boxhalfleft, :scope > .boxhalfright').forEach(function (column) {
 			column.classList.add('ts-module-index-column');
 			if (!(column.textContent || '').replace(/\s+/g, '').length) { column.classList.add('ts-module-index-empty'); }
-			column.querySelectorAll('table.noborder, table.border').forEach(function (table) { table.classList.add('ts-module-index-card'); });
+			column.querySelectorAll('table.noborder, table.border').forEach(function (table) {
+				table.classList.add('ts-module-index-card');
+				var widestRow = Array.from(table.rows || []).reduce(function (count, row) { return Math.max(count, row.cells.length); }, 0);
+				table.classList.toggle('ts-module-index-card-dense', widestRow >= 5);
+			});
 		});
 		return true;
+	}
+
+	function polishSharedEmptyStates() {
+		var changed = false;
+		document.querySelectorAll('table.liste td[colspan], table.noborder td[colspan], table.border td[colspan]').forEach(function (cell) {
+			var text = (cell.textContent || '').replace(/\s+/g, ' ').trim();
+			if (!/^(None|No record found|No records found|No invoice)$/i.test(text)) { return; }
+			cell.classList.add('ts-command-empty-state');
+			changed = true;
+		});
+		return changed;
 	}
 
 	/* The companion module publishes translated labels and canonical field keys as
@@ -785,7 +800,48 @@
 		form.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="password"], textarea').forEach(function (control) {
 			control.classList.add('ts-command-control');
 		});
-		form.querySelectorAll('.select2-container').forEach(function (control) { control.classList.add('ts-command-select'); });
+		function sourceSelectFor(container) {
+			var select = container.previousElementSibling && container.previousElementSibling.matches('select') ? container.previousElementSibling : null;
+			if (select) { return select; }
+			var selection = container.querySelector('.select2-selection[aria-labelledby]');
+			var labelId = selection && selection.getAttribute('aria-labelledby');
+			var rendered = labelId && document.getElementById(labelId);
+			var renderedId = rendered && rendered.id ? rendered.id.replace(/^select2-/, '').replace(/-container$/, '') : '';
+			return renderedId ? document.getElementById(renderedId) : null;
+		}
+		form.querySelectorAll('.select2-container').forEach(function (control) {
+			control.classList.add('ts-command-select');
+			var select = sourceSelectFor(control);
+			if (!select) { return; }
+			var options = Array.from(select.options || []).filter(function (option) { return (option.textContent || '').replace(/\s+/g, '').length; });
+			control.classList.toggle('ts-command-select-compact', !select.multiple && options.length > 0 && options.length <= 12);
+		});
+		function polishOpenFormDropdown() {
+			window.requestAnimationFrame(function () {
+				var open = form.querySelector('.select2-selection[aria-expanded="true"]');
+				var container = open && open.closest('.select2-container');
+				var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
+				if (!container || !dropdown) { return; }
+				var rect = container.getBoundingClientRect();
+				var width = Math.min(rect.width, window.innerWidth - 24);
+				dropdown.classList.add('ts-command-form-dropdown');
+				dropdown.classList.toggle('ts-command-form-dropdown-compact', container.classList.contains('ts-command-select-compact'));
+				dropdown.style.setProperty('width', width + 'px', 'important');
+				dropdown.style.setProperty('min-width', width + 'px', 'important');
+				dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
+					if (!(option.textContent || '').replace(/\s+/g, '').length) { option.classList.add('ts-command-empty-option'); }
+				});
+			});
+		}
+		/* Select2 emits a jQuery event and mounts its popup under body. Observe that
+		   portal as well as the native event so every bundled Select2 version gets
+		   the same trigger-sized COMMAND treatment. */
+		form.addEventListener('select2:open', polishOpenFormDropdown);
+		if (window.jQuery) { window.jQuery(form).on('select2:open.tsCommandForm', polishOpenFormDropdown); }
+		var dropdownObserver = new MutationObserver(function (mutations) {
+			if (mutations.some(function (mutation) { return mutation.addedNodes.length; })) { polishOpenFormDropdown(); }
+		});
+		dropdownObserver.observe(document.body, { childList: true, subtree: true });
 		var actionHost = Array.from(form.querySelectorAll('.center, .centered, .tabsAction')).reverse().find(function (node) {
 			return node.querySelector('input[type="submit"], button[type="submit"]');
 		});
@@ -2584,6 +2640,7 @@
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
 		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
+		try { polishSharedEmptyStates(); } catch (e) { /* retain native empty messages */ }
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
