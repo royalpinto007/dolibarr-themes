@@ -360,6 +360,145 @@
 		return changed;
 	}
 
+	/* The overview is the visual reference for the Third Party record. Keep this
+	   final pass route-specific: other Third Party tabs retain the permanent shell
+	   normalization above, while only /societe/card.php receives the compact
+	   identity, prioritized tabs and overview-card refinements. Existing links and
+	   controls are always moved or annotated, never recreated. */
+	function polishThirdPartyOverview() {
+		var params = new URLSearchParams(window.location.search);
+		if (!/\/societe\/card\.php$/.test(window.location.pathname) || !(params.get('socid') || params.get('id'))) { return false; }
+		var banner = document.querySelector('.ts-thirdparty-record-shell > .ts-entity-banner');
+		var groups = document.querySelector('.ts-thirdparty-groups');
+		if (!banner || !groups || document.body.classList.contains('ts-thirdparty-overview')) { return false; }
+		document.body.classList.add('ts-thirdparty-overview');
+
+		var identity = banner.querySelector('.ts-entity-identity');
+		var title = identity && identity.querySelector(':scope > .refid');
+		var photo = identity && identity.querySelector(':scope > .divphotoref');
+		if (photo) { photo.classList.add('ts-overview-photo-source'); }
+		if (identity && !identity.querySelector('.ts-overview-icon-tile')) {
+			var tile = document.createElement('span');
+			tile.className = 'ts-overview-icon-tile fas fa-building';
+			tile.setAttribute('aria-hidden', 'true');
+			identity.insertBefore(tile, identity.firstChild);
+		}
+		if (title) {
+			if (!title.querySelector(':scope > .ts-overview-name')) {
+				var name = document.createElement('span');
+				name.className = 'ts-overview-name';
+				Array.from(title.childNodes).filter(function (node) {
+					return node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim();
+				}).forEach(function (node) { name.appendChild(node); });
+				title.insertBefore(name, title.firstChild);
+			}
+			var status = title.querySelector(':scope > .statusref');
+			if (status && !title.querySelector('.ts-overview-info')) {
+				var info = document.createElement('span');
+				info.className = 'ts-overview-info fas fa-info-circle';
+				info.setAttribute('aria-label', 'Third party information');
+				status.insertAdjacentElement('afterend', info);
+			}
+			var addressBlock = title.querySelector('.refaddress');
+			var address = addressBlock && addressBlock.querySelector('.address');
+			if (address) {
+				address.classList.add('ts-overview-location');
+				title.appendChild(address);
+			}
+			title.querySelectorAll(':scope > .refidno:not(.ts-overview-location)').forEach(function (node) {
+				node.classList.add('ts-overview-secondary-hidden');
+			});
+		}
+
+		/* Make the existing disclosure behave like a conventional menu and give the
+		   original controls a stable icon slot without changing their handlers. */
+		var actions = banner.querySelector('.ts-more-actions');
+		if (actions) {
+			var actionIcons = {
+				'action-clone': 'fa-copy',
+				'action-delete': 'fa-trash-alt'
+			};
+			actions.querySelectorAll('.ts-more-action-item').forEach(function (control) {
+				if (control.querySelector('.ts-overview-action-icon')) { return; }
+				var icon = document.createElement('span');
+				icon.className = 'ts-overview-action-icon far ' + (actionIcons[control.id] || (/merge/.test(control.getAttribute('href') || '') ? 'fa-object-group' : 'fa-circle'));
+				icon.setAttribute('aria-hidden', 'true');
+				control.insertBefore(icon, control.firstChild);
+			});
+			document.addEventListener('click', function (event) {
+				if (actions.open && !actions.contains(event.target)) { actions.removeAttribute('open'); }
+			});
+			document.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape' && actions.open) {
+					actions.removeAttribute('open');
+					var trigger = actions.querySelector('summary');
+					if (trigger) { trigger.focus(); }
+				}
+			});
+		}
+
+		var tabs = document.querySelector('.ts-thirdparty-record-shell > .tabs[data-ts-placed="1"]');
+		var overviewTab = tabs && tabs.querySelector('a#card');
+		if (overviewTab) {
+			Array.from(overviewTab.childNodes).forEach(function (node) {
+				if (node.nodeType === Node.TEXT_NODE && (node.textContent || '').trim()) { node.textContent = 'Overview'; }
+			});
+			overviewTab.setAttribute('title', 'Overview');
+			var tabIcon = overviewTab.querySelector('[title="Third party"]');
+			if (tabIcon) { tabIcon.setAttribute('title', 'Overview'); }
+		}
+		if (tabs && !tabs.querySelector('.ts-tabs-more')) {
+			var trailing = ['margin', 'note', 'document', 'agenda'].map(function (id) {
+				var link = tabs.querySelector('a#' + id);
+				return link && link.closest('.tabsElem');
+			}).filter(Boolean);
+			if (trailing.length) {
+				var more = document.createElement('details');
+				more.className = 'ts-tabs-more';
+				var moreTrigger = document.createElement('summary');
+				moreTrigger.innerHTML = 'More <span class="fas fa-chevron-down" aria-hidden="true"></span>';
+				var moreMenu = document.createElement('div');
+				moreMenu.className = 'ts-tabs-more-menu';
+				trailing.forEach(function (item) { moreMenu.appendChild(item); });
+				more.appendChild(moreTrigger);
+				more.appendChild(moreMenu);
+				tabs.appendChild(more);
+				document.addEventListener('click', function (event) {
+					if (more.open && !more.contains(event.target)) { more.removeAttribute('open'); }
+				});
+				document.addEventListener('keydown', function (event) {
+					if (event.key === 'Escape' && more.open) { more.removeAttribute('open'); moreTrigger.focus(); }
+				});
+			}
+		}
+
+		/* Surface the translated nature already carried by Dolibarr's title instead
+		   of the terse C/P/V glyph, without changing the destination anchor. */
+		groups.querySelectorAll('tr[data-field="nature"] a[title]').forEach(function (link) {
+			var label = (link.getAttribute('title') || '').trim();
+			if (label && /^[CPV]$/.test((link.textContent || '').trim())) { link.textContent = label; }
+		});
+		groups.querySelectorAll('.clipboardCPButton').forEach(function (button) { button.classList.add('ts-overview-copy'); });
+
+		var lower = document.querySelector('.fiche > .fichecenter:has(.ts-record-section-card)');
+		if (lower) { lower.classList.add('ts-overview-lower-grid'); }
+		var events = document.querySelector('.ts-record-section-events');
+		if (events) {
+			events.querySelectorAll('tr.oddeven td:nth-child(4)').forEach(function (cell) { cell.classList.add('ts-overview-event-type'); });
+			var conversation = events.querySelector('a.btnTitle[title="Full conversation"]');
+			if (conversation) { conversation.classList.add('ts-overview-redundant-event-action'); }
+			var createEvent = events.querySelector('a.btnTitle[title="Create event"]');
+			if (createEvent && !createEvent.querySelector('.ts-section-action-label')) {
+				var createLabel = document.createElement('span');
+				createLabel.className = 'ts-section-action-label';
+				createLabel.textContent = 'Create event';
+				createEvent.appendChild(createLabel);
+				createEvent.classList.add('ts-section-labelled-action', 'ts-overview-create-event');
+			}
+		}
+		return true;
+	}
+
 	/* Active-tab content varies by module, but list/table wrappers are stable.
 	   Add presentation hooks only after the permanent Third Party shell exists;
 	   native forms, controls, tables and pagination remain exactly where their
@@ -2218,6 +2357,7 @@
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
 		try { buildBreadcrumb(); } catch (e) { /* idem */ }
 		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
+		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 	});
 })();
