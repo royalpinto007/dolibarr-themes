@@ -2216,6 +2216,15 @@ body#mainbody form.ts-modern-form .select2-container--default .select2-search__f
 	box-shadow: none !important;
 	outline: 0 !important;
 }
+body#mainbody form.ts-modern-form .select2-selection--multiple .select2-search--inline,
+body#mainbody form.ts-modern-form .select2-selection--multiple .select2-search__field {
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	outline: 0 !important;
+	appearance: none;
+}
 body .select2-dropdown.ts-form-select2-dropdown {
 	border: 1px solid #e0e6ef;
 	border-radius: 8px;
@@ -2316,6 +2325,28 @@ form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > span:not([cla
 	border-radius: 0 8px 8px 0;
 	background: var(--c-sunken);
 	color: var(--c-ink-2);
+}
+
+/* Width roles affect only the control inside the established value track. They
+   deliberately do not alter row columns, labels, icon slots, or help slots. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-compact > input:not([type="hidden"]),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-compact > select,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-compact > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-compact > span:has(> .select2-container),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-compact .select2-container {
+	width: min(100%, 340px) !important;
+	max-width: 340px !important;
+}
+body#mainbody form.ts-modern-form .select2-container.ts-form-control-compact {
+	width: min(100%, 340px) !important;
+	max-width: 340px !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-full > input:not([type="hidden"]),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-full > textarea,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-full > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-width-full > span:has(> .select2-container) {
+	width: 100% !important;
+	max-width: none !important;
 }
 
 body#mainbody form.ts-modern-form input[type="file"] {
@@ -2886,4 +2917,58 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:ha
 	body#mainbody form.ts-modern-form table.ts-modern-form-table tr.ts-form-row-paired > td:nth-child(4) {
 		grid-column: 2;
 	}
+}
+
+/* Compound controls override only the deterministic value cell's internal child
+   placement. The form's shared label, adornment, and left/right axes above stay
+   untouched. These rules live after the generic `td.ts-form-value > *` mapping
+   so Capital and Incoterms cannot be split back into separate visual rows. */
+body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value {
+	display: grid !important;
+	grid-template-columns: minmax(0, 1fr) 64px !important;
+	gap: 0 !important;
+}
+body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > input[name="capital"] {
+	grid-column: 1 !important;
+	grid-row: 1;
+	width: 100% !important;
+	border-radius: 8px 0 0 8px;
+}
+body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value > span:not([class*="fa-"]) {
+	grid-column: 2 !important;
+	grid-row: 1;
+	width: 64px;
+	height: 40px;
+}
+body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value {
+	display: grid !important;
+	grid-template-columns: minmax(0, .42fr) minmax(0, .58fr) !important;
+	column-gap: 8px !important;
+	row-gap: 0 !important;
+}
+body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > .select2-container {
+	grid-column: 1 !important;
+	grid-row: 1;
+	width: 100% !important;
+	max-width: none !important;
+}
+body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > input[name="location_incoterms"] {
+	grid-column: 2 !important;
+	grid-row: 1;
+	width: 100% !important;
+}
+
+/* Category selectors keep the shared adornment and control axes, then reserve a
+   real trailing slot for Dolibarr's existing add action. The button stays in the
+   same row without being copied or detached from its dialog behavior. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a.button_custcats),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a.button_suppcats) {
+	grid-template-columns: var(--tsf-adorn) minmax(0, 1fr) 48px !important;
+	column-gap: 0 !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > a.button_custcats,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > a.button_suppcats {
+	grid-column: 3 !important;
+	grid-row: 1;
+	justify-self: end;
 }

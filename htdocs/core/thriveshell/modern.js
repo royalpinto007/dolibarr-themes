@@ -736,6 +736,14 @@
 			'suppcats[]', 'parent_company_id', 'commercial[]', 'photo', 'capital',
 			'forme_juridique_code'
 		]);
+		var compactControlFields = new Set([
+			'status', 'typent_id', 'forme_juridique_code', 'effectif_id',
+			'cond_reglement_id', 'mode_reglement_id'
+		]);
+		var fullControlFields = new Set([
+			'name', 'name_alias', 'address', 'country_id', 'state_id', 'email',
+			'custcats[]', 'suppcats[]', 'parent_company_id', 'commercial[]', 'photo'
+		]);
 
 		Array.from(body.rows).forEach(function (row) {
 			/* Some edit templates leave a third, completely empty cell after an
@@ -771,6 +779,13 @@
 			Array.from(row.cells).forEach(function (cell, index) {
 				cell.classList.add(index % 2 === 0 ? 'ts-form-label' : 'ts-form-value');
 				if (index % 2 === 1) {
+					var cellControls = Array.from(cell.querySelectorAll('input, select, textarea')).filter(function (control) {
+						return control.type !== 'hidden' && !control.classList.contains('select2-search__field');
+					});
+					var cellNames = cellControls.map(function (control) { return control.name || control.id || ''; });
+					var widthRole = cellNames.some(function (name) { return compactControlFields.has(name); }) ? 'compact' :
+						(cellNames.some(function (name) { return fullControlFields.has(name); }) ? 'full' : 'medium');
+					cell.classList.add('ts-form-width-' + widthRole);
 					Array.from(cell.children).forEach(function (child) {
 						if (!child.matches('span[class*="fa-"], img.pictofixedwidth')) { return; }
 						var isHelp = child.classList.contains('fa-info-circle');
@@ -930,6 +945,20 @@
 			form.querySelectorAll('.select2-container').forEach(function (container) {
 				var select = sourceSelectFor(container);
 				if (!select) { return; }
+				var valueCell = select.closest('td.ts-form-value');
+				if (valueCell) {
+					var compactControl = valueCell.classList.contains('ts-form-width-compact');
+					var fullControl = valueCell.classList.contains('ts-form-width-full');
+					container.classList.toggle('ts-form-control-compact', compactControl);
+					container.classList.toggle('ts-form-control-full', fullControl);
+					if (compactControl) {
+						container.style.setProperty('width', 'min(100%, 340px)', 'important');
+						container.style.setProperty('max-width', '340px', 'important');
+					} else if (fullControl) {
+						container.style.setProperty('width', '100%', 'important');
+						container.style.setProperty('max-width', 'none', 'important');
+					}
+				}
 				var meaningfulOptions = Array.from(select.options).filter(function (option) {
 					return (option.textContent || '').replace(/\u00a0/g, ' ').trim();
 				});
