@@ -172,6 +172,7 @@
 		banner.parentNode.insertBefore(tabs, banner.nextSibling);
 		tabs.setAttribute('data-ts-placed', '1');
 		card.classList.add('ts-entity-card');
+		document.body.classList.add('ts-command-record-page');
 		return true;
 	}
 
@@ -709,6 +710,49 @@
 			}
 		});
 		return done;
+	}
+
+	/* Standard Dolibarr create/edit pages share one top-level form containing a
+	   tableforfield/border field table and a final submit row. Mark that structure
+	   for the global COMMAND form language without re-parenting fields. Specialized
+	   adapters remain authoritative where their body class is already present. */
+	function enhanceSharedFormPage() {
+		var params = new URLSearchParams(window.location.search);
+		var action = (params.get('action') || '').toLowerCase();
+		if (!/^(create|edit)$/.test(action)) { return false; }
+		/* The Third Party and Partnership forms have richer declarative adapters.
+		   Route guards keep those reference implementations authoritative even when
+		   optional fields/hooks mean their body marker is not produced on one load. */
+		if (/^\/societe\/card\.php$/.test(window.location.pathname) || /^\/partnership\/partnership_card\.php$/.test(window.location.pathname)) { return false; }
+		if (document.body.classList.contains('ts-thirdparty-form-page') || document.body.classList.contains('ts-partnership-form-page')) { return false; }
+		var candidates = Array.from(document.querySelectorAll('.fiche > form, .fiche > div > form, .fiche .tabBar > form')).filter(function (form) {
+			return form.querySelector('table.tableforfield, table.border') && form.querySelector('input[type="submit"], button[type="submit"]');
+		});
+		var form = candidates.sort(function (a, b) {
+			return b.querySelectorAll('input, select, textarea').length - a.querySelectorAll('input, select, textarea').length;
+		})[0];
+		if (!form || form.getAttribute('data-ts-shared-form') === '1') { return false; }
+		document.body.classList.add('ts-command-form-page');
+		form.classList.add('ts-command-form');
+		form.setAttribute('data-ts-shared-form', '1');
+		var fieldTable = Array.from(form.querySelectorAll('table.tableforfield, table.border')).find(function (table) {
+			return table.querySelectorAll('input, select, textarea').length >= 2;
+		});
+		if (fieldTable) { fieldTable.classList.add('ts-command-form-fields'); }
+		form.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="password"], textarea').forEach(function (control) {
+			control.classList.add('ts-command-control');
+		});
+		form.querySelectorAll('.select2-container').forEach(function (control) { control.classList.add('ts-command-select'); });
+		var actionHost = Array.from(form.querySelectorAll('.center, .centered, .tabsAction')).reverse().find(function (node) {
+			return node.querySelector('input[type="submit"], button[type="submit"]');
+		});
+		if (actionHost) {
+			actionHost.classList.add('ts-command-form-actions');
+			var submits = actionHost.querySelectorAll('input[type="submit"], button[type="submit"]');
+			if (submits[0]) { submits[0].classList.add('ts-command-submit-primary'); }
+			if (submits[1]) { submits[1].classList.add('ts-command-submit-secondary'); }
+		}
+		return true;
 	}
 
 	/* List page header.
@@ -2485,6 +2529,7 @@
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
 		try { enhanceThirdPartyForm(); } catch (e) { /* retain Dolibarr's native edit table */ }
+		try { enhanceSharedFormPage(); } catch (e) { /* retain the native standard form */ }
 		/* After the form is rebuilt, not before: enhanceThirdPartyForm replaces the
 		   select containers, which discarded the classification when it ran first. */
 		try { classifySelects(); } catch (e) { /* leave selects as they are */ }

@@ -261,7 +261,25 @@ div.arearef.ts-has-actions {
 	flex-wrap: wrap;
 }
 .ts-header-actions { margin-<?php echo $left; ?>: auto; flex: 0 0 auto; }
-.ts-header-actions div.tabsAction { margin: 0; justify-content: flex-end; }
+.ts-header-actions {
+	max-width: min(100%, 900px);
+}
+.ts-header-actions div.tabsAction {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--sp-2);
+	margin: 0;
+}
+.ts-header-actions div.tabsAction > a,
+.ts-header-actions div.tabsAction > button,
+.ts-header-actions div.tabsAction > input,
+.ts-header-actions div.tabsAction > .inline-block,
+.ts-header-actions div.tabsAction > details {
+	flex: 0 0 auto;
+	margin: 0 !important;
+}
 @media only screen and (max-width: 900px) {
 	div.arearef.ts-has-actions { flex-direction: column; }
 	.ts-header-actions { margin-<?php echo $left; ?>: 0; width: 100%; }
@@ -4430,6 +4448,211 @@ body.ts-partnership-form-page .ts-partnership-select-dropdown .select2-results__
 body.ts-partnership-form-page .ts-partnership-select-dropdown .select2-results__option--highlighted {
 	background: #f1efff !important;
 	color: #4338ca !important;
+}
+
+/* Shared COMMAND create/edit form surfaces -------------------------------
+   JS marks only a top-level create/edit form with a real field table and submit
+   controls. Specialized module adapters opt out before these rules apply. */
+body.ts-command-form-page .fiche {
+	max-width: 1320px;
+	margin: 0 auto;
+	padding: 22px 24px 42px !important;
+}
+body.ts-command-form-page .fiche > table.table-fiche-title,
+body.ts-command-form-page .fiche > div > table.table-fiche-title {
+	margin: 0 0 16px !important;
+}
+body.ts-command-form-page .fiche div.titre {
+	font-size: 26px;
+	font-weight: 680;
+	line-height: 1.25;
+}
+body.ts-command-form-page .ts-command-form {
+	margin: 0 !important;
+	padding: 24px !important;
+	border: 1px solid #e7e9ee;
+	border-radius: 12px;
+	background: #fff;
+	box-shadow: 0 5px 18px rgba(15, 23, 42, .045);
+}
+
+/* Shared record normalization. The node movement is generic and only activates
+   after Dolibarr exposes both its native entity banner and native tabs. This
+   keeps dense action sets inside the card without changing their links or order. */
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-width: 0;
+}
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions > .refid,
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions > .ts-entity-identity {
+	flex: 1 1 320px;
+	min-width: 0;
+}
+body.ts-command-record-page .ts-header-actions {
+	flex: 1 1 480px;
+	min-width: 0;
+}
+body.ts-command-record-page div.tabs[data-ts-placed="1"] {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+}
+body.ts-command-record-page div.tabs[data-ts-placed="1"] > a.tab {
+	flex: 0 0 auto;
+}
+@media (max-width: 900px) {
+	body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef.ts-has-actions { align-items: flex-start; }
+	body.ts-command-record-page .ts-header-actions { flex-basis: 100%; max-width: 100%; }
+}
+@media (max-width: 640px) {
+	body.ts-command-record-page .ts-header-actions div.tabsAction {
+		justify-content: flex-start;
+		width: 100%;
+	}
+	body.ts-command-record-page .ts-header-actions div.tabsAction > a,
+	body.ts-command-record-page .ts-header-actions div.tabsAction > button,
+	body.ts-command-record-page .ts-header-actions div.tabsAction > input,
+	body.ts-command-record-page .ts-header-actions div.tabsAction > .inline-block {
+		max-width: 100%;
+	}
+}
+body.ts-command-form-page .ts-command-form-fields {
+	width: 100% !important;
+	margin: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+body.ts-command-form-page .ts-command-form-fields > tbody > tr {
+	border: 0 !important;
+}
+body.ts-command-form-page .ts-command-form-fields > tbody > tr > td {
+	min-height: 52px;
+	padding-top: 8px !important;
+	padding-bottom: 8px !important;
+	border: 0 !important;
+	border-bottom: 1px solid #f1f3f6 !important;
+	background: transparent !important;
+	font-size: 13px;
+	vertical-align: middle;
+}
+body.ts-command-form-page .ts-command-form-fields > tbody > tr:last-child > td { border-bottom: 0 !important; }
+body.ts-command-form-page .ts-command-form-fields > tbody > tr > td:first-child,
+body.ts-command-form-page .ts-command-form-fields .titlefield,
+body.ts-command-form-page .ts-command-form-fields .titlefieldcreate,
+body.ts-command-form-page .ts-command-form-fields .titlefieldmiddle {
+	width: clamp(180px, 23%, 230px) !important;
+	padding-right: 22px !important;
+	color: #273449;
+	font-size: 13px;
+	font-weight: 600;
+}
+body.ts-command-form-page .ts-command-control,
+body.ts-command-form-page .ts-command-form input[type="text"],
+body.ts-command-form-page .ts-command-form input[type="email"],
+body.ts-command-form-page .ts-command-form input[type="url"],
+body.ts-command-form-page .ts-command-form input[type="number"],
+body.ts-command-form-page .ts-command-form input[type="password"] {
+	min-height: 40px !important;
+	padding-left: 13px !important;
+	padding-right: 13px !important;
+	border: 1px solid #dfe4ec !important;
+	border-radius: 8px !important;
+	background: #fff !important;
+	box-shadow: none !important;
+	font-size: 13px !important;
+}
+body.ts-command-form-page .ts-command-form textarea.ts-command-control {
+	min-height: 104px !important;
+	padding: 11px 13px !important;
+	line-height: 1.5;
+}
+body.ts-command-form-page .ts-command-form input:focus,
+body.ts-command-form-page .ts-command-form textarea:focus,
+body.ts-command-form-page .ts-command-form .select2-selection:focus,
+body.ts-command-form-page .ts-command-form .select2-selection[aria-expanded="true"] {
+	border-color: #8b7cf6 !important;
+	box-shadow: 0 0 0 3px rgba(91, 76, 240, .12) !important;
+	outline: 0 !important;
+}
+body.ts-command-form-page .ts-command-form .select2-selection--single {
+	height: 40px !important;
+	min-height: 40px !important;
+	border: 1px solid #dfe4ec !important;
+	border-radius: 8px !important;
+	background: #fff !important;
+	box-shadow: none !important;
+}
+body.ts-command-form-page .ts-command-form .select2-selection__rendered {
+	height: 38px !important;
+	padding: 0 40px 0 13px !important;
+	font-size: 13px !important;
+	line-height: 38px !important;
+}
+body.ts-command-form-page .ts-command-form .select2-selection__arrow {
+	top: 0 !important;
+	right: 9px !important;
+	height: 38px !important;
+}
+body.ts-command-form-page .ts-command-form-actions {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	gap: 11px;
+	margin: 28px 0 0 !important;
+	padding: 22px 0 0;
+	border-top: 1px solid #e7e9ee;
+}
+body.ts-command-form-page .ts-command-form-actions input,
+body.ts-command-form-page .ts-command-form-actions button {
+	min-width: 112px;
+	height: 40px !important;
+	margin: 0 !important;
+	padding: 0 18px !important;
+	border-radius: 8px !important;
+	font-size: 13px !important;
+	font-weight: 650 !important;
+}
+body.ts-command-form-page .ts-command-submit-primary {
+	border-color: #5546e8 !important;
+	background: #5546e8 !important;
+	color: #fff !important;
+}
+body.ts-command-form-page .ts-command-submit-secondary {
+	border-color: #dfe4ec !important;
+	background: #fff !important;
+	color: #334155 !important;
+}
+@media (max-width: 760px) {
+	body.ts-command-form-page .fiche { padding: 16px 12px 30px !important; }
+	body.ts-command-form-page .ts-command-form { padding: 16px !important; }
+	body.ts-command-form-page .ts-command-form-fields > tbody > tr {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		padding: 10px 0;
+		border-bottom: 1px solid #f1f3f6 !important;
+	}
+	body.ts-command-form-page .ts-command-form-fields > tbody > tr > td {
+		display: block;
+		width: 100% !important;
+		min-height: 0;
+		padding: 4px 0 !important;
+		border: 0 !important;
+	}
+	body.ts-command-form-page .ts-command-form-fields > tbody > tr > td:first-child,
+	body.ts-command-form-page .ts-command-form-fields .titlefield,
+	body.ts-command-form-page .ts-command-form-fields .titlefieldcreate,
+	body.ts-command-form-page .ts-command-form-fields .titlefieldmiddle { width: 100% !important; padding-right: 0 !important; }
+	body.ts-command-form-page .ts-command-form input[type="text"],
+	body.ts-command-form-page .ts-command-form input[type="email"],
+	body.ts-command-form-page .ts-command-form input[type="url"],
+	body.ts-command-form-page .ts-command-form textarea,
+	body.ts-command-form-page .ts-command-form .select2-container { max-width: 100% !important; }
+	body.ts-command-form-page .ts-command-form-actions { flex-wrap: wrap; }
 }
 
 /* Third Party overview reference composition -----------------------------
