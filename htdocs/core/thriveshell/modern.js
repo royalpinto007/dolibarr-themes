@@ -2051,7 +2051,11 @@
 				if (nameSearch) {
 					nameSearch.classList.add('ts-quick-search-input');
 					if (!document.body.classList.contains('ts-thirdparty-record-context')) {
-						nameSearch.setAttribute('placeholder', 'Search third parties…');
+						/* Every list said "Search third parties" regardless of what it
+						   listed. Name the page instead -- its heading already does. */
+						var pageTitle = document.querySelector('.ts-pagehead div.titre');
+						var pageLabel = pageTitle ? (pageTitle.textContent || '').replace(/\s+/g, ' ').replace(/\d[\d\s.,]*$/, '').trim() : '';
+						nameSearch.setAttribute('placeholder', pageLabel ? 'Search ' + pageLabel.toLowerCase() + '…' : 'Search…');
 					} else {
 						/* Name the tab actually being searched. This used to say
 						   "contacts/addresses" on every record tab, which read as plainly

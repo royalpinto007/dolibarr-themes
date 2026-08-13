@@ -7155,3 +7155,111 @@ body.ts-category-index table.ts-category-index-table > tbody > tr:last-child > t
 body.ts-category-index table.ts-category-index-table > tbody > tr.oddeven,
 body.ts-category-index table.ts-category-index-table > tbody > tr.impair,
 body.ts-category-index table.ts-category-index-table > tbody > tr.pair { background: transparent !important; }
+
+
+/* Date filter controls and the jQuery UI picker.
+
+   The two halves of a range were sized by different rules, so "from" and "to"
+   did not match; the picker trigger was a bare 26px image; and the calendar
+   itself inherited jQuery UI's default metrics, which read as cramped next to
+   the rest of the toolbar. Size all three together. */
+.ts-filter-surface input.hasDatepicker,
+.ts-filter-surface .divfordateinput input[type="text"],
+.ts-setting-control input.hasDatepicker {
+	width: 112px !important;
+	min-width: 112px !important;
+	max-width: 112px !important;
+	height: 38px;
+	box-sizing: border-box;
+	text-align: center;
+}
+.ts-filter-surface img.ui-datepicker-trigger,
+.ts-setting-control img.ui-datepicker-trigger {
+	width: 34px !important;
+	height: 34px !important;
+	padding: 8px;
+	box-sizing: border-box;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+	cursor: pointer;
+	opacity: .75;
+}
+.ts-filter-surface img.ui-datepicker-trigger:hover,
+.ts-setting-control img.ui-datepicker-trigger:hover {
+	border-color: var(--c-accent);
+	opacity: 1;
+}
+
+/* The calendar itself */
+#ui-datepicker-div.ui-datepicker {
+	width: 268px;
+	padding: 10px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-lg);
+	font-size: 0.8125rem;
+}
+#ui-datepicker-div .ui-datepicker-header {
+	padding: 2px 0 8px;
+	border: 0;
+	background: transparent;
+}
+#ui-datepicker-div .ui-datepicker-title {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin: 0 28px;
+}
+#ui-datepicker-div .ui-datepicker-title select.ui-datepicker-month,
+#ui-datepicker-div .ui-datepicker-title select.ui-datepicker-year {
+	width: auto !important;
+	min-width: 78px !important;
+	height: 32px;
+	padding: 0 6px !important;
+	border: 1px solid var(--c-border);
+	border-radius: 6px;
+	background: var(--c-surface);
+	font-size: 0.8125rem;
+}
+#ui-datepicker-div .ui-datepicker-prev,
+#ui-datepicker-div .ui-datepicker-next {
+	top: 4px;
+	width: 28px;
+	height: 28px;
+	border: 1px solid var(--c-border) !important;
+	border-radius: 6px;
+	background: var(--c-surface) !important;
+	cursor: pointer;
+}
+#ui-datepicker-div .ui-datepicker-prev { left: 4px; }
+#ui-datepicker-div .ui-datepicker-next { right: 4px; }
+#ui-datepicker-div table.ui-datepicker-calendar { margin: 0; font-size: 0.8125rem; }
+#ui-datepicker-div .ui-datepicker-calendar th {
+	padding: 6px 0;
+	color: var(--c-ink-subtle);
+	font-size: 0.6875rem;
+	font-weight: 600;
+}
+#ui-datepicker-div .ui-datepicker-calendar td { padding: 2px; border: 0; }
+#ui-datepicker-div .ui-datepicker-calendar td a,
+#ui-datepicker-div .ui-datepicker-calendar td span {
+	display: block;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--c-ink-2);
+	line-height: 32px;
+	text-align: center;
+}
+#ui-datepicker-div .ui-datepicker-calendar td a:hover { background: var(--c-sunken); }
+#ui-datepicker-div .ui-datepicker-calendar td a.ui-state-active,
+#ui-datepicker-div .ui-datepicker-calendar td a.ui-state-highlight {
+	background: var(--c-accent) !important;
+	color: #fff !important;
+	font-weight: 600;
+}
