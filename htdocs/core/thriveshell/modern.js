@@ -711,7 +711,15 @@
 	   presentation hooks. It does not invent filter fields or event links. */
 	function polishThirdPartyEvents() {
 		var params = new URLSearchParams(window.location.search);
-		if (!/\/societe\/messaging\.php$/.test(window.location.pathname) || !(params.get('socid') || params.get('id'))) { return false; }
+		/* The filter form POSTs to this same path, which moves socid out of the
+		   query string and into the request body. Reading the record only from
+		   location.search therefore failed on every filtered view and the page
+		   dropped back to Dolibarr's native rendering. Fall back to the id the
+		   filter form carries, so the filtered states compose like the default. */
+		var recordId = params.get('socid') || params.get('id')
+			|| (document.querySelector('form.listactionsfilter input[name="socid"], form.listactionsfilter input[name="id"]') || {}).value
+			|| '';
+		if (!/\/societe\/messaging\.php$/.test(window.location.pathname) || !recordId) { return false; }
 		if (!document.body.classList.contains('ts-thirdparty-record-context') || document.body.classList.contains('ts-thirdparty-events')) { return false; }
 		var shell = document.querySelector('.ts-thirdparty-record-shell');
 		var timeline = document.querySelector('.fiche ul.timeline');
@@ -2863,6 +2871,68 @@
 	   jPicker bindings, the AJAX on/off widgets and the submitting form all stay
 	   exactly as Dolibarr produced them. Only composition changes.
 	   ========================================================================== */
+	/* jPicker centres its popup on the trigger, which covers the very swatch the
+	   colour is being chosen for, and it only closes via its own two buttons.
+	   Place it under the field instead and dismiss it on outside click or
+	   Escape. The plugin's own open/close is reused -- clicking its trigger
+	   toggles -- so no picker state is managed here. */
+	function tameColorPickers() {
+		var visibleContainer = function () {
+			return Array.prototype.slice.call(document.querySelectorAll('.jPicker.Container')).filter(function (container) {
+				var rect = container.getBoundingClientRect();
+				return rect.width > 0 && rect.height > 0;
+			})[0] || null;
+		};
+		var openTrigger = null;
+		var place = function (trigger) {
+			var container = visibleContainer();
+			if (!container || !trigger) { return; }
+			var rect = trigger.getBoundingClientRect();
+			var viewport = document.documentElement.clientWidth;
+			var width = container.offsetWidth || 0;
+			var height = container.offsetHeight || 0;
+			var left = Math.max(12, Math.min(rect.left, viewport - width - 12));
+			/* Below the field, unless there is no room left underneath. */
+			var top = rect.bottom + 8;
+			if (top + height > window.innerHeight && rect.top - height - 8 > 0) {
+				top = rect.top - height - 8;
+			}
+			container.style.left = (left + window.pageXOffset) + 'px';
+			container.style.top = (top + window.pageYOffset) + 'px';
+		};
+		document.addEventListener('click', function (event) {
+			var trigger = event.target && event.target.closest ? event.target.closest('.ts-color-control span.jPicker') : null;
+			if (!trigger) { return; }
+			openTrigger = trigger;
+			window.requestAnimationFrame(function () { place(trigger); });
+			window.setTimeout(function () { place(trigger); }, 60);
+		});
+		var dismiss = function () {
+			var container = visibleContainer();
+			if (!container) { return; }
+			/* Close through jPicker's own Cancel control. Clicking the trigger again
+			   would toggle, but the synthetic click re-enters the open handler below
+			   and the popup simply reopens. Cancel also leaves the stored colour
+			   alone, which is what dismissing without choosing should do. */
+			var cancel = Array.prototype.slice.call(container.querySelectorAll('input[type="button"], button, a'))
+				.filter(function (control) {
+					var label = (control.value || control.textContent || '').trim().toLowerCase();
+					return label === 'cancel';
+				})[0];
+			if (cancel) { cancel.click(); }
+			openTrigger = null;
+		};
+		document.addEventListener('mousedown', function (event) {
+			var container = visibleContainer();
+			if (!container || container.contains(event.target)) { return; }
+			if (openTrigger && openTrigger.contains(event.target)) { return; }
+			dismiss();
+		});
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') { dismiss(); }
+		});
+	}
+
 	function composeDisplaySettings() {
 		if (!/\/admin\/ihm\.php$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-display-settings')) { return false; }
@@ -3046,9 +3116,10 @@
 				}
 			});
 
-			/* Keep the existing result line with the fields it counts. */
-			var resultsFooter = host.querySelector('.ts-results-footer');
-			if (resultsFooter) { colorCard.appendChild(resultsFooter); }
+			/* A settings form has no result set, so the row counter another pass
+			   added here reads as noise. */
+			var resultsFooter = document.querySelector('.ts-results-footer');
+			if (resultsFooter) { resultsFooter.remove(); }
 		}
 
 		table.remove();
@@ -3101,6 +3172,7 @@
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
+		try { tameColorPickers(); } catch (e) { /* leave jPicker's own popup behaviour */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
 		try { polishThirdPartyCustomerTab(); } catch (e) { /* retain the native customer tab */ }
