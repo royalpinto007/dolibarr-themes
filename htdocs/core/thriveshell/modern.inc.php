@@ -6925,3 +6925,74 @@ body.ts-settings-page .ts-settings-actions a.butAction {
 	body.ts-settings-page .ts-settings-actions { flex-wrap: wrap; }
 	body.ts-settings-page .ts-settings-action { flex: 1 1 140px; }
 }
+
+/* ==========================================================================
+   Record card field panels (Proposal, Order, Invoice, Product, Contact ...)
+
+   Dolibarr renders each detail panel as table.tableforfield inside the
+   fichehalfleft/fichehalfright columns. Those rows carry nested tables and
+   inline edit links, so this is styling only -- no node is moved, which keeps
+   every edit link, tooltip and form exactly where Dolibarr put it.
+
+   The third-party record page has its own composition and is excluded.
+   ========================================================================== */
+body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfleft > table.tableforfield,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfright > table.tableforfield,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfleft > div > table.tableforfield,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfright > div > table.tableforfield {
+	width: 100%;
+	margin: 0 0 16px;
+	border: 1px solid var(--c-hairline) !important;
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td {
+	padding: 11px 16px !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	font-size: 0.8125rem;
+	vertical-align: middle;
+	background: transparent !important;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr:last-child > td {
+	border-bottom: 0 !important;
+}
+/* First cell is the label column; keep every panel on one label axis. */
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child {
+	width: 38%;
+	color: var(--c-ink-2);
+	font-weight: 550;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child table {
+	width: 100%;
+	background: transparent !important;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child table td {
+	padding: 0 !important;
+	border: 0 !important;
+	font-weight: inherit;
+	color: inherit;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:last-child {
+	color: var(--c-ink);
+}
+/* Dolibarr stripes these rows; a card reads better flat. */
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr.oddeven,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr.impair,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr.pair {
+	background: transparent !important;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield a.editfielda {
+	opacity: .6;
+	margin-left: 6px;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield a.editfielda:hover { opacity: 1; }
+
+@media only screen and (max-width: 700px) {
+	body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child { width: 44%; }
+	body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td { padding: 9px 12px !important; }
+}
