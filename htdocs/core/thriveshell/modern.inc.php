@@ -1215,7 +1215,9 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	top: calc(100% + 7px);
 	left: 0;
 	right: auto;
-	width: 280px;
+	min-width: 280px;
+	width: max-content;
+	max-width: 380px;
 	min-width: 280px;
 	max-width: calc(100vw - 32px);
 	max-height: min(380px, calc(100vh - 32px));
@@ -1436,7 +1438,11 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
    content-sized while giving record cards an opaque, structured surface. */
 .ui-tooltip.mytooltip {
 	box-sizing: border-box;
-	width: 400px;
+	/* Content decides, within a ceiling: a fixed width clipped longer values
+	   and left short ones padded out. */
+	width: max-content;
+	min-width: 300px;
+	max-width: 420px;
 	max-width: calc(100vw - 24px);
 	padding: 16px;
 	border: 1px solid var(--c-border);
@@ -1636,7 +1642,8 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 .ts-results-nav li { display: inline-flex; align-items: center; min-height: 38px; }
 .ts-results-nav li.paginationcombolimit {
 	position: relative;
-	width: 126px;
+	min-width: 126px;
+	width: auto;
 	height: 38px;
 	box-sizing: border-box;
 	padding: 0;
