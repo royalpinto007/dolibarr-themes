@@ -4997,6 +4997,13 @@ body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
    "Latest 3 modified Vendor invoices" wrapped to four lines and longer titles
    truncated. Let each label take only its own width and give the rest to the
    title. */
+/* The card carries a min-height so the columns line up, and a table row will
+   happily absorb that slack -- the Statistics header stretched to 126px against
+   47px on every other card. Pin the header to its content height so the body
+   row takes the extra instead. */
+body.ts-command-module-index .ts-module-index-card tr.liste_titre {
+	height: 1px;
+}
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > th:not(:first-child),
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > td:not(:first-child) {
 	width: 1px !important;
