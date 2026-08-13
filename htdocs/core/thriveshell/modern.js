@@ -2506,7 +2506,10 @@
 	function polishDashboard() {
 		var summary = document.querySelector('.opened-dash-board-wrap > .box-flex-container');
 		var fiche = summary && summary.closest('.fiche');
-		if (!summary || !fiche || !/(^|\/)index\.php$/.test(window.location.pathname)) { return false; }
+		/* The same dashboard is served both as /index.php and as the directory
+		   index at /, and only the first form matched -- so entering Dolibarr by
+		   its bare URL gave the unstyled page. */
+		if (!summary || !fiche || !/(^|\/)(index\.php)?$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-command-dashboard')) { return true; }
 		document.body.classList.add('ts-command-dashboard');
 		summary.classList.add('ts-dashboard-summary-grid');
