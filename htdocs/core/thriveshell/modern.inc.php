@@ -6248,3 +6248,289 @@ body.ts-thirdparty-events .ts-events-entry-status .badge-status {
 }
 /* Dolibarr's view switch lived in a title table that is now empty. */
 table.table-fiche-title.ts-events-native-title-source { display: none !important; }
+
+/* ==========================================================================
+   Display > Skin and colors (admin/ihm.php?mode=template)
+
+   Route-gated by composeDisplaySettings() in modern.js. Every selector below
+   is scoped to body.ts-display-settings, so no other admin screen is touched.
+   ========================================================================== */
+body.ts-display-settings .ts-settings-shell {
+	display: grid;
+	gap: 20px;
+	min-width: 0;
+}
+body.ts-display-settings .ts-settings-card {
+	min-width: 0;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+body.ts-display-settings .ts-settings-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-display-settings .ts-settings-card-title {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 650;
+	color: var(--c-ink);
+}
+body.ts-display-settings .ts-settings-card-aside {
+	flex: 0 0 auto;
+	font-size: 0.8125rem;
+	white-space: nowrap;
+}
+body.ts-display-settings .ts-settings-card-aside a { color: var(--c-accent); text-decoration: none; }
+body.ts-display-settings .ts-settings-card-aside a:hover { text-decoration: underline; }
+
+/* ---- skin picker ---- */
+body.ts-display-settings .ts-theme-grid {
+	/* Flex rather than grid: the skin count is whatever is installed, and a
+	   trailing partial row should centre rather than strand itself at column 1. */
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 16px;
+	padding: 20px;
+}
+body.ts-display-settings .ts-theme-card { flex: 0 1 158px; }
+body.ts-display-settings .ts-theme-card {
+	display: flex !important;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	padding: 10px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r);
+	background: var(--c-surface);
+	text-align: center;
+}
+body.ts-display-settings .ts-theme-card:hover { border-color: var(--c-border); }
+body.ts-display-settings .ts-theme-card-selected {
+	border-color: var(--c-accent);
+	box-shadow: 0 0 0 2px var(--c-accent-soft);
+}
+/* One thumbnail ratio for every skin, whatever each theme ships. */
+body.ts-display-settings .ts-theme-card img.img-skinthumb {
+	display: block;
+	width: 100%;
+	height: 92px;
+	margin: 0 !important;
+	border: 1px solid var(--c-hairline) !important;
+	border-radius: 6px;
+	object-fit: cover;
+	object-position: top center;
+	box-shadow: none !important;
+}
+body.ts-display-settings .ts-theme-card br { display: none; }
+body.ts-display-settings .ts-theme-card input[type="radio"] { margin: 0; }
+body.ts-display-settings .ts-theme-card label {
+	font-size: 0.8125rem;
+	font-weight: 550;
+	color: var(--c-ink-2);
+	cursor: pointer;
+}
+body.ts-display-settings .ts-theme-card-selected label { color: var(--c-accent-ink); }
+
+/* ---- general preferences ---- */
+body.ts-display-settings .ts-settings-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0 32px;
+	padding: 4px 20px 20px;
+	border-top: 1px solid var(--c-hairline);
+}
+body.ts-display-settings .ts-setting {
+	display: grid;
+	grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
+	align-items: center;
+	gap: 16px;
+	min-height: 64px;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-display-settings .ts-settings-grid .ts-setting:nth-last-child(-n + 2) { border-bottom: 0; }
+body.ts-display-settings .ts-setting-label {
+	font-size: 0.8125rem;
+	font-weight: 550;
+	color: var(--c-ink-2);
+}
+body.ts-display-settings .ts-setting-control {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+body.ts-display-settings .ts-setting-control select { max-width: 100%; }
+body.ts-display-settings .ts-setting-control .select2-container {
+	width: min(100%, 240px) !important;
+	min-width: 0 !important;
+}
+body.ts-display-settings .ts-setting-control .select2-selection { min-height: 40px; }
+body.ts-display-settings .ts-setting-control .select2-selection__rendered { line-height: 38px; }
+body.ts-display-settings .ts-setting-control .select2-selection__arrow { height: 38px; }
+/* Dolibarr's AJAX switch ships both states; only the live one should show. */
+body.ts-display-settings .ts-setting-control span.valignmiddle { display: inline-flex; align-items: center; }
+
+/* ---- colour fields ---- */
+body.ts-display-settings .ts-color-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0 32px;
+	padding: 4px 20px 12px;
+}
+body.ts-display-settings .ts-color-item {
+	display: grid;
+	/* A fixed control track, so the swatch and hex field share one x down the
+	   column instead of drifting with each label's hint length. */
+	grid-template-columns: minmax(0, 1fr) 332px;
+	align-items: center;
+	gap: 12px;
+	min-height: 52px;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-display-settings .ts-color-grid .ts-color-item:nth-last-child(-n + 2) { border-bottom: 0; }
+body.ts-display-settings .ts-color-label {
+	font-size: 0.8125rem;
+	font-weight: 550;
+	line-height: 1.35;
+	color: var(--c-ink-2);
+}
+body.ts-display-settings .ts-color-control {
+	/* Fixed tracks, not flex: the default hints differ in length, and on flex
+	   that pushed every row's swatch and field to a different x. */
+	display: grid;
+	grid-template-columns: 38px 118px minmax(0, 1fr) 16px;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+/* Every cell is pinned to row 1: the picker markup follows the input in the
+   DOM, so assigning it an earlier column alone wrapped it onto a second row. */
+body.ts-display-settings .ts-color-control span.jPicker { grid-column: 1; grid-row: 1; }
+body.ts-display-settings .ts-color-control input[id^="colorpicker"] { grid-column: 2; grid-row: 1; }
+body.ts-display-settings .ts-color-control .ts-color-default { grid-column: 3; grid-row: 1; }
+body.ts-display-settings .ts-color-control .classfortooltip { grid-column: 4; grid-row: 1; }
+/* jPicker renders the swatch as a bound container next to its input. */
+/* jPicker already renders a live swatch; it just needs a size and to sit
+   before the hex field, the way the value reads. */
+body.ts-display-settings .ts-color-control span.jPicker {
+	flex: 0 0 auto;
+	margin: 0 !important;
+}
+body.ts-display-settings .ts-color-control span.jPicker span.Icon {
+	display: block !important;
+	width: 38px !important;
+	height: 36px !important;
+	border: 1px solid var(--c-border);
+	border-radius: 6px;
+	background-image: none !important;
+	overflow: hidden;
+}
+body.ts-display-settings .ts-color-control span.jPicker span.Color {
+	display: block !important;
+	width: 100% !important;
+	height: 100% !important;
+	border: 0 !important;
+	background-image: none !important;
+}
+body.ts-display-settings .ts-color-control span.jPicker span.Alpha,
+body.ts-display-settings .ts-color-control span.jPicker span.Image { display: none !important; }
+/* Dolibarr emits both halves of its AJAX switch and hides the inactive one with
+   .hideobject; that rule is not reaching here, so both were rendering. */
+body.ts-display-settings .ts-setting-control .hideobject { display: none !important; }
+body.ts-display-settings .ts-color-control input[type="text"] {
+	width: 118px;
+	height: 36px;
+	padding: 0 10px;
+	border: 1px solid var(--c-border);
+	border-radius: 6px;
+	background: var(--c-surface);
+	font-size: 0.8125rem;
+	font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+body.ts-display-settings .ts-color-default {
+	font-size: 0.75rem;
+	color: var(--c-ink-subtle);
+	white-space: nowrap;
+}
+/* Dolibarr bolds and link-colours the default value; it is a hint, not a link. */
+body.ts-display-settings .ts-color-control b,
+body.ts-display-settings .ts-color-control strong,
+body.ts-display-settings .ts-color-default-value {
+	font-weight: 500 !important;
+	color: var(--c-ink-subtle) !important;
+}
+body.ts-display-settings .ts-color-item .ts-color-control > img,
+body.ts-display-settings .ts-setting-control > img {
+	flex: 0 0 auto;
+	opacity: .55;
+}
+body.ts-display-settings .ts-results-footer {
+	padding: 12px 20px;
+	border-top: 1px solid var(--c-hairline);
+	font-size: 0.8125rem;
+	color: var(--c-ink-subtle);
+}
+
+/* ---- action footer ---- */
+body.ts-display-settings .ts-settings-actions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin: 24px 0 8px;
+}
+body.ts-display-settings .ts-settings-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 42px;
+	min-width: 108px;
+	padding: 0 20px !important;
+	border-radius: var(--r);
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+body.ts-display-settings input.ts-settings-action-primary {
+	border: 1px solid var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
+}
+body.ts-display-settings input.ts-settings-action-primary:hover { filter: brightness(1.06); }
+body.ts-display-settings .ts-settings-action-secondary,
+body.ts-display-settings .ts-settings-actions a.butAction {
+	border: 1px solid var(--c-border) !important;
+	background: var(--c-surface) !important;
+	color: var(--c-ink-2) !important;
+}
+
+@media only screen and (max-width: 1100px) {
+	body.ts-display-settings .ts-settings-grid,
+	body.ts-display-settings .ts-color-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+	body.ts-display-settings .ts-settings-grid .ts-setting:nth-last-child(-n + 2),
+	body.ts-display-settings .ts-color-grid .ts-color-item:nth-last-child(-n + 2) {
+		border-bottom: 1px solid var(--c-hairline);
+	}
+	body.ts-display-settings .ts-settings-grid .ts-setting:last-child,
+	body.ts-display-settings .ts-color-grid .ts-color-item:last-child { border-bottom: 0; }
+}
+@media only screen and (max-width: 700px) {
+	body.ts-display-settings .ts-theme-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; padding: 16px; }
+	body.ts-display-settings .ts-setting,
+	body.ts-display-settings .ts-color-item { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
+	body.ts-display-settings .ts-settings-card-head { flex-wrap: wrap; gap: 8px; }
+	body.ts-display-settings .ts-settings-actions { flex-wrap: wrap; }
+	body.ts-display-settings .ts-settings-action { flex: 1 1 140px; }
+}

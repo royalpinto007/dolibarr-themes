@@ -2850,6 +2850,225 @@
 		return true;
 	}
 
+
+	/* ==========================================================================
+	   Display > Skin and colors (admin/ihm.php?mode=template)
+
+	   Dolibarr renders this whole screen as one table: a skin picker, a handful
+	   of general preferences and fourteen colour fields, each as a label/control
+	   row. At page width that leaves narrow wrapped labels beside mostly empty
+	   control cells.
+
+	   Every native control is MOVED, never rebuilt, so field names, values,
+	   jPicker bindings, the AJAX on/off widgets and the submitting form all stay
+	   exactly as Dolibarr produced them. Only composition changes.
+	   ========================================================================== */
+	function composeDisplaySettings() {
+		if (!/\/admin\/ihm\.php$/.test(window.location.pathname)) { return false; }
+		if (document.body.classList.contains('ts-display-settings')) { return false; }
+		var table = document.querySelector('table.editmodeforshowskin');
+		if (!table || !table.rows.length) { return false; }
+		var rows = Array.prototype.slice.call(table.rows);
+		if (rows.length < 3) { return false; }
+
+		var host = table.parentNode;
+		if (!host) { return false; }
+		document.body.classList.add('ts-display-settings');
+
+		var moveInto = function (target, cell) {
+			if (!cell) { return; }
+			Array.prototype.slice.call(cell.childNodes).forEach(function (node) {
+				target.appendChild(node);
+			});
+		};
+
+		/* A row is a colour field when its control cell owns one of Dolibarr's
+		   jPicker-bound inputs. Detect the input rather than the row index, so a
+		   Dolibarr release that adds or drops a colour keeps working. */
+		var colorInputOf = function (row) {
+			return row.cells[1] ? row.cells[1].querySelector('input[id^="colorpicker"]') : null;
+		};
+
+		var shell = document.createElement('div');
+		shell.className = 'ts-settings-shell';
+		table.insertAdjacentElement('beforebegin', shell);
+
+		/* ---- card 1: skin picker + general preferences ---- */
+		var skinCard = document.createElement('section');
+		skinCard.className = 'ts-settings-card';
+		shell.appendChild(skinCard);
+
+		var head = document.createElement('div');
+		head.className = 'ts-settings-card-head';
+		var headTitle = document.createElement('h2');
+		headTitle.className = 'ts-settings-card-title';
+		moveInto(headTitle, rows[0].cells[0]);
+		head.appendChild(headTitle);
+		if (rows[0].cells[1]) {
+			var headAside = document.createElement('div');
+			headAside.className = 'ts-settings-card-aside';
+			moveInto(headAside, rows[0].cells[1]);
+			head.appendChild(headAside);
+		}
+		skinCard.appendChild(head);
+
+		var themeGrid = document.createElement('div');
+		themeGrid.className = 'ts-theme-grid';
+		skinCard.appendChild(themeGrid);
+		Array.prototype.slice.call(rows[1].querySelectorAll('div.inline-block')).forEach(function (card) {
+			card.classList.add('ts-theme-card');
+			/* Dolibarr spaces these with inline margins that fight the grid. */
+			card.style.margin = '';
+			card.style.marginTop = '';
+			card.style.marginBottom = '';
+			card.style.marginLeft = '';
+			card.style.marginRight = '';
+			var radio = card.querySelector('input[type="radio"]');
+			if (radio && radio.checked) { card.classList.add('ts-theme-card-selected'); }
+			themeGrid.appendChild(card);
+		});
+		/* Reflect the choice immediately; the radio still submits it. */
+		themeGrid.addEventListener('change', function (event) {
+			if (!event.target || event.target.type !== 'radio') { return; }
+			themeGrid.querySelectorAll('.ts-theme-card').forEach(function (card) {
+				var radio = card.querySelector('input[type="radio"]');
+				card.classList.toggle('ts-theme-card-selected', Boolean(radio && radio.checked));
+			});
+		});
+
+		var generalRows = rows.slice(2).filter(function (row) {
+			return row.cells.length > 1 && !colorInputOf(row);
+		});
+		var colorRows = rows.slice(2).filter(function (row) { return colorInputOf(row); });
+
+		if (generalRows.length) {
+			var generalGrid = document.createElement('div');
+			generalGrid.className = 'ts-settings-grid';
+			skinCard.appendChild(generalGrid);
+			generalRows.forEach(function (row) {
+				var field = document.createElement('div');
+				field.className = 'ts-setting';
+				var label = document.createElement('div');
+				label.className = 'ts-setting-label';
+				moveInto(label, row.cells[0]);
+				var control = document.createElement('div');
+				control.className = 'ts-setting-control';
+				moveInto(control, row.cells[1]);
+				field.appendChild(label);
+				field.appendChild(control);
+				generalGrid.appendChild(field);
+			});
+		}
+
+		/* ---- card 2: colour fields ---- */
+		if (colorRows.length) {
+			var colorCard = document.createElement('section');
+			colorCard.className = 'ts-settings-card';
+			shell.appendChild(colorCard);
+			var colorHead = document.createElement('div');
+			colorHead.className = 'ts-settings-card-head';
+			var colorTitle = document.createElement('h2');
+			colorTitle.className = 'ts-settings-card-title';
+			colorTitle.textContent = 'Color settings';
+			colorHead.appendChild(colorTitle);
+			colorCard.appendChild(colorHead);
+
+			var colorGrid = document.createElement('div');
+			colorGrid.className = 'ts-color-grid';
+			colorCard.appendChild(colorGrid);
+
+			colorRows.forEach(function (row) {
+				var item = document.createElement('div');
+				item.className = 'ts-color-item';
+				var label = document.createElement('div');
+				label.className = 'ts-color-label';
+				moveInto(label, row.cells[0]);
+				var control = document.createElement('div');
+				control.className = 'ts-color-control';
+				moveInto(control, row.cells[1]);
+				item.appendChild(label);
+				item.appendChild(control);
+				colorGrid.appendChild(item);
+
+				/* Dolibarr prints the default as loose nodes after the field, with the
+				   hex in its own coloured element. Collect whatever is left once the
+				   input, its picker and the help icon are accounted for, and restate it
+				   as one muted hint. The field itself is untouched. */
+				var colorInput = control.querySelector('input[id^="colorpicker"]');
+				var picker = control.querySelector('span.jPicker');
+				var helpIcon = control.querySelector('.classfortooltip');
+				var hintNodes = Array.prototype.slice.call(control.childNodes).filter(function (node) {
+					if (node === colorInput || node === picker || node === helpIcon) { return false; }
+					if (node.nodeType === 1 && (node.tagName === 'SCRIPT' || node.tagName === 'LINK')) { return false; }
+					if (node.nodeType === 1 && node.contains && node.contains(colorInput)) { return false; }
+					return (node.textContent || '').replace(/\s+/g, ' ').trim() !== '';
+				});
+				if (hintNodes.length) {
+					var hint = document.createElement('span');
+					hint.className = 'ts-color-default';
+					var hintText = hintNodes.map(function (node) {
+						return (node.textContent || '').replace(/\s+/g, ' ').trim();
+					}).join(' ').replace(/\s+/g, ' ').trim();
+					/* "Default : 263c5c" -> "Default: #263c5c", matching how the value is
+					   written everywhere else. Presentation only; nothing is submitted. */
+					hintText = hintText.replace(/\s*:\s*/, ': ').replace(/:\s*([0-9a-f]{3,8})\b/i, ': #$1');
+					hint.textContent = hintText;
+					hintNodes.forEach(function (node) { if (node.parentNode) { node.parentNode.removeChild(node); } });
+					control.appendChild(hint);
+					if (helpIcon) { control.appendChild(helpIcon); }
+
+					/* An unset field still renders in a colour -- its default. Show that
+					   in the swatch so each row reads at a glance.
+					   jPicker builds its swatch markup on a later ready handler, so it does
+					   not exist yet at this point -- look it up when painting, not now.
+					   Paint the Icon rather than the Color: the plugin owns Color and
+					   repaints it from the empty value, while Color stays transparent
+					   above the Icon, so a picked colour still wins. */
+					var defaultHex = (hintText.match(/#([0-9a-f]{3,8})\b/i) || [])[1];
+					if (colorInput && defaultHex) {
+						var paintDefault = function () {
+							var icon = control.querySelector('span.jPicker span.Icon');
+							if (!icon) { return false; }
+							if ((colorInput.value || '').trim()) { return true; }
+							icon.style.backgroundColor = '#' + defaultHex;
+							return true;
+						};
+						if (!paintDefault()) {
+							var tries = 0;
+							var waitForPicker = window.setInterval(function () {
+								tries += 1;
+								if (paintDefault() || tries > 40) { window.clearInterval(waitForPicker); }
+							}, 50);
+						}
+						colorInput.addEventListener('change', paintDefault);
+						colorInput.addEventListener('blur', paintDefault);
+					}
+				}
+			});
+
+			/* Keep the existing result line with the fields it counts. */
+			var resultsFooter = host.querySelector('.ts-results-footer');
+			if (resultsFooter) { colorCard.appendChild(resultsFooter); }
+		}
+
+		table.remove();
+
+		/* ---- action footer: mark the native buttons, do not replace them ---- */
+		var submit = document.querySelector('input[type="submit"][name="modify"], input.button[type="submit"]');
+		var actionHost = submit && submit.closest('div.center, .tabsAction');
+		if (actionHost) {
+			actionHost.classList.add('ts-settings-actions');
+			actionHost.querySelectorAll('input[type="submit"], input.button, input.butAction').forEach(function (button) {
+				button.classList.add('ts-settings-action');
+			});
+			actionHost.querySelectorAll('input.button_delete, input[name="cancel"], a.butActionDelete').forEach(function (button) {
+				button.classList.add('ts-settings-action-secondary');
+			});
+			if (submit) { submit.classList.add('ts-settings-action-primary'); }
+		}
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -2881,6 +3100,7 @@
 		try { polishRecordSections(); } catch (e) { /* retain the native section layout */ }
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
+		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
 		try { polishThirdPartyCustomerTab(); } catch (e) { /* retain the native customer tab */ }
