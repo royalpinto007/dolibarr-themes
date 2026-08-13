@@ -2007,8 +2007,17 @@
 
 		var filter = form.querySelector('div.liste_titre.liste_titre_bydiv');
 		var embeddedFilterRow = null;
-		if (!filter && document.body.classList.contains('ts-thirdparty-record-context')) {
-			embeddedFilterRow = Array.from(list.rows || []).find(function (row, index) {
+		/* Only some lists ship the filters as a div.liste_titre_bydiv block; the
+		   rest keep them in the table's own filter row. This fallback was limited
+		   to third-party record tabs, so every other such list -- stock movements,
+		   for one -- composed its table but left the raw filter row showing above
+		   it. The row is the same structure wherever it appears.
+
+		   Gated on Dolibarr's own bodyforlist marker: without it this also claimed
+		   the filter row on admin screens such as website.php, which then failed
+		   to compose as a settings page. */
+		if (!filter && (document.body.classList.contains('bodyforlist') || document.body.classList.contains('ts-thirdparty-record-context'))) {
+			embeddedFilterRow = list.querySelector('tr.liste_titre_filter') || Array.from(list.rows || []).find(function (row, index) {
 				return index < 2 && row.querySelector('input:not([type="hidden"]), select, button[name="button_search_x"]');
 			});
 			if (embeddedFilterRow) {
