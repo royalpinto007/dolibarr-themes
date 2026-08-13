@@ -3999,6 +3999,15 @@ body.ts-thirdparty-dashboard .ts-statistics-total-row > td:last-child {
 	font-size: 21px;
 	font-weight: 700;
 }
+/* The tile is a deliberate exception to the generic "leading icon in a table
+   cell" rule, which sets display:inline-block, width:1.25em and an 8px gap from a
+   selector of higher specificity than a plain class. That is why the tile kept
+   rendering 23x36 instead of a 36px square however the class was declared: the
+   rule was correct and simply never won. Stated here at the specificity of the
+   rule it has to override, and scoped to the same td > span:first-child shape so
+   it cannot leak onto other icons. */
+body.ts-thirdparty-dashboard table td > span.ts-total-icon:first-child,
+body.ts-thirdparty-dashboard td > span.ts-total-icon:first-child,
 body.ts-thirdparty-dashboard .ts-total-icon {
 	display: inline-flex;
 	align-items: center;
