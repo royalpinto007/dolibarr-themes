@@ -6734,3 +6734,51 @@ body.ts-customer-summary table.ts-latest-table {
 body.ts-customer-summary table.ts-latest-table td { white-space: nowrap; }
 body.ts-customer-summary table.ts-latest-table td:first-child { width: 38%; }
 body.ts-customer-summary table.ts-latest-table td a { white-space: nowrap; }
+
+/* Events/Agenda toolbar: target proportions -- 44px controls, 12px gaps, the
+   search taking the slack, Date and Type at fixed widths, reset only when it
+   has something to clear. */
+body.ts-thirdparty-events .ts-events-toolbar { gap: 12px; padding: 0 24px 20px; }
+body.ts-thirdparty-events .ts-events-filter-form .liste_titre {
+	grid-template-columns: minmax(260px, 1fr) 190px 210px max-content;
+	gap: 12px;
+}
+body.ts-thirdparty-events .ts-events-filter-form th { height: 44px !important; }
+body.ts-thirdparty-events .ts-events-view-switch { height: 44px; }
+body.ts-thirdparty-events .ts-events-search-control,
+body.ts-thirdparty-events .ts-events-date-control { height: 44px; }
+body.ts-thirdparty-events .ts-events-search-input { height: 42px !important; font-size: 0.875rem; }
+body.ts-thirdparty-events .ts-events-filter-form .select2-container { height: 44px; }
+body.ts-thirdparty-events .ts-events-filter-form .select2-selection--single {
+	height: 44px !important;
+	min-height: 44px !important;
+}
+body.ts-thirdparty-events .ts-events-filter-form .select2-selection__rendered {
+	height: 42px !important;
+	line-height: 42px !important;
+	font-size: 0.875rem !important;
+}
+body.ts-thirdparty-events .ts-events-filter-form .select2-selection__arrow { height: 42px !important; }
+body.ts-thirdparty-events .ts-events-filter-form button.button_search,
+body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter {
+	height: 44px !important;
+	padding: 0 16px !important;
+	font-size: 0.875rem;
+}
+/* Reset carries a word now, so it is no longer a bare square. */
+body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter {
+	width: auto !important;
+	gap: 8px;
+}
+body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter[hidden] { display: none !important; }
+body.ts-thirdparty-events .ts-events-date-order { margin-left: auto; font-size: 11px; opacity: .6; }
+body.ts-thirdparty-events .ts-events-date-control { justify-content: flex-start !important; gap: 10px; }
+/* Segmented view switch: two equal, clearly-stated views. */
+body.ts-thirdparty-events .ts-events-view-option {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 7px;
+}

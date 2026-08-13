@@ -802,22 +802,70 @@
 				searchWrap.appendChild(searchIcon);
 				searchWrap.appendChild(labelInput);
 			}
+			/* This control is a sort toggle -- it flips sortorder on a.datep -- not a
+			   date filter, which is how a bare calendar icon beside Search and Type
+			   reads. State that it sorts, and show which way it will go. */
 			var dateLink = form.querySelector('a[href*="sortfield=a.datep"]');
 			if (dateLink) {
 				dateLink.classList.add('ts-events-date-control');
+				var nextOrder = /sortorder=asc/i.test(dateLink.getAttribute('href') || '') ? 'asc' : 'desc';
+				dateLink.setAttribute('title', nextOrder === 'asc' ? 'Sort by date, oldest first' : 'Sort by date, newest first');
+				dateLink.setAttribute('aria-label', dateLink.getAttribute('title'));
 				var dateIcon = document.createElement('span');
 				dateIcon.className = 'far fa-calendar-alt';
 				dateIcon.setAttribute('aria-hidden', 'true');
 				dateLink.insertBefore(dateIcon, dateLink.firstChild);
+				var dateCaret = document.createElement('span');
+				dateCaret.className = 'fas ' + (nextOrder === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down') + ' ts-events-date-order';
+				dateCaret.setAttribute('aria-hidden', 'true');
+				dateLink.appendChild(dateCaret);
 			}
 			var type = form.querySelector('select#actioncode');
 			if (type) { type.setAttribute('data-ts-events-select', 'compact'); }
+			/* This button submits the filter form; it expands nothing, so labelling it
+			   "Filters" promised a panel that does not exist. Say what it does. */
 			var submit = form.querySelector('button.button_search');
 			if (submit && !submit.querySelector('.ts-events-filter-label')) {
 				var submitLabel = document.createElement('span');
 				submitLabel.className = 'ts-events-filter-label';
-				submitLabel.textContent = 'Filters';
+				submitLabel.textContent = 'Apply';
 				submit.appendChild(submitLabel);
+				submit.setAttribute('title', 'Apply the search and type filters');
+			}
+
+			/* The reset button posts button_removefilter_x, which only clears the
+			   filters. With nothing filtered it is a permanent, mysterious X, so
+			   show it only when there is something to clear. */
+			var reset = form.querySelector('button.button_removefilter');
+			if (reset) {
+				var labelField = form.querySelector('input[name="search_agenda_label"]');
+				var typeField = form.querySelector('select#actioncode');
+				var searchParams = new URLSearchParams(window.location.search);
+				var hasActiveFilter = Boolean(
+					(labelField && (labelField.value || '').trim())
+					|| (typeField && typeField.value && typeField.value !== '-1' && typeField.value !== '')
+					|| searchParams.get('search_agenda_label')
+					|| (searchParams.get('actioncode') && searchParams.get('actioncode') !== '-1')
+				);
+				reset.hidden = !hasActiveFilter;
+				reset.classList.add('ts-events-reset');
+				reset.setAttribute('title', 'Clear filters');
+				reset.setAttribute('aria-label', 'Clear filters');
+				if (!reset.querySelector('.ts-events-reset-label')) {
+					var resetLabel = document.createElement('span');
+					resetLabel.className = 'ts-events-reset-label';
+					resetLabel.textContent = 'Clear';
+					reset.appendChild(resetLabel);
+				}
+				/* Reveal it as soon as a filter is set, without waiting for a submit. */
+				var refreshReset = function () {
+					reset.hidden = !(
+						(labelField && (labelField.value || '').trim())
+						|| (typeField && typeField.value && typeField.value !== '-1' && typeField.value !== '')
+					);
+				};
+				if (labelField) { labelField.addEventListener('input', refreshReset); }
+				if (typeField) { typeField.addEventListener('change', refreshReset); }
 			}
 			if (window.jQuery && type) {
 				window.jQuery(type).on('select2:open', function () {
