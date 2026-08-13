@@ -6996,3 +6996,59 @@ body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfie
 	body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child { width: 44%; }
 	body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td { padding: 9px 12px !important; }
 }
+
+/* ==========================================================================
+   Record card line items (Proposal, Order, Invoice)
+
+   All three render their lines as table#tablelines inside a responsive div,
+   so one selector covers the set. Styling only -- the drag handles, inline
+   edit forms and the "add new line" row keep their markup and behaviour.
+   ========================================================================== */
+body.ts-command-record-page:not(.ts-thirdparty-record-context) div.div-table-responsive-no-min:has(> table#tablelines),
+body.ts-command-record-page:not(.ts-thirdparty-record-context) div.div-table-responsive:has(> table#tablelines) {
+	margin: 0 0 16px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+	overflow-x: auto;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines {
+	width: 100%;
+	margin: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.liste_titre > td,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.liste_titre > th {
+	padding: 11px 12px !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	background: var(--c-sunken) !important;
+	color: var(--c-ink-2) !important;
+	font-size: 0.75rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr > td {
+	padding: 11px 12px !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	font-size: 0.8125rem;
+	vertical-align: middle;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr:last-child > td { border-bottom: 0 !important; }
+/* Dolibarr stripes these; a card reads better flat. */
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.pair,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.impair,
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.oddeven {
+	background: transparent !important;
+}
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr:hover > td { background: var(--c-sunken); }
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines input[type="text"],
+body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines select {
+	height: 36px;
+	border-radius: 6px;
+	font-size: 0.8125rem;
+}
