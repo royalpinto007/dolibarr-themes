@@ -5045,14 +5045,19 @@ body.ts-command-module-index .ts-module-index-card tr:not(.liste_titre) > td {
 	font-size: 13px;
 }
 body.ts-command-module-index .ts-module-index-empty-row td {
-	display: flex !important;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	min-height: 112px;
+	/* display:flex on a td drops its table-cell behaviour, so the colspan is
+	   ignored and the cell shrinks to its own content -- "None" ended up 32px
+	   wide against the left edge while sibling widgets centred theirs across the
+	   card. Keep the cell a table cell and centre its contents instead. */
+	display: table-cell !important;
+	height: 112px;
 	color: var(--c-muted);
 	text-align: center;
+	vertical-align: middle;
+}
+body.ts-command-module-index .ts-module-index-empty-row td > .ts-module-index-empty-icon {
+	display: block;
+	margin: 0 auto 8px;
 }
 body.ts-command-module-index .ts-module-index-empty-icon {
 	display: inline-flex;
