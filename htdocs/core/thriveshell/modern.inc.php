@@ -4005,10 +4005,17 @@ body.ts-thirdparty-dashboard .ts-total-icon {
 	justify-content: center;
 	width: 36px;
 	height: 36px;
+	min-width: 36px;
 	margin-right: 12px;
 	border-radius: 9px;
 	background: #e9e4ff;
 	color: #7047eb;
+	font-size: 18px !important;
+	line-height: 1 !important;
+	vertical-align: middle;
+}
+body.ts-thirdparty-dashboard .ts-statistics-total-row > td:first-child {
+	white-space: nowrap;
 }
 body.ts-thirdparty-dashboard .ts-stat-mini-grid {
 	display: grid;
