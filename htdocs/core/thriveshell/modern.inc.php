@@ -1499,7 +1499,11 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 .ui-tooltip.mytooltip b,
 .ui-tooltip.mytooltip strong {
 	display: inline-block;
-	width: 112px;
+	/* A fixed width here collided with its own value: labels longer than 112px,
+	   such as "Amount (excl. tax):", overflowed straight into the number. Treat
+	   it as a floor and keep a gap after it. */
+	min-width: 140px;
+	padding-right: 10px;
 	color: var(--c-muted);
 	font-weight: 550;
 	white-space: nowrap;
@@ -1542,16 +1546,19 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	margin: 0 0 0 auto;
 	flex: 0 0 auto;
 }
+/* One grid for the whole list rather than a fixed column per row: at 112px a
+   longer label such as "Amount (excl. tax):" ran straight into its own value,
+   and each row measured independently so nothing lined up. Letting the labels
+   share a content-sized column aligns them and gives each the width it needs. */
 .ui-tooltip.mytooltip .ts-tooltip-details {
 	display: grid;
-	gap: 7px;
+	grid-template-columns: max-content minmax(0, 1fr);
+	align-items: start;
+	gap: 7px var(--sp-3);
 	margin-top: var(--sp-3);
 }
 .ui-tooltip.mytooltip .ts-tooltip-row {
-	display: grid;
-	grid-template-columns: 112px minmax(0, 1fr);
-	align-items: start;
-	column-gap: var(--sp-3);
+	display: contents;
 }
 .ui-tooltip.mytooltip .ts-tooltip-label {
 	display: inline-flex;
