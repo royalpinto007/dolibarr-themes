@@ -5836,7 +5836,7 @@ body.ts-thirdparty-events .ts-events-filter-form tr {
 }
 body.ts-thirdparty-events .ts-events-filter-form .liste_titre {
 	display: grid;
-	grid-template-columns: minmax(220px, 1.25fr) minmax(180px, .8fr) minmax(220px, .9fr) 132px;
+	grid-template-columns: minmax(240px, 1fr) 210px 240px minmax(196px, max-content);
 	align-items: center;
 	gap: 10px;
 	width: 100%;
@@ -5890,16 +5890,25 @@ body.ts-thirdparty-events .ts-events-date-control {
 	height: 40px;
 	padding: 0 12px;
 	border: 1px solid #dfe4ec;
-	border-radius: 8px;
+	border-radius: 8px !important;
 	background: #fff;
 	color: #475569;
 	font-size: 13px;
 	font-weight: 500;
 	text-decoration: none;
+	justify-content: flex-start !important;
 }
 body.ts-thirdparty-events .ts-events-filter-form th:nth-child(2) > .nowrap,
 body.ts-thirdparty-events .ts-events-filter-form th:nth-child(4) > [class*="fa-square"] { display: none !important; }
-body.ts-thirdparty-events .ts-events-filter-form .select2-container { width: 100% !important; }
+body.ts-thirdparty-events .ts-events-filter-form .select2-container {
+	/* Select2's container is inline and unsized, so the 40px selection inside it
+	   sat below the row's shared baseline. Give the container the control height
+	   it is standing in for. */
+	width: 100% !important;
+	display: block;
+	height: 40px;
+	align-self: center;
+}
 body.ts-thirdparty-events .ts-events-filter-form .select2-selection--single {
 	height: 40px !important;
 	min-height: 40px !important;
@@ -5931,9 +5940,13 @@ body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter {
 	font-size: 13px;
 }
 body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) { gap: 8px; justify-content: flex-end; }
-body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) button.button_search { flex: 1 1 auto; min-width: 92px; }
-body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter { width: 40px; padding: 0 !important; }
-body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) > .nowraponall { display: flex; width: 100%; gap: 8px; }
+body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) button.button_search { flex: 0 0 auto; min-width: 92px; }
+body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter { flex: 0 0 auto; width: 40px; padding: 0 !important; }
+/* Dolibarr wraps only part of this column's buttons, so the wrapper box laid
+   the group out from its own origin and ran the reset control past the card
+   edge. Take the wrapper out of layout entirely and let the column align both
+   buttons as one row. */
+body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) > .nowraponall { display: contents; }
 body.ts-thirdparty-events .ts-events-filter-label { font-weight: 550; }
 body.ts-thirdparty-events .select2-dropdown.ts-events-select-dropdown {
 	border: 1px solid #dfe4ec !important;
