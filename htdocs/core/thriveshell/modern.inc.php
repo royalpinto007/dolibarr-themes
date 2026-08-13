@@ -6546,3 +6546,191 @@ body.ts-display-settings .ts-settings-actions a.butAction {
 	body.ts-display-settings .ts-settings-actions { flex-wrap: wrap; }
 	body.ts-display-settings .ts-settings-action { flex: 1 1 140px; }
 }
+
+/* ==========================================================================
+   Third party > Customer tab, right-hand summary column (comm/card.php)
+   Route-gated by composeCustomerSummary(); scoped to body.ts-customer-summary.
+   ========================================================================== */
+body.ts-customer-summary .ts-cust-stack { display: grid; gap: 16px; min-width: 0; }
+body.ts-customer-summary div.fichehalfright > br,
+body.ts-customer-summary div.fichehalfright > .underbanner { display: none; }
+
+/* ---- stat cards ---- */
+body.ts-customer-summary .ts-kpi-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	min-width: 0;
+}
+body.ts-customer-summary a.ts-kpi-card {
+	display: block !important;
+	min-width: 0;
+	padding: 16px 18px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	text-decoration: none !important;
+}
+body.ts-customer-summary a.ts-kpi-card:hover { border-color: var(--c-accent); }
+body.ts-customer-summary a.ts-kpi-card .boxstats {
+	display: grid !important;
+	grid-template-columns: 44px minmax(0, 1fr);
+	grid-template-rows: auto auto;
+	align-items: center;
+	gap: 2px 14px;
+	width: auto !important;
+	min-height: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: none !important;
+	text-align: left;
+}
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-icon {
+	display: inline-flex;
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 10px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent);
+}
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-icon [class*="fa-"] {
+	color: var(--c-accent) !important;
+	font-size: 17px !important;
+}
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-label {
+	grid-column: 2;
+	grid-row: 1;
+	font-size: 0.8125rem;
+	font-weight: 550;
+	color: var(--c-ink-2);
+}
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-value {
+	grid-column: 2;
+	grid-row: 2;
+	font-size: 1.375rem;
+	font-weight: 700;
+	color: var(--c-ink);
+}
+body.ts-customer-summary a.ts-kpi-card br { display: none; }
+
+/* ---- record list cards ---- */
+body.ts-customer-summary .ts-latest-card {
+	min-width: 0;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+body.ts-customer-summary .ts-latest-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-customer-summary .ts-latest-title {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-size: 0.9375rem;
+	font-weight: 650;
+	color: var(--c-ink);
+}
+body.ts-customer-summary .ts-latest-aside { flex: 0 0 auto; font-size: 0.8125rem; }
+body.ts-customer-summary .ts-latest-aside a { color: var(--c-accent); text-decoration: none; }
+body.ts-customer-summary .ts-latest-aside a:hover { text-decoration: underline; }
+body.ts-customer-summary .ts-latest-aside .badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	margin-left: 6px;
+	padding: 0 7px;
+	border-radius: 999px;
+	background: var(--c-sunken);
+	color: var(--c-ink-2);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+body.ts-customer-summary .ts-latest-card .div-table-responsive-no-min,
+body.ts-customer-summary .ts-latest-card .div-table-responsive { margin: 0 !important; overflow-x: auto; }
+body.ts-customer-summary table.ts-latest-table {
+	width: 100%;
+	margin: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+}
+body.ts-customer-summary table.ts-latest-table tr.oddeven,
+body.ts-customer-summary table.ts-latest-table tr.impair,
+body.ts-customer-summary table.ts-latest-table tr.pair { background: transparent !important; }
+body.ts-customer-summary table.ts-latest-table tr + tr > td { border-top: 1px solid var(--c-hairline); }
+body.ts-customer-summary table.ts-latest-table td {
+	padding: 12px 14px !important;
+	border-bottom: 0 !important;
+	font-size: 0.8125rem;
+	vertical-align: middle;
+}
+body.ts-customer-summary table.ts-latest-table td:first-child { padding-left: 18px !important; }
+body.ts-customer-summary table.ts-latest-table td:last-child { padding-right: 18px !important; text-align: right; }
+body.ts-customer-summary table.ts-latest-table a { text-decoration: none; }
+body.ts-customer-summary table.ts-latest-table td [class*="fa-"] { margin-right: 6px; opacity: .85; }
+/* Dolibarr's status label, as a pill. */
+body.ts-customer-summary table.ts-latest-table span.badge-status,
+body.ts-customer-summary table.ts-latest-table .badge {
+	display: inline-flex;
+	align-items: center;
+	height: 24px;
+	padding: 0 10px;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+@media only screen and (max-width: 1100px) {
+	body.ts-customer-summary .ts-kpi-grid { gap: 12px; }
+}
+@media only screen and (max-width: 700px) {
+	body.ts-customer-summary .ts-kpi-grid { grid-template-columns: minmax(0, 1fr); }
+	body.ts-customer-summary a.ts-kpi-card { padding: 14px; }
+	body.ts-customer-summary table.ts-latest-table td { padding: 10px !important; }
+}
+
+/* Corrections after measuring the composed column. */
+/* The stat anchor carries Dolibarr's own thumbstat width; the grid cell is the
+   authority here, and the label span is hidden by the native boxstats rules. */
+body.ts-customer-summary a.ts-kpi-card {
+	width: 100% !important;
+	max-width: none !important;
+	min-width: 0 !important;
+	box-sizing: border-box;
+}
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-label,
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-label > span {
+	display: inline !important;
+	visibility: visible !important;
+	overflow: visible !important;
+	width: auto !important;
+	height: auto !important;
+	font-size: 0.8125rem !important;
+	color: var(--c-ink-2) !important;
+}
+body.ts-customer-summary a.ts-kpi-card .ts-kpi-value {
+	display: block !important;
+	width: auto !important;
+}
+/* Let the record tables size to their content and scroll inside the card
+   rather than clipping refs and stacking dates one character per line. */
+body.ts-customer-summary table.ts-latest-table {
+	table-layout: auto !important;
+	min-width: 100%;
+}
+body.ts-customer-summary table.ts-latest-table td { white-space: nowrap; }
+body.ts-customer-summary table.ts-latest-table td:first-child { width: 38%; }
+body.ts-customer-summary table.ts-latest-table td a { white-space: nowrap; }

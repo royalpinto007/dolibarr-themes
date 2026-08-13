@@ -3140,6 +3140,88 @@
 		return true;
 	}
 
+
+	/* ==========================================================================
+	   Third party > Customer tab (comm/card.php) -- right-hand summary column
+
+	   Dolibarr stacks four stat links inside one boxtable cell, then three record
+	   lists each wrapped in its own responsive div with the section title buried
+	   in a nested table inside the list's first row. That renders as uneven stat
+	   widths and three lists merged into a single slab inside an outer box.
+
+	   Compose the four stats as a 2x2 grid and give each list its own card with a
+	   real header. Every link, icon, count and row is moved, never rebuilt.
+	   ========================================================================== */
+	function composeCustomerSummary() {
+		if (!/\/comm\/card\.php$/.test(window.location.pathname)) { return false; }
+		if (document.body.classList.contains('ts-customer-summary')) { return false; }
+		var right = document.querySelector('div.fichehalfright');
+		if (!right) { return false; }
+		var statCell = right.querySelector('td.tdboxstats');
+		var lists = Array.prototype.slice.call(right.querySelectorAll('table.lastrecordtable'));
+		if (!statCell && !lists.length) { return false; }
+		document.body.classList.add('ts-customer-summary');
+
+		var stack = document.createElement('div');
+		stack.className = 'ts-cust-stack';
+		right.appendChild(stack);
+
+		/* ---- 2x2 stat grid ---- */
+		if (statCell) {
+			var grid = document.createElement('div');
+			grid.className = 'ts-kpi-grid';
+			stack.appendChild(grid);
+			Array.prototype.slice.call(statCell.querySelectorAll('a.thumbstat')).forEach(function (link) {
+				link.classList.add('ts-kpi-card');
+				var body = link.querySelector('.boxstats') || link;
+				var textWrap = body.querySelector('.boxstatstext');
+				var icon = textWrap && textWrap.querySelector('[class*="fa-"]');
+				if (icon) {
+					var iconTile = document.createElement('span');
+					iconTile.className = 'ts-kpi-icon';
+					icon.parentNode.insertBefore(iconTile, icon);
+					iconTile.appendChild(icon);
+					body.insertBefore(iconTile, body.firstChild);
+				}
+				if (textWrap) { textWrap.classList.add('ts-kpi-label'); }
+				/* The value is the indicator span that is not the link itself. */
+				Array.prototype.slice.call(body.querySelectorAll('span.boxstatsindicator')).forEach(function (value) {
+					value.classList.add('ts-kpi-value');
+				});
+				grid.appendChild(link);
+			});
+			var oldBox = right.querySelector('div.box.divboxtable, div.box-halfright');
+			if (oldBox) { oldBox.remove(); }
+		}
+
+		/* ---- one card per record list ---- */
+		lists.forEach(function (list) {
+			var card = document.createElement('section');
+			card.className = 'ts-latest-card';
+			var titleRow = list.querySelector('tr.liste_titre');
+			var titleTable = titleRow && titleRow.querySelector('table');
+			if (titleTable) {
+				var head = document.createElement('div');
+				head.className = 'ts-latest-head';
+				var cells = Array.prototype.slice.call(titleTable.rows[0].cells);
+				cells.forEach(function (cell, index) {
+					var part = document.createElement('div');
+					part.className = index === 0 ? 'ts-latest-title' : 'ts-latest-aside';
+					Array.prototype.slice.call(cell.childNodes).forEach(function (node) { part.appendChild(node); });
+					head.appendChild(part);
+				});
+				card.appendChild(head);
+				titleRow.remove();
+			}
+			var wrap = list.closest('div.div-table-responsive-no-min, div.div-table-responsive') || list;
+			wrap.parentNode.insertBefore(card, wrap);
+			card.appendChild(wrap === list ? list : wrap);
+			list.classList.add('ts-latest-table');
+			stack.appendChild(card);
+		});
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -3172,6 +3254,7 @@
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
+		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { tameColorPickers(); } catch (e) { /* leave jPicker's own popup behaviour */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
