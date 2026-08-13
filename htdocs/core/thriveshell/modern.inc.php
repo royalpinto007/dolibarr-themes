@@ -5004,17 +5004,18 @@ body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
 body.ts-command-module-index .ts-module-index-card tr.liste_titre {
 	height: 1px;
 }
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > th:not(:first-child),
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > td:not(:first-child) {
-	width: 1px !important;
+/* Keep the labels and the title on one line each and let auto layout size the
+   columns from that. Forcing widths here instead starved the data columns: the
+   title cell spans two of them, so a percentage on it truncated the reference
+   and customer beneath. */
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > th,
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
 	white-space: nowrap !important;
 }
-/* Auto layout needs a preference on the title too, or shrinking the labels
-   simply shrinks everything in proportion. */
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > th:first-child,
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > td:first-child {
-	width: 55% !important;
-	min-width: 210px !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > :first-child {
 	position: relative;
