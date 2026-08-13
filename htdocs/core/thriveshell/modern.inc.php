@@ -4992,6 +4992,23 @@ body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
 	line-height: 1.35;
 	vertical-align: middle;
 }
+/* The widget title shares this row with the column labels. Under auto layout
+   the labels claimed width by content ratio and left the title 137px, so
+   "Latest 3 modified Vendor invoices" wrapped to four lines and longer titles
+   truncated. Let each label take only its own width and give the rest to the
+   title. */
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > th:not(:first-child),
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > td:not(:first-child) {
+	width: 1px !important;
+	white-space: nowrap !important;
+}
+/* Auto layout needs a preference on the title too, or shrinking the labels
+   simply shrinks everything in proportion. */
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > th:first-child,
+body.ts-command-module-index .ts-module-index-card tr.liste_titre > td:first-child {
+	width: 55% !important;
+	min-width: 210px !important;
+}
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > :first-child {
 	position: relative;
 	padding-left: 62px !important;
