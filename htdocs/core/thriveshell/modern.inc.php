@@ -6131,3 +6131,101 @@ body.ts-thirdparty-events .ts-events-entry-status .badge-status {
 	body.ts-partnership-form-page .ts-partnership-actions { flex-wrap: wrap; }
 	body.ts-partnership-form-page .ts-partnership-actions input.button { flex: 1 1 180px; }
 }
+
+/* Filters promoted into the record-tab toolbar (Events/Agenda, Contacts).
+   These reuse .ts-column-filter-control, which is a stacked grid built for the
+   Filters disclosure -- inside the toolbar that stacked the label over the
+   control and broke a date range onto two lines, pushing its picker buttons
+   over the neighbouring field. Lay them out as one row at the shared 40px
+   control height instead. Scoped to controls carrying both classes, so the
+   disclosure panel and the main list pages keep their own layout. */
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	height: 40px;
+	min-height: 40px;
+	padding: 0 10px;
+	border: 1px solid var(--c-line);
+	border-radius: var(--r);
+	background: var(--c-surface);
+	overflow: hidden;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter:focus-within {
+	border-color: var(--c-accent);
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter > .ts-column-filter-label {
+	/* The disclosure-panel rule lays this label out full width above its control.
+	   In a row it must size to its text, or it consumes the slot and collapses
+	   the field it names to zero. */
+	flex: none;
+	display: inline-block;
+	width: auto;
+	min-width: 0;
+	max-width: none;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: none;
+	color: var(--c-ink-subtle);
+	white-space: nowrap;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .divfordateinput {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter input[type="text"] {
+	width: 74px;
+	min-width: 0;
+	height: 28px;
+	padding: 0 6px;
+	border: 1px solid var(--c-line);
+	border-radius: 6px;
+	background: var(--c-surface);
+	font-size: 13px;
+	text-align: center;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter img.ui-datepicker-trigger {
+	width: 15px;
+	height: 15px;
+	flex: none;
+	cursor: pointer;
+	opacity: .6;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter img.ui-datepicker-trigger:hover { opacity: 1; }
+/* The select carries Dolibarr's own max-width utilities; the toolbar slot is
+   the authority on width here. */
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-container {
+	flex: 1 1 auto;
+	width: auto !important;
+	min-width: 0 !important;
+	max-width: none !important;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-selection {
+	min-height: 28px;
+	height: 28px;
+	border: 1px solid var(--c-line);
+	border-radius: 6px;
+	background: var(--c-surface);
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-selection__rendered {
+	line-height: 26px;
+	font-size: 13px;
+	padding-left: 6px;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-selection__arrow { height: 26px; }
+/* A date range needs both inputs plus their pickers; the enum next to it does not. */
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter-1 {
+	flex-basis: 300px;
+	width: 300px;
+	min-width: 300px;
+}
+.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter-2 {
+	flex-basis: 230px;
+	width: 230px;
+	min-width: 230px;
+}
+/* Dolibarr's view switch lived in a title table that is now empty. */
+table.table-fiche-title.ts-events-native-title-source { display: none !important; }

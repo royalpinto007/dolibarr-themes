@@ -1993,6 +1993,7 @@
 						   wrong once tabs beyond Contacts/Addresses gained this surface. */
 						var activeTabLink = document.querySelector('.tabsElemActive a');
 						var tabLabel = activeTabLink ? (activeTabLink.textContent || '').replace(/\s+/g, ' ').replace(/\d+$/, '').trim() : '';
+						if (/^events\b/i.test(tabLabel)) { tabLabel = 'events'; }
 						nameSearch.setAttribute('placeholder', tabLabel ? 'Search ' + tabLabel.toLowerCase() + '…' : 'Search…');
 					}
 					nameSearch.classList.remove('maxwidth50', 'maxwidth75', 'maxwidth100', 'maxwidth150');
@@ -2021,6 +2022,22 @@
 					});
 				}
 				if (nameSearch) { filter.insertBefore(quick, filter.firstChild); }
+				/* Dolibarr parks the timeline/list view switch in its own title table, which
+				   rendered as a card containing nothing else. Lift it into this toolbar so
+				   both view modes present one control bar. */
+				var nativeTitle = document.querySelector('table.table-fiche-title');
+				var nativeSwitch = nativeTitle && nativeTitle.querySelector('.paginationafterarrows');
+				if (nativeSwitch && nativeSwitch.querySelector('a')) {
+					var switcher = document.createElement('div');
+					switcher.className = 'ts-events-view-switch';
+					nativeSwitch.querySelectorAll(':scope > a').forEach(function (link) {
+						link.classList.add('ts-events-view-option');
+						link.setAttribute('aria-label', link.getAttribute('title') || 'Change event view');
+						switcher.appendChild(link);
+					});
+					filter.insertBefore(switcher, filter.firstChild);
+					nativeTitle.classList.add('ts-events-native-title-source');
+				}
 				/* The first row of Dolibarr's list filter provides the promoted toolbar
 				   controls in display order. Add structural hooks without depending on
 				   translated labels or field names. */
@@ -2041,6 +2058,13 @@
 				var panel = document.createElement('div');
 				panel.className = 'ts-column-filters-panel';
 				var nameCell = nameSearch && nameSearch.closest('td, th');
+				/* List pages promote their leading filters into the toolbar; the record-tab
+				   path used to send every one to the disclosure, so Events/Agenda hid its
+				   Date and Type behind "Filters" while the timeline mode showed them inline.
+				   Promote the same number of leading controls here, reusing the existing
+				   ts-toolbar-filter slots so both modes share one visual language. */
+				var promoted = 0;
+				var promoteLimit = embeddedFilterRow ? 2 : 0;
 				Array.from(filterRow.cells).forEach(function (cell, index) {
 					if (index === 0 || cell === nameCell) { return; }
 					var movable = Array.from(cell.children).filter(function (child) { return child.tagName !== 'SCRIPT'; });
@@ -2089,7 +2113,13 @@
 							});
 						}
 					}
-					panel.appendChild(control);
+					if (promoted < promoteLimit && control.querySelector('select, input:not([type="hidden"])')) {
+						promoted += 1;
+						control.classList.add('divsearchfield', 'ts-toolbar-filter', 'ts-toolbar-filter-' + promoted);
+						filter.appendChild(control);
+					} else {
+						panel.appendChild(control);
+					}
 				});
 				filterRow.classList.add('ts-filter-row-extracted');
 				if (panel.children.length) {
