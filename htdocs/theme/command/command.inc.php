@@ -473,6 +473,15 @@ aside.cmd-nav {
 .cmd-nav-group.is-active { margin-bottom: var(--sp-3); }
 .cmd-nav-list, .cmd-nav-sub { list-style: none; margin: 0; padding: 0; }
 
+/* Inter renders heavy at small sizes on the sidebar's light ground; smoothing
+   keeps the labels crisp rather than smudged. */
+.cmd-nav-link,
+.cmd-nav-sublink,
+.cmd-nav-section {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
 .cmd-nav-link {
 	display: flex;
 	align-items: center;
@@ -486,6 +495,7 @@ aside.cmd-nav {
 	transition: background var(--t), color var(--t);
 	min-height: 42px;
 	font-size: 0.875rem;
+	letter-spacing: -0.006em;
 }
 .cmd-nav-link:hover { background: var(--c-sunken); color: var(--c-ink); }
 .cmd-nav-group.is-active > .cmd-nav-link {
@@ -517,8 +527,14 @@ aside.cmd-nav {
 	   "Customers") read as children of their parent rather than duplicates. */
 	padding: 5px var(--sp-2) 5px calc(var(--sp-2) + (var(--lvl, 0) * 12px));
 	border-radius: var(--r-sm);
-	color: var(--c-muted);
-	font-size: <?php echo $fontsizesmaller; ?>;
+	color: var(--c-ink-2);
+	/* Dolibarr's $fontsizesmaller resolves to 10.5px here, which is a caption
+	   size doing navigation work: the sub-entries are how most of the app is
+	   reached, and they were the smallest text on the page. */
+	font-size: 0.8125rem;
+	font-weight: 450;
+	line-height: 1.45;
+	letter-spacing: -0.005em;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
