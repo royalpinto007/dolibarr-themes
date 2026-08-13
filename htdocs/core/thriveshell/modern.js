@@ -289,7 +289,7 @@
 				var totalRow = document.createElement('div');
 				totalRow.className = 'ts-module-stat-total';
 				var moduleTitle = (document.querySelector('.fiche > .ts-pagehead .titre')?.textContent || 'Records').trim().replace(/\s+area$/i, '');
-				totalRow.innerHTML = '<span class="ts-module-index-heading-icon"><span class="fas fa-chart-simple"></span></span><strong></strong><b></b>';
+				totalRow.innerHTML = '<span class="ts-module-index-heading-icon"><span class="fas fa-chart-bar"></span></span><strong></strong><b></b>';
 				totalRow.querySelector('strong').textContent = 'Total ' + moduleTitle.toLowerCase();
 				totalRow.querySelector('b').textContent = String(total);
 				var tiles = document.createElement('div');

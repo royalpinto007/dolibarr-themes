@@ -7052,3 +7052,28 @@ body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines 
 	border-radius: 6px;
 	font-size: 0.8125rem;
 }
+
+/* Narrow Select2 triggers.
+
+   Dolibarr sizes some selects with its own width50/width75/width100 classes.
+   Our Select2 rendering reserves 38px on the right for the arrow, which at
+   75px leaves too little room for the value itself -- a year read as "20…".
+   Give those triggers a workable floor and tighten their internal spacing so
+   the value fits. Applies wherever a narrow select appears, not just the
+   product statistics filter where it was noticed. */
+body span.select2-container.width50,
+body span.select2-container.width75 { min-width: 92px !important; }
+body span.select2-container.width100 { min-width: 108px !important; }
+body span.select2-container.width50 span.select2-selection__rendered,
+body span.select2-container.width75 span.select2-selection__rendered,
+body span.select2-container.width100 span.select2-selection__rendered {
+	width: auto !important;
+	min-width: 0 !important;
+	max-width: none !important;
+	padding-right: 24px !important;
+	padding-left: 9px !important;
+	text-overflow: clip !important;
+}
+body span.select2-container.width50 span.select2-selection__arrow,
+body span.select2-container.width75 span.select2-selection__arrow,
+body span.select2-container.width100 span.select2-selection__arrow { right: 4px !important; }
