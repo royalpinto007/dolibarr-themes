@@ -1935,6 +1935,17 @@
 		if (!title || title.closest('div.fichecenter')) { return false; }
 		var listWrap = document.querySelector('div.div-table-responsive, div.div-table-responsive-no-min');
 		var list = listWrap && listWrap.querySelector('table.liste');
+		if (listWrap && !list) {
+			/* Several record tabs -- Events/Agenda in its list mode, for one -- render
+			   the very same filter/heading/data structure on a table.noborder instead
+			   of table.liste, so the shared composition skipped them and the raw
+			   Dolibarr filter row showed through. Match on the liste_titre rows this
+			   function actually operates on rather than on the table class, still
+			   scoped to the responsive wrapper so unrelated tables are untouched. */
+			list = Array.prototype.find.call(listWrap.querySelectorAll('table'), function (table) {
+				return table.querySelector('tr.liste_titre') && table.querySelector('tr.oddeven, tr.impair, tr.pair');
+			}) || null;
+		}
 		var form = listWrap && listWrap.closest('form');
 		if (!list || !form) { return false; }
 
@@ -1974,7 +1985,16 @@
 				var nameSearch = filterRow.querySelector('input[name="search_nom"], input[name="search_name"], input[type="text"]');
 				if (nameSearch) {
 					nameSearch.classList.add('ts-quick-search-input');
-					nameSearch.setAttribute('placeholder', document.body.classList.contains('ts-thirdparty-record-context') ? 'Search contacts/addresses…' : 'Search third parties…');
+					if (!document.body.classList.contains('ts-thirdparty-record-context')) {
+						nameSearch.setAttribute('placeholder', 'Search third parties…');
+					} else {
+						/* Name the tab actually being searched. This used to say
+						   "contacts/addresses" on every record tab, which read as plainly
+						   wrong once tabs beyond Contacts/Addresses gained this surface. */
+						var activeTabLink = document.querySelector('.tabsElemActive a');
+						var tabLabel = activeTabLink ? (activeTabLink.textContent || '').replace(/\s+/g, ' ').replace(/\d+$/, '').trim() : '';
+						nameSearch.setAttribute('placeholder', tabLabel ? 'Search ' + tabLabel.toLowerCase() + '…' : 'Search…');
+					}
 					nameSearch.classList.remove('maxwidth50', 'maxwidth75', 'maxwidth100', 'maxwidth150');
 					quick.appendChild(nameSearch);
 				}
