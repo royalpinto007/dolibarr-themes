@@ -205,16 +205,16 @@
 	/* Standard module index pages reuse the same two-column dashboard boxes. The
 	   Home and Third Party dashboards have richer adapters and remain excluded. */
 	function polishSharedModuleIndex() {
-		if (!/(^|\/)index\.php$/.test(window.location.pathname)) { return false; }
+		if (!/(^|\/)(index\.php)?$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-command-dashboard') || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
 		var layout = document.querySelector('.fiche .twocolumns');
-		if (!layout && /\/expedition\/index\.php$/.test(window.location.pathname)) {
+		if (!layout && /\/expedition\/(index\.php)?$/.test(window.location.pathname)) {
 			layout = document.querySelector('.fiche > .fichecenter');
 		}
 		if (!layout) { return false; }
 		document.body.classList.add('ts-command-module-index');
-		if (/\/product\/index\.php$/.test(window.location.pathname)) { document.body.classList.add('ts-products-module-index'); }
-		if (/\/expedition\/index\.php$/.test(window.location.pathname)) { document.body.classList.add('ts-shipments-module-index'); }
+		if (/\/product\/(index\.php)?$/.test(window.location.pathname)) { document.body.classList.add('ts-products-module-index'); }
+		if (/\/expedition\/(index\.php)?$/.test(window.location.pathname)) { document.body.classList.add('ts-shipments-module-index'); }
 		layout.classList.add('ts-module-index-grid');
 		layout.querySelectorAll(':scope > .fichehalfleft, :scope > .fichehalfright, :scope > .boxhalfleft, :scope > .boxhalfright, :scope > .fichethirdleft, :scope > .fichetwothirdright').forEach(function (column) {
 			column.classList.add('ts-module-index-column');
@@ -371,7 +371,7 @@
 	}
 
 	function polishShipmentStatistics() {
-		if (!/\/expedition\/stats\/index\.php$/.test(window.location.pathname)) { return false; }
+		if (!/\/expedition\/stats\/(index\.php)?$/.test(window.location.pathname)) { return false; }
 		var card = document.querySelector('.fiche > .tabBar');
 		if (!card) { return false; }
 		document.body.classList.add('ts-shipment-statistics');
@@ -2593,7 +2593,7 @@
 	   headings and data-derived summary tiles are new presentation. */
 	function polishThirdPartyDashboard() {
 		var params = new URLSearchParams(window.location.search);
-		if (!/\/societe\/index\.php$/.test(window.location.pathname)) { return false; }
+		if (!/\/societe\/(index\.php)?$/.test(window.location.pathname)) { return false; }
 		var canvas = document.getElementById('canvas_idgraphthirdparties');
 		var center = document.querySelector('.fichecenter.fichecenterbis');
 		var left = center && center.querySelector('#boxhalfleft');
