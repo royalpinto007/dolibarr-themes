@@ -2555,7 +2555,7 @@
 			var totalLabel = totalRow.cells[0];
 			if (totalLabel && !totalLabel.querySelector('.ts-total-icon')) {
 				var totalIcon = document.createElement('span');
-				totalIcon.className = 'ts-total-icon fas fa-chart-bar';
+				totalIcon.className = 'ts-total-icon fas fa-building';
 				totalIcon.setAttribute('aria-hidden', 'true');
 				totalLabel.insertBefore(totalIcon, totalLabel.firstChild);
 			}
