@@ -6443,8 +6443,20 @@ body.ts-display-settings .ts-color-control span.jPicker span.Color {
 	border: 0 !important;
 	background-image: none !important;
 }
-body.ts-display-settings .ts-color-control span.jPicker span.Alpha,
-body.ts-display-settings .ts-color-control span.jPicker span.Image { display: none !important; }
+body.ts-display-settings .ts-color-control span.jPicker span.Alpha { display: none !important; }
+/* Image is jPicker's click target -- hiding it made the swatch inert and took
+   the picker away. Keep it, sized over the swatch with its sprite dropped, so
+   it stays the trigger while the colour underneath shows through. */
+body.ts-display-settings .ts-color-control span.jPicker span.Image {
+	display: block !important;
+	width: 100% !important;
+	height: 100% !important;
+	background-image: none !important;
+	background-color: transparent !important;
+	border: 0 !important;
+	cursor: pointer;
+}
+body.ts-display-settings .ts-color-control span.jPicker span.Icon { cursor: pointer; }
 /* Dolibarr emits both halves of its AJAX switch and hides the inactive one with
    .hideobject; that rule is not reaching here, so both were rendering. */
 body.ts-display-settings .ts-setting-control .hideobject { display: none !important; }
