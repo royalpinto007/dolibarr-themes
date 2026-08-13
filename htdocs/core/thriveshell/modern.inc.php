@@ -1490,11 +1490,19 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	font-weight: 600;
 }
 .ui-tooltip.mytooltip .badge-status {
-	position: absolute;
-	top: 5px;
-	right: 0;
-	float: none;
-	margin: 0;
+	/* Absolute positioning pinned every badge to the same corner, so a record
+	   carrying two statuses -- a product that is neither for sale nor for
+	   purchase -- drew them on top of each other. Let them flow to the right so
+	   any number sit side by side. */
+	position: static;
+	float: right;
+	margin: 0 0 0 6px;
+}
+/* Contain the floated badges so they cannot ride over the line beneath. */
+.ui-tooltip.mytooltip .ui-tooltip-content::after {
+	content: '';
+	display: table;
+	clear: both;
 }
 .ui-tooltip.mytooltip b,
 .ui-tooltip.mytooltip strong {
@@ -7114,3 +7122,36 @@ body span.select2-container.width100 span.select2-selection__rendered {
 body span.select2-container.width50 span.select2-selection__arrow,
 body span.select2-container.width75 span.select2-selection__arrow,
 body span.select2-container.width100 span.select2-selection__arrow { right: 4px !important; }
+
+/* Categories landing page summary table. Styling only -- the page has no filter
+   form, so there is nothing to compose, just a table sitting bare on the page. */
+body.ts-category-index table.ts-category-index-table {
+	width: 100%;
+	margin: 0 0 16px;
+	border: 1px solid var(--c-hairline) !important;
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+body.ts-category-index table.ts-category-index-table > tbody > tr > td,
+body.ts-category-index table.ts-category-index-table > tbody > tr > th {
+	padding: 12px 16px !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	font-size: 0.8125rem;
+	vertical-align: middle;
+}
+body.ts-category-index table.ts-category-index-table > tbody > tr.liste_titre > th,
+body.ts-category-index table.ts-category-index-table > tbody > tr.liste_titre > td {
+	background: var(--c-sunken) !important;
+	color: var(--c-ink-2) !important;
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+body.ts-category-index table.ts-category-index-table > tbody > tr:last-child > td { border-bottom: 0 !important; }
+body.ts-category-index table.ts-category-index-table > tbody > tr.oddeven,
+body.ts-category-index table.ts-category-index-table > tbody > tr.impair,
+body.ts-category-index table.ts-category-index-table > tbody > tr.pair { background: transparent !important; }

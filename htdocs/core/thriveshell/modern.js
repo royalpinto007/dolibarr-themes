@@ -3406,6 +3406,19 @@
 		return true;
 	}
 
+	/* Categories landing page. Its summary table carries no filter form, so the
+	   shared list composition -- which exists to relocate filter controls -- has
+	   nothing to do here. Mark the page and let CSS give the table a card, the
+	   same treatment the record detail panels get. */
+	function polishCategoryIndex() {
+		if (!/\/categories\/(index\.php)?$/.test(window.location.pathname)) { return false; }
+		var table = document.querySelector('table.liste');
+		if (!table || !table.querySelector('tr.liste_titre')) { return false; }
+		document.body.classList.add('ts-category-index');
+		table.classList.add('ts-category-index-table');
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -3424,6 +3437,7 @@
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { normalizePageTitleIcons(); } catch (e) { /* retain Dolibarr's title layout */ }
 		try { polishCategoryDialogPage(); } catch (e) { /* retain the native category dialog page */ }
+		try { polishCategoryIndex(); } catch (e) { /* retain the native categories landing */ }
 		try { moveActionsIntoHeader(); } catch (e) { /* leave Dolibarr's layout alone */ }
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
