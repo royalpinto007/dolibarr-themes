@@ -162,7 +162,36 @@ if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-header('Cache-Control: max-age=10800, public, must-revalidate');
+// This theme's stylesheet is assembled from the thriveshell sources below, and
+// its URL never changes when they do. A plain max-age therefore served the
+// previous stylesheet for up to three hours after a deployment -- alongside
+// modern.js, which is versioned by content hash and updates immediately. That
+// combination renders a half-styled page. Validate against a hash of the
+// sources instead: unchanged requests still cost one cheap 304, and a deployed
+// change is picked up on the next request.
+$commandCssSources = array(
+	__DIR__.'/command.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/modern.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/components.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/palette.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/select2.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/utilities.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/darkmode.inc.php',
+	DOL_DOCUMENT_ROOT.'/core/thriveshell/navtree.inc.php',
+);
+$commandCssStamp = '';
+foreach ($commandCssSources as $commandCssSource) {
+	if (is_readable($commandCssSource)) {
+		$commandCssStamp .= basename($commandCssSource).':'.filemtime($commandCssSource).':'.filesize($commandCssSource).';';
+	}
+}
+$commandCssEtag = '"command-'.substr(sha1($commandCssStamp.DOL_VERSION), 0, 16).'"';
+header('Cache-Control: no-cache, must-revalidate');
+header('ETag: '.$commandCssEtag);
+if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) === $commandCssEtag) {
+	header('HTTP/1.1 304 Not Modified');
+	exit;
+}
 
 if (GETPOST('theme', 'aZ09')) {
 	$conf->theme = GETPOST('theme', 'aZ09'); // If theme was forced on URL

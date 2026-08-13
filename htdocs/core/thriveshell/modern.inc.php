@@ -959,9 +959,15 @@ body.ts-command-record-secondary .ts-list-composition .ts-filter-surface .ts-qui
 	max-width: none !important;
 }
 body.ts-command-record-secondary .ts-column-filters-panel {
-	left: 0;
-	right: auto;
-	width: min(680px, calc(100vw - var(--nav-w) - 48px));
+	/* This anchored left from when the disclosure sat at the start of the filter
+	   row. The toolbar now ends with it, so opening leftwards ran the panel off
+	   the card and over the table. Anchor it to the control it belongs to and
+	   size it to the filters it actually holds. */
+	left: auto;
+	right: 0;
+	grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
+	width: max-content;
+	max-width: min(680px, calc(100vw - var(--nav-w) - 48px));
 }
 body.ts-command-record-secondary .ts-list-card { overflow: visible; }
 body.ts-command-record-secondary .ts-list-card .ts-record-tab-surface { margin: 0 !important; }
