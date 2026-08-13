@@ -6782,3 +6782,146 @@ body.ts-thirdparty-events .ts-events-view-option {
 	height: 38px;
 	border-radius: 7px;
 }
+
+/* ==========================================================================
+   Shared COMMAND settings surface -- every Dolibarr admin screen composed by
+   composeAdminSettings(). Scoped to body.ts-settings-page.
+   ========================================================================== */
+body.ts-settings-page .ts-settings-card {
+	min-width: 0;
+	margin: 0 0 20px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+body.ts-settings-page .ts-settings-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 15px 20px;
+	border-bottom: 1px solid var(--c-hairline);
+	background: var(--c-sunken);
+}
+body.ts-settings-page .ts-settings-card-title {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 650;
+	color: var(--c-accent);
+}
+body.ts-settings-page .ts-settings-card-title [class*="fa-"] { color: var(--c-accent) !important; }
+body.ts-settings-page .ts-settings-card-aside { flex: 0 0 auto; font-size: 0.8125rem; color: var(--c-ink-subtle); }
+body.ts-settings-page .ts-settings-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+body.ts-settings-page .ts-setting {
+	display: grid;
+	grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+	align-items: center;
+	gap: 18px;
+	padding: 12px 20px;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-settings-page .ts-settings-grid .ts-setting:last-child { border-bottom: 0; }
+body.ts-settings-page .ts-setting-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	font-size: 0.8125rem;
+	font-weight: 550;
+	line-height: 1.4;
+	color: var(--c-ink-2);
+}
+body.ts-settings-page .ts-setting-label [class*="fa-info"] { opacity: .55; }
+body.ts-settings-page .ts-setting-control {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+/* Width bands, so a toggle does not occupy the same room as a URL field. */
+body.ts-settings-page .ts-setting-control.ts-control-compact { max-width: 120px; }
+body.ts-settings-page .ts-setting-control.ts-control-medium { max-width: 320px; }
+body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 420px; }
+body.ts-settings-page .ts-setting-control.ts-control-full { max-width: 100%; }
+body.ts-settings-page .ts-setting-control input[type="text"],
+body.ts-settings-page .ts-setting-control input[type="number"],
+body.ts-settings-page .ts-setting-control input[type="email"],
+body.ts-settings-page .ts-setting-control input[type="url"],
+body.ts-settings-page .ts-setting-control input[type="password"],
+body.ts-settings-page .ts-setting-control textarea {
+	width: 100%;
+	min-width: 0;
+	height: 40px;
+	padding: 0 12px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+	font-size: 0.8125rem;
+}
+body.ts-settings-page .ts-setting-control textarea { height: auto; min-height: 80px; padding: 10px 12px; }
+body.ts-settings-page .ts-setting-control.ts-control-compact input { text-align: left; }
+body.ts-settings-page .ts-setting-control select { max-width: 100%; }
+body.ts-settings-page .ts-setting-control .select2-container {
+	width: 100% !important;
+	min-width: 0 !important;
+}
+body.ts-settings-page .ts-setting-control .select2-selection { min-height: 40px; }
+body.ts-settings-page .ts-setting-control .select2-selection__rendered { line-height: 38px; font-size: 0.8125rem; }
+body.ts-settings-page .ts-setting-control .select2-selection__arrow { height: 38px; }
+/* Dolibarr renders both halves of its AJAX switch and hides the inactive one
+   with .hideobject; that rule does not reach these composed rows. */
+body.ts-settings-page .ts-setting-control .hideobject { display: none !important; }
+body.ts-settings-page .ts-setting-control .fa-toggle-on,
+body.ts-settings-page .ts-setting-control .fa-toggle-off { font-size: 26px; }
+body.ts-settings-page .ts-setting-control > img,
+body.ts-settings-page .ts-setting-control .classfortooltip { flex: 0 0 auto; }
+
+/* Action row */
+body.ts-settings-page .ts-settings-actions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin: 22px 0;
+}
+body.ts-settings-page .ts-settings-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	height: 42px;
+	min-width: 104px;
+	padding: 0 20px !important;
+	border-radius: var(--r);
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+body.ts-settings-page .ts-settings-action-primary {
+	border: 1px solid var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
+}
+body.ts-settings-page .ts-settings-action-secondary,
+body.ts-settings-page .ts-settings-actions a.butAction {
+	border: 1px solid var(--c-border) !important;
+	background: var(--c-surface) !important;
+	color: var(--c-ink-2) !important;
+}
+
+@media only screen and (max-width: 1100px) {
+	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 14px; }
+}
+@media only screen and (max-width: 700px) {
+	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
+	body.ts-settings-page .ts-setting-control.ts-control-compact,
+	body.ts-settings-page .ts-setting-control.ts-control-medium,
+	body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 100%; }
+	body.ts-settings-page .ts-settings-actions { flex-wrap: wrap; }
+	body.ts-settings-page .ts-settings-action { flex: 1 1 140px; }
+}

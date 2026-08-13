@@ -3270,6 +3270,139 @@
 		return true;
 	}
 
+
+	/* ==========================================================================
+	   Shared admin settings composition
+
+	   Dolibarr builds nearly every setup screen the same way: a table whose first
+	   row is a tr.liste_titre section title, followed by rows of
+	   <td>label</td><td>control</td>. That is the seam this works from, so the
+	   treatment generalises across admin pages instead of targeting one file.
+
+	   Rows are moved, never rebuilt: field names, values, AJAX on/off widgets and
+	   the submitting form are Dolibarr's own throughout.
+	   ========================================================================== */
+	function composeAdminSettings() {
+		if (!/\/admin\//.test(window.location.pathname)) { return false; }
+		/* The skin page has its own composition already. */
+		if (document.body.classList.contains('ts-display-settings')) { return false; }
+		if (document.body.classList.contains('ts-settings-page')) { return false; }
+
+		var isSettingRow = function (row) {
+			return row.cells.length >= 2 && row.querySelector('input:not([type="hidden"]), select, textarea, .linkobject');
+		};
+		var tables = Array.prototype.slice.call(document.querySelectorAll('form table')).filter(function (table) {
+			if (table.closest('.ts-settings-card')) { return false; }
+			if (!Array.prototype.slice.call(table.rows).filter(isSettingRow).length) { return false; }
+			/* Several setup screens wrap their settings table in a layout table.
+			   Composing the wrapper would swallow the real one, so take the
+			   innermost table that actually holds setting rows. */
+			var nested = Array.prototype.slice.call(table.querySelectorAll('table')).some(function (inner) {
+				return Array.prototype.slice.call(inner.rows).filter(isSettingRow).length > 0;
+			});
+			return !nested;
+		});
+		if (!tables.length) { return false; }
+		document.body.classList.add('ts-settings-page');
+
+		/* Give a control a width band from what it is, rather than stretching
+		   everything to the full column. */
+		var classifyControl = function (control) {
+			var field = control.querySelector('select, textarea, input:not([type="hidden"])');
+			if (!field) { return 'ts-control-compact'; }
+			if (field.tagName === 'TEXTAREA') { return 'ts-control-full'; }
+			if (field.tagName === 'SELECT') {
+				return field.options && field.options.length > 25 ? 'ts-control-full' : 'ts-control-medium';
+			}
+			var type = (field.getAttribute('type') || 'text').toLowerCase();
+			if (type === 'checkbox' || type === 'radio') { return 'ts-control-compact'; }
+			if (type === 'number') { return 'ts-control-compact'; }
+			var size = parseInt(field.getAttribute('size') || '0', 10);
+			if (size && size <= 8) { return 'ts-control-compact'; }
+			if (/url|link|mail/i.test(field.name || '')) { return 'ts-control-full'; }
+			return 'ts-control-wide';
+		};
+
+		tables.forEach(function (table) {
+			var rows = Array.prototype.slice.call(table.rows);
+			var settingRows = rows.filter(isSettingRow);
+			if (!settingRows.length) { return; }
+
+			var card = document.createElement('section');
+			card.className = 'ts-settings-card';
+			table.insertAdjacentElement('beforebegin', card);
+
+			var titleRow = rows[0] && rows[0].classList.contains('liste_titre') && !isSettingRow(rows[0]) ? rows[0] : null;
+			if (titleRow) {
+				var head = document.createElement('div');
+				head.className = 'ts-settings-card-head';
+				var title = document.createElement('h2');
+				title.className = 'ts-settings-card-title';
+				Array.prototype.slice.call(titleRow.cells).forEach(function (cell, index) {
+					var target = title;
+					if (index > 0) {
+						target = document.createElement('div');
+						target.className = 'ts-settings-card-aside';
+					}
+					Array.prototype.slice.call(cell.childNodes).forEach(function (node) { target.appendChild(node); });
+					if (index === 0) { head.appendChild(title); } else { head.appendChild(target); }
+				});
+				card.appendChild(head);
+				titleRow.remove();
+			}
+
+			var grid = document.createElement('div');
+			grid.className = 'ts-settings-grid ts-settings-grid-single';
+			card.appendChild(grid);
+
+			settingRows.forEach(function (row) {
+				var field = document.createElement('div');
+				field.className = 'ts-setting';
+				var label = document.createElement('div');
+				label.className = 'ts-setting-label';
+				Array.prototype.slice.call(row.cells[0].childNodes).forEach(function (node) { label.appendChild(node); });
+				var control = document.createElement('div');
+				control.className = 'ts-setting-control';
+				/* Trailing cells are usually help icons or units; keep them with the
+				   control rather than letting them form phantom columns. */
+				Array.prototype.slice.call(row.cells).slice(1).forEach(function (cell) {
+					Array.prototype.slice.call(cell.childNodes).forEach(function (node) { control.appendChild(node); });
+				});
+				control.classList.add(classifyControl(control));
+				field.appendChild(label);
+				field.appendChild(control);
+				grid.appendChild(field);
+			});
+
+			/* Anything left is layout scaffolding for rows that have all moved. */
+			var remaining = Array.prototype.slice.call(table.rows).filter(function (row) {
+				return (row.innerText || '').replace(/\s+/g, ' ').trim() !== '' || row.querySelector('input:not([type="hidden"]), select, textarea');
+			});
+			if (!remaining.length) { table.remove(); } else { card.appendChild(table); }
+		});
+
+		/* A settings form has no result set, so a row counter added by the list
+		   passes reads as noise here. */
+		Array.prototype.slice.call(document.querySelectorAll('.ts-results-footer')).forEach(function (footer) {
+			footer.remove();
+		});
+
+		/* Action rows: mark Dolibarr's own buttons, never replace them. */
+		Array.prototype.slice.call(document.querySelectorAll('div.center, .tabsAction')).forEach(function (host) {
+			var submit = host.querySelector('input[type="submit"], button[type="submit"]');
+			if (!submit) { return; }
+			host.classList.add('ts-settings-actions');
+			Array.prototype.slice.call(host.querySelectorAll('input[type="submit"], button[type="submit"], input.button, a.butAction')).forEach(function (button) {
+				button.classList.add('ts-settings-action');
+			});
+			submit.classList.add('ts-settings-action-primary');
+			Array.prototype.slice.call(host.querySelectorAll('input[name="cancel"], a.butActionDelete, input.button_delete')).forEach(function (button) {
+				button.classList.add('ts-settings-action-secondary');
+			});
+		});
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -3303,6 +3436,7 @@
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
+		try { composeAdminSettings(); } catch (e) { /* retain the native admin settings tables */ }
 		try { tameColorPickers(); } catch (e) { /* leave jPicker's own popup behaviour */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
