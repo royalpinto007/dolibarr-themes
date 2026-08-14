@@ -7325,3 +7325,57 @@ span.badge.badge-dot,
 	color: var(--c-ink-subtle) !important;
 	letter-spacing: 0.01em;
 }
+
+/* Page header and tab strip.
+
+   Applies wherever the shell renders a .ts-pagehead with a tab strip, so the
+   treatment is shared rather than per-page. */
+
+/* Any picto Dolibarr already prints beside a page title becomes a soft tile.
+   Only pages that ship an icon get one -- none is invented. */
+.ts-pagehead-title > .ts-pagehead-icon,
+.ts-pagehead-title .titre > img.pictotitle,
+.ts-pagehead-title .titre > span.pictotitle,
+.ts-pagehead-title .titre > [class*="fa-"]:first-child {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	margin: 0 14px 0 0 !important;
+	padding: 0 !important;
+	border-radius: 12px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent) !important;
+	font-size: 20px !important;
+	vertical-align: middle;
+}
+
+/* Active tab: an indigo pill with the underline kept as the anchor. */
+/* The active tab carries no class of its own -- it is identified by its
+   containing .tabsElemActive, and the anchor is not a direct child of it. */
+div.tabs a.tab.tabactive,
+.tabsElemActive a.tab,
+.tabsElemActive a {
+	position: relative;
+	border-radius: 999px !important;
+	background: var(--c-accent-soft) !important;
+	color: var(--c-accent) !important;
+	font-weight: 650 !important;
+}
+div.tabs a.tab.tabactive::after,
+.tabsElemActive a.tab::after {
+	content: '';
+	position: absolute;
+	right: 14%;
+	bottom: -9px;
+	left: 14%;
+	height: 3px;
+	border-radius: 999px;
+	background: var(--c-accent);
+}
+div.tabs a.tab:not(.tabactive):hover {
+	border-radius: 999px !important;
+	background: var(--c-sunken) !important;
+	color: var(--c-ink) !important;
+}
