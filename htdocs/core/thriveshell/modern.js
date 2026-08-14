@@ -237,8 +237,19 @@
 		if (!/(^|\/)(index\.php)?$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-command-dashboard') || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
 		var layout = document.querySelector('.fiche .twocolumns');
-		if (!layout && /\/expedition\/(index\.php)?$/.test(window.location.pathname)) {
-			layout = document.querySelector('.fiche > .fichecenter');
+		if (!layout) {
+			/* Several module dashboards -- shipments and the module-scoped index
+			   pages such as comm/propal -- lay their two columns straight inside
+			   .fichecenter with no .twocolumns wrapper, so matching that wrapper
+			   alone left them on the legacy surface. Accept the outer container
+			   instead, but only when it actually holds dashboard columns, so a page
+			   that merely happens to have a .fichecenter is still left alone. */
+			layout = Array.prototype.find.call(
+				document.querySelectorAll('.fiche > .fichecenter, .fiche'),
+				function (node) {
+					return node.querySelector(':scope > .fichehalfleft, :scope > .fichehalfright, :scope > .boxhalfleft, :scope > .boxhalfright, :scope > .fichethirdleft, :scope > .fichetwothirdright');
+				}
+			) || null;
 		}
 		if (!layout) { return false; }
 		document.body.classList.add('ts-command-module-index');
