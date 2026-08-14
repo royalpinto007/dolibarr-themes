@@ -1440,8 +1440,11 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	box-sizing: border-box;
 	/* Content decides, within a ceiling: a fixed width clipped longer values
 	   and left short ones padded out. */
+	/* Content decides. An earlier floor of 300px was meant to stop long values
+	   clipping, but it also inflated a two-word tooltip into a slab; max-width
+	   alone does the job. */
 	width: max-content;
-	min-width: 300px;
+	min-width: 0;
 	max-width: 420px;
 	max-width: calc(100vw - 24px);
 	padding: 16px;
@@ -7312,4 +7315,13 @@ span.badge.badge-dot,
 	grid-auto-rows: 0 !important;
 	row-gap: 0 !important;
 	overflow: hidden;
+}
+
+/* The version in the top bar rendered at 8px -- below the point where it can be
+   read at all, and the smallest text anywhere in the shell. */
+#id-top .hideonsmartphone.small,
+.ts-topbar .hideonsmartphone.small {
+	font-size: 0.6875rem !important;
+	color: var(--c-ink-subtle) !important;
+	letter-spacing: 0.01em;
 }
