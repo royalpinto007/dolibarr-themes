@@ -1301,6 +1301,13 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
    sit, and on a wide toolbar it started left of the content area and was clipped
    under the sidebar. The toolbar's own left edge is a stable anchor, so the
    panel stays inside the content whatever the button's position. */
+/* The content column scrolls (overflow-y:auto) and is only as tall as whatever
+   it holds, so on a page with no rows a dropdown opening near the bottom of the
+   filter panel was clipped by the column's own edge -- the same dropdown was
+   fine as soon as the list had data to make the column taller. Floor the column
+   at the viewport height so a short page still has somewhere to open into. */
+#id-right { min-height: calc(100vh - 108px); }
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
