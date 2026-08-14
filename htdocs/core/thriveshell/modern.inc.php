@@ -5098,21 +5098,39 @@ body.ts-command-module-index .ts-module-index-empty-row td {
 	text-align: center;
 	vertical-align: middle;
 }
-body.ts-command-module-index .ts-module-index-empty-row td > .ts-module-index-empty-icon {
-	display: block;
-	margin: 0 auto 8px;
-}
-body.ts-command-module-index .ts-module-index-empty-icon {
-	display: inline-flex;
+body.ts-command-module-index .ts-module-index-empty-inner {
+	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 42px;
-	height: 42px;
-	border-radius: 10px;
-	background: #f4f1ff;
-	color: var(--c-primary);
-	font-size: 18px;
+	gap: 8px;
 }
+body.ts-command-module-index .ts-module-index-empty-row .ts-module-index-empty-icon {
+	flex: none;
+}
+
+/* These links ship as inline-flex, and a flex container cannot render an
+   ellipsis: the name overflowed the anchor and was sheared off by the cell
+   instead. Constraining the flex items only made it worse -- the text collapsed
+   to zero and the anchor shrank to its icon. Lay the anchor out as inline-block
+   so text-overflow applies to it directly, keeping the icon inline. */
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a,
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > span {
+	display: inline-block !important;
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+}
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > img,
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > .fas,
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > .far,
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > .fa {
+	vertical-align: middle;
+	margin-right: 4px;
+}
+
 body.ts-command-module-index .ts-module-stat-summary {
 	display: grid;
 	gap: 14px;

@@ -231,6 +231,44 @@
 		return true;
 	}
 
+	/* Widget tables head their columns with a single title cell spanning the lot,
+	   so under fixed layout the browser has nothing to size columns by and splits
+	   them evenly -- a customer name and a status dot each got 137px, cutting the
+	   name off. Widths cannot be expressed per column through a colspan, so state
+	   them as a colgroup instead: pin the predictable narrow columns by the shape
+	   of their content and leave the text columns to share what is left. */
+	function buildColumnModel(table, columnCount) {
+		if (table.querySelector(':scope > colgroup.ts-module-index-cols')) { return; }
+		var dataRows = Array.from(table.rows || []).filter(function (row) {
+			return !row.classList.contains('liste_titre')
+				&& !row.classList.contains('ts-module-index-empty-row')
+				&& row.cells.length === columnCount
+				&& !Array.from(row.cells).some(function (cell) { return (cell.colSpan || 1) > 1; });
+		});
+		if (dataRows.length < 2) { return; }
+		var DATE = /^\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}/;
+		var group = document.createElement('colgroup');
+		group.className = 'ts-module-index-cols';
+		for (var index = 0; index < columnCount; index++) {
+			var texts = dataRows.map(function (row) { return (row.cells[index].textContent || '').trim(); });
+			var filled = texts.filter(function (text) { return text.length; });
+			var col = document.createElement('col');
+			if (!filled.length) {
+				/* status dots, badges and bare icons */
+				col.style.width = '48px';
+			} else if (filled.every(function (text) { return DATE.test(text); })) {
+				col.style.width = '112px';
+			} else if (filled.every(function (text) { return text.length <= 3; })) {
+				col.style.width = '56px';
+			} else if (dataRows.every(function (row) { return row.cells[index].classList.contains('right'); })) {
+				col.style.width = '116px';
+			}
+			/* anything else stays auto and shares the remaining width */
+			group.appendChild(col);
+		}
+		table.insertBefore(group, table.firstChild);
+	}
+
 	/* Standard module index pages reuse the same two-column dashboard boxes. The
 	   Home and Third Party dashboards have richer adapters and remain excluded. */
 	function polishSharedModuleIndex() {
@@ -263,6 +301,7 @@
 				table.classList.add('ts-module-index-card');
 				var widestRow = Array.from(table.rows || []).reduce(function (count, row) { return Math.max(count, row.cells.length); }, 0);
 				table.classList.toggle('ts-module-index-data-card', widestRow >= 4);
+				if (widestRow >= 4) { buildColumnModel(table, widestRow); }
 				/* Many index widgets render one title cell followed by structural empty
 				   cells. Collapse only that exact pattern so the header remains one flat
 				   surface without altering the table's data-column geometry. */
@@ -314,7 +353,15 @@
 			emptyIcon.className = 'ts-module-index-empty-icon fas fa-inbox';
 			var emptyText = document.createElement('span');
 			emptyText.textContent = message;
-			cells[0].append(emptyIcon, emptyText);
+			/* Centre the icon and message inside their own flex column rather than
+			   relying on the cell. The icon carried two competing display rules --
+			   block from the cell-scoped rule and inline-flex from its own -- and the
+			   loser left it 23px wide against the left edge with the glyph cut off. A
+			   wrapper takes the cell's display out of the question entirely. */
+			var emptyInner = document.createElement('div');
+			emptyInner.className = 'ts-module-index-empty-inner';
+			emptyInner.append(emptyIcon, emptyText);
+			cells[0].appendChild(emptyInner);
 		});
 		layout.querySelectorAll('.ts-module-index-card .dolgraph').forEach(function (chartNode) {
 			var chartCard = chartNode.closest('.ts-module-index-card');
