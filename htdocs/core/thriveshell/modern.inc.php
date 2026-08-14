@@ -7659,17 +7659,3 @@ span.editfielda > [class*="fa-"],
 	font-size: 13px !important;
 	vertical-align: middle !important;
 }
-/* View-switch and similar icon-only title buttons sat 4px right of centre from
-   asymmetric padding. */
-a.btnTitle:not(:has(.btnTitle-label)) {
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	width: 34px !important;
-	height: 32px !important;
-	padding: 0 !important;
-}
-a.btnTitle:not(:has(.btnTitle-label)) > [class*="fa-"] {
-	margin: 0 !important;
-	line-height: 1 !important;
-}
