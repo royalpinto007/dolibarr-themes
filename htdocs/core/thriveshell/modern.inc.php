@@ -2756,7 +2756,7 @@ body.ts-category-dialog-create-page .ts-category-select2-dropdown .select2-resul
 body.ts-category-dialog-create-page .ts-category-select2-dropdown .select2-results__option--highlighted[aria-selected] { background: var(--c-accent-soft); color: var(--c-accent); }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) { display: flex; justify-content: center; gap: 10px; margin-top: 24px; padding-bottom: 4px; }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) input.button { min-width: 110px; height: 40px; margin: 0; border-radius: 8px; }
-body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="creation"] { border: 1px solid var(--c-accent) !important; background: var(--c-accent) !important; color: #fff !important; box-shadow: 0 3px 8px var(--c-accent-ring); }
+body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="creation"] { border: 1px solid var(--c-btn-action, var(--c-accent)) !important; background: var(--c-btn-action, var(--c-accent)) !important; color: var(--c-btn-action-text, #fff) !important; box-shadow: 0 3px 8px var(--c-accent-ring); }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="cancel"] { border: 1px solid #e0e6ef !important; background: #fff !important; color: var(--c-ink-2) !important; }
 body .ts-form-select2-dropdown[data-ts-select-name="country_id"] .select2-results__option img,
 body .ts-form-select2-dropdown[data-ts-select-name="state_id"] .select2-results__option img {
@@ -2945,14 +2945,14 @@ form.ts-modern-form .ts-modern-form-actions input.button {
 	font-weight: 600;
 }
 form.ts-modern-form .ts-modern-form-actions input.button-save {
-	background: var(--c-accent);
-	border-color: var(--c-accent);
-	color: #fff;
+	background: var(--c-btn-action, var(--c-accent));
+	border-color: var(--c-btn-action, var(--c-accent));
+	color: var(--c-btn-action-text, #fff);
 	box-shadow: 0 2px 5px var(--c-accent-ring);
 }
 form.ts-modern-form .ts-modern-form-actions input.button-save:hover {
-	background: var(--c-accent-hover);
-	border-color: var(--c-accent-hover);
+	background: var(--c-btn-action, var(--c-accent-hover));
+	border-color: var(--c-btn-action, var(--c-accent-hover));
 }
 
 @media only screen and (max-width: 900px) {
@@ -6575,9 +6575,9 @@ body.ts-display-settings .ts-settings-action {
 	cursor: pointer;
 }
 body.ts-display-settings input.ts-settings-action-primary {
-	border: 1px solid var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border: 1px solid var(--c-btn-action, var(--c-accent)) !important;
+	background: var(--c-btn-action, var(--c-accent)) !important;
+	color: var(--c-btn-action-text, #fff) !important;
 }
 body.ts-display-settings input.ts-settings-action-primary:hover { filter: brightness(1.06); }
 body.ts-display-settings .ts-settings-action-secondary,
@@ -6962,9 +6962,9 @@ body.ts-settings-page .ts-settings-action {
 	cursor: pointer;
 }
 body.ts-settings-page .ts-settings-action-primary {
-	border: 1px solid var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border: 1px solid var(--c-btn-action, var(--c-accent)) !important;
+	background: var(--c-btn-action, var(--c-accent)) !important;
+	color: var(--c-btn-action-text, #fff) !important;
 }
 body.ts-settings-page .ts-settings-action-secondary,
 body.ts-settings-page .ts-settings-actions a.butAction {

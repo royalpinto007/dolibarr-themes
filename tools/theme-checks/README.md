@@ -47,6 +47,21 @@ on `/index.php`, and module indexes matched only on `.../index.php`.
 This loads both forms of each pair and compares the `ts-` body classes.
 Expected output ends with `MISMATCHES: 0`.
 
+## action_button_colour_check.py
+
+Display > Skin and colours sets the action button colour. Seven separate rules
+in this theme paint a filled button, so wiring the ones you happen to look at
+leaves others on the old colour -- which is exactly what happened: the Save
+button on the settings page and on edit/create forms stayed indigo after the
+record buttons were fixed.
+
+This walks every button-like element on a set of pages, computes its background,
+and reports any filled button whose colour is not the configured one. Expected
+output ends with .
+
+Run it after touching any button rule. A new rule that hardcodes the accent
+shows up here immediately instead of being found by eye months later.
+
 ## Two failure modes worth knowing
 
 **Widening a guard needs a replacement boundary, not just removal of the old
