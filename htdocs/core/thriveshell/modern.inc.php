@@ -7599,3 +7599,77 @@ div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box-conte
 	opacity: .6;
 }
 [data-ts-kanban="shared"] .ts-kanban-meta-row .badge-status { margin-left: 0; }
+
+/* ==========================================================================
+   Icon-only actions
+
+   Dolibarr's inline edit/copy/view actions rendered at whatever size their
+   content and inherited line-height produced: measured across record cards the
+   same .editfielda was 14x17 bare inline in one place and 32x24 or 34x24 with a
+   radius in another, holding a 22px icon in a 24px box. The glyph is centred in
+   that box, but a squat rectangle around a nearly-overflowing icon reads as
+   off-centre, and the hover surface differed per page.
+
+   One square interaction box, with the icon's own line-height and spacing
+   neutralised so nothing can push it off centre. Only actions that are icon-only
+   are matched -- labelled buttons keep their own shape.
+   ========================================================================== */
+a.editfielda,
+a.editfield,
+span.editfielda,
+.ts-icon-action {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 32px !important;
+	padding: 0 !important;
+	margin: 0 2px !important;
+	border-radius: 8px;
+	line-height: 1 !important;
+	text-indent: 0 !important;
+	vertical-align: middle;
+	color: var(--c-ink-subtle);
+	transition: background var(--t), color var(--t);
+}
+a.editfielda:hover,
+a.editfield:hover,
+.ts-icon-action:hover {
+	background: var(--c-sunken);
+	color: var(--c-accent);
+}
+a.editfielda:focus-visible,
+a.editfield:focus-visible,
+.ts-icon-action:focus-visible {
+	outline: 2px solid var(--c-accent);
+	outline-offset: 1px;
+}
+/* The glyph itself carries Dolibarr's line-height and padding; neutralise both
+   so the flex centring is the only thing positioning it. */
+a.editfielda > [class*="fa-"],
+a.editfield > [class*="fa-"],
+span.editfielda > [class*="fa-"],
+.ts-icon-action > [class*="fa-"] {
+	display: block !important;
+	width: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	line-height: 1 !important;
+	font-size: 13px !important;
+	vertical-align: middle !important;
+}
+/* View-switch and similar icon-only title buttons sat 4px right of centre from
+   asymmetric padding. */
+a.btnTitle:not(:has(.btnTitle-label)) {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 34px !important;
+	height: 32px !important;
+	padding: 0 !important;
+}
+a.btnTitle:not(:has(.btnTitle-label)) > [class*="fa-"] {
+	margin: 0 !important;
+	line-height: 1 !important;
+}

@@ -145,7 +145,36 @@
 		details.appendChild(summary);
 		details.appendChild(menu);
 		bar.appendChild(details);
+		bindMoreActionsDismissal();
 		return true;
+	}
+
+	/* A native <details> stays open until its own summary is clicked again, so
+	   the menu sat there while the page was used behind it. Close it the way a
+	   menu is expected to close -- clicking away, or Escape -- and return focus
+	   to the trigger so keyboard use is not stranded. Bound once for the
+	   document, however many menus a page ends up with. */
+	var tsMoreActionsBound = false;
+	function bindMoreActionsDismissal() {
+		if (tsMoreActionsBound) { return; }
+		tsMoreActionsBound = true;
+		var openMenus = function () {
+			return Array.prototype.slice.call(document.querySelectorAll('details.ts-more-actions[open]'));
+		};
+		document.addEventListener('click', function (event) {
+			openMenus().forEach(function (details) {
+				if (details.contains(event.target)) { return; }
+				details.removeAttribute('open');
+			});
+		});
+		document.addEventListener('keydown', function (event) {
+			if (event.key !== 'Escape') { return; }
+			openMenus().forEach(function (details) {
+				details.removeAttribute('open');
+				var trigger = details.querySelector('summary');
+				if (trigger) { trigger.focus(); }
+			});
+		});
 	}
 
 	function polishEntityHeader() {
