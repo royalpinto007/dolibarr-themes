@@ -1203,10 +1203,40 @@
 		});
 	}
 
+	/* Dolibarr writes tooltip labels inconsistently: some carry their own colon
+	   ("Product ref.:"), others leave it loose in the text that follows
+	   ("Use lot/serial number" + " : Yes"). Rendered against a fixed label width
+	   the loose ones pushed their colon far from the word it belongs to. Move
+	   the colon onto the label and leave exactly one space before the value. */
+	function normalizeTooltipLabels(root) {
+		Array.prototype.slice.call(root.querySelectorAll('.ui-tooltip.mytooltip b, .ui-tooltip.mytooltip strong')).forEach(function (label) {
+			if (label.getAttribute('data-ts-colon') === '1') { return; }
+			var text = (label.textContent || '').replace(/\s+/g, ' ').replace(/\s*:\s*$/, '').trim();
+			if (!text) { return; }
+			label.textContent = text + ':';
+			label.setAttribute('data-ts-colon', '1');
+			/* Drop the colon and padding Dolibarr left at the start of the value. */
+			var next = label.nextSibling;
+			while (next && next.nodeType === 3 && !(next.nodeValue || '').trim()) { next = next.nextSibling; }
+			if (next && next.nodeType === 3) {
+				next.nodeValue = ' ' + (next.nodeValue || '').replace(/^\s*:?\s*/, '');
+			} else if (next) {
+				var gap = label.nextSibling;
+				if (!(gap && gap.nodeType === 3 && gap.nodeValue === ' ')) {
+					label.parentNode.insertBefore(document.createTextNode(' '), next);
+				}
+			}
+		});
+	}
+
 	function watchAjaxTooltips() {
 		structureAjaxTooltip(document);
+		try { normalizeTooltipLabels(document); } catch (e) { /* leave Dolibarr's own wording */ }
 		var observer = new MutationObserver(function (mutations) {
-			if (mutations.some(function (mutation) { return mutation.addedNodes.length; })) { structureAjaxTooltip(document); }
+			if (mutations.some(function (mutation) { return mutation.addedNodes.length; })) {
+				structureAjaxTooltip(document);
+				try { normalizeTooltipLabels(document); } catch (e) { /* leave Dolibarr's own wording */ }
+			}
 		});
 		observer.observe(document.body, {childList: true, subtree: true});
 	}

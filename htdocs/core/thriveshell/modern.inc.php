@@ -1516,8 +1516,9 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	/* A fixed width here collided with its own value: labels longer than 112px,
 	   such as "Amount (excl. tax):", overflowed straight into the number. Treat
 	   it as a floor and keep a gap after it. */
-	min-width: 140px;
-	padding-right: 10px;
+	min-width: 0;
+	padding-right: 0;
+	margin-right: 0;
 	color: var(--c-muted);
 	font-weight: 550;
 	white-space: nowrap;
@@ -7269,4 +7270,46 @@ body.ts-category-index table.ts-category-index-table > tbody > tr.pair { backgro
 	background: var(--c-accent) !important;
 	color: #fff !important;
 	font-weight: 600;
+}
+
+/* Status dots.
+
+   Dolibarr's .badge-dot carries the pill padding of a full status badge, so it
+   measured 18x22 and a 999px radius drew an ellipse rather than a dot. Give it
+   equal sides and the radius follows. Scoped to badge-dot so the wider
+   badge-status pills keep their shape. */
+span.badge.badge-dot,
+.badge.badge-dot {
+	display: inline-block !important;
+	width: 11px !important;
+	height: 11px !important;
+	min-width: 11px !important;
+	min-height: 11px !important;
+	max-width: 11px !important;
+	padding: 0 !important;
+	border-radius: 50% !important;
+	font-size: 0 !important;
+	line-height: 0 !important;
+	vertical-align: middle;
+	overflow: hidden;
+}
+
+/* Colour rows carry the picker's own <link> and <script> tags inside the cell.
+   As grid items they auto-placed into a second row, padding each control to
+   67px for 36px of visible content -- the swatch stayed at the top while the
+   label centred against the taller box, which read as the labels sitting low.
+   Take them out of layout. */
+.ts-color-control > link,
+.ts-color-control > script,
+.ts-setting-control > link,
+.ts-setting-control > script {
+	display: none !important;
+}
+/* Only the first row holds real cells; template it and pin the extras to zero
+   so a stray anonymous item cannot pad the control. */
+.ts-color-control {
+	grid-template-rows: minmax(38px, auto) !important;
+	grid-auto-rows: 0 !important;
+	row-gap: 0 !important;
+	overflow: hidden;
 }
