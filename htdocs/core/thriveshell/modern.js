@@ -3462,11 +3462,74 @@
 		return true;
 	}
 
+
+	/* Page header icon.
+
+	   Dolibarr prints a picto beside some titles and nothing beside others, so
+	   headers read inconsistently. Map the area a page belongs to onto an icon
+	   and add one only where the page ships none.
+
+	   Every glyph here is FontAwesome 5, which is what Dolibarr bundles. A
+	   version 6 name renders as an empty tile rather than failing loudly, so
+	   additions want checking against the shipped set rather than the docs. */
+	var TS_PAGE_ICONS = [
+		[/^\/admin\/ihm\.php/, 'fa-desktop'],
+		[/^\/admin\/(company|company_socialnetworks)\.php/, 'fa-building'],
+		[/^\/admin\/(mails|emailcollector|mails_templates)/, 'fa-envelope'],
+		[/^\/admin\/sms/, 'fa-sms'],
+		[/^\/admin\/(security|proxy)/, 'fa-shield-alt'],
+		[/^\/admin\/(pdf|document)/, 'fa-file-pdf'],
+		[/^\/admin\/(menus|menu)/, 'fa-bars'],
+		[/^\/admin\/(translation|languages)/, 'fa-language'],
+		[/^\/admin\/(modules|const)/, 'fa-puzzle-piece'],
+		[/^\/admin\//, 'fa-cog'],
+		[/^\/societe\//, 'fa-building'],
+		[/^\/contact\//, 'fa-address-book'],
+		[/^\/product\/stock/, 'fa-warehouse'],
+		[/^\/product\//, 'fa-box'],
+		[/^\/projet\//, 'fa-project-diagram'],
+		[/^\/comm\/propal/, 'fa-file-signature'],
+		[/^\/comm\/action/, 'fa-calendar-alt'],
+		[/^\/comm\//, 'fa-briefcase'],
+		[/^\/commande\//, 'fa-shopping-cart'],
+		[/^\/compta\/facture/, 'fa-file-invoice-dollar'],
+		[/^\/compta\/bank/, 'fa-university'],
+		[/^\/compta\//, 'fa-calculator'],
+		[/^\/fourn\//, 'fa-truck'],
+		[/^\/expedition\//, 'fa-shipping-fast'],
+		[/^\/ticket\//, 'fa-life-ring'],
+		[/^\/user\//, 'fa-user'],
+		[/^\/adherents\//, 'fa-users'],
+		[/^\/contrat\//, 'fa-file-contract'],
+		[/^\/expensereport\//, 'fa-receipt'],
+		[/^\/holiday\//, 'fa-umbrella-beach'],
+		[/^\/hrm\//, 'fa-id-badge'],
+		[/^\/categories\//, 'fa-tags'],
+		[/^\/don\//, 'fa-hand-holding-heart'],
+		[/^\/fichinter\//, 'fa-tools']
+	];
+
+	function applyPageHeadIcon() {
+		var head = document.querySelector('.ts-pagehead .ts-pagehead-title');
+		if (!head || head.querySelector('.ts-pagehead-icon')) { return false; }
+		/* A page that already shows its own picto keeps it. */
+		if (head.querySelector('img.pictotitle, span.pictotitle, .titre > [class*="fa-"]')) { return false; }
+		var path = window.location.pathname.replace(/^.*?(\/(?:admin|societe|contact|product|projet|comm|commande|compta|fourn|expedition|ticket|user|adherents|contrat|expensereport|holiday|hrm|categories|don|fichinter)\/)/, '$1');
+		var match = TS_PAGE_ICONS.filter(function (entry) { return entry[0].test(path); })[0];
+		if (!match) { return false; }
+		var icon = document.createElement('span');
+		icon.className = 'ts-pagehead-icon fas ' + match[1];
+		icon.setAttribute('aria-hidden', 'true');
+		head.insertBefore(icon, head.firstChild);
+		return true;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
+		try { applyPageHeadIcon(); } catch (e) { /* leave the header without an icon */ }
 		try { polishThirdPartyDashboard(); } catch (e) { /* retain the native Third Parties module landing */ }
 		try { polishPartnershipForm(); } catch (e) { /* retain the native Partnership form */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
