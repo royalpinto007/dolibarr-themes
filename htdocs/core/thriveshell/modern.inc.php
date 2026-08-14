@@ -7353,3 +7353,25 @@ span.badge.badge-dot,
 	font-size: 20px !important;
 	vertical-align: middle;
 }
+
+/* Colour picker popup.
+
+   jPicker positions this itself, near the trigger, and a field in the right
+   column or low on the page opened it past the edge of the window -- partly
+   unreachable. Scripted repositioning proved unreliable because the plugin
+   lays the panel out on its own schedule, so pin it in the viewport instead:
+   centred, never larger than the window, and scrollable if it ever is. */
+.jPicker.Container {
+	position: fixed !important;
+	top: 50% !important;
+	left: 50% !important;
+	right: auto !important;
+	bottom: auto !important;
+	transform: translate(-50%, -50%) !important;
+	max-width: calc(100vw - 32px) !important;
+	max-height: calc(100vh - 32px) !important;
+	overflow: auto !important;
+	z-index: 2000 !important;
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-lg);
+}

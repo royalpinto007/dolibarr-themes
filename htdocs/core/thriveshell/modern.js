@@ -2980,26 +2980,40 @@
 		var openTrigger = null;
 		var place = function (trigger) {
 			var container = visibleContainer();
-			if (!container || !trigger) { return; }
+			if (!container || !trigger) { return false; }
+			var box = container.getBoundingClientRect();
+			var width = box.width;
+			var height = box.height;
+			/* Measured, not offsetWidth: called too early the popup has no layout
+			   yet, the clamp below becomes a no-op and the panel opens off-screen.
+			   Returning false lets the caller retry until it has a size. */
+			if (!width || !height) { return false; }
 			var rect = trigger.getBoundingClientRect();
-			var viewport = document.documentElement.clientWidth;
-			var width = container.offsetWidth || 0;
-			var height = container.offsetHeight || 0;
-			var left = Math.max(12, Math.min(rect.left, viewport - width - 12));
-			/* Below the field, unless there is no room left underneath. */
+			var viewportW = document.documentElement.clientWidth;
+			var viewportH = window.innerHeight;
+			var left = Math.max(12, Math.min(rect.left, viewportW - width - 12));
 			var top = rect.bottom + 8;
-			if (top + height > window.innerHeight && rect.top - height - 8 > 0) {
-				top = rect.top - height - 8;
+			if (top + height > viewportH) {
+				/* Prefer above the field; if it does not fit there either, sit it
+				   against the bottom edge rather than running past it. */
+				top = rect.top - height - 8 > 0 ? rect.top - height - 8 : Math.max(12, viewportH - height - 12);
 			}
 			container.style.left = (left + window.pageXOffset) + 'px';
 			container.style.top = (top + window.pageYOffset) + 'px';
+			return true;
 		};
 		document.addEventListener('click', function (event) {
 			var trigger = event.target && event.target.closest ? event.target.closest('.ts-color-control span.jPicker') : null;
 			if (!trigger) { return; }
 			openTrigger = trigger;
+			/* jPicker lays the popup out on its own schedule, so keep trying until
+			   it has a size to clamp against. */
+			var attempts = 0;
+			var settle = window.setInterval(function () {
+				attempts += 1;
+				if (place(trigger) || attempts > 25) { window.clearInterval(settle); }
+			}, 20);
 			window.requestAnimationFrame(function () { place(trigger); });
-			window.setTimeout(function () { place(trigger); }, 60);
 		});
 		var dismiss = function () {
 			var container = visibleContainer();
