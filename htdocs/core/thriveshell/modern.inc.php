@@ -1296,7 +1296,13 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	}
 }
 
-.ts-column-filters { position: relative; flex: 0 0 auto; }
+/* Anchored to the toolbar rather than to the Filters button. Positioned against
+   the button the panel opened leftwards from wherever that button happened to
+   sit, and on a wide toolbar it started left of the content area and was clipped
+   under the sidebar. The toolbar's own left edge is a stable anchor, so the
+   panel stays inside the content whatever the button's position. */
+.ts-column-filters { position: static; flex: 0 0 auto; }
+.ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
 	display: inline-flex;
 	align-items: center;
@@ -1319,11 +1325,12 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	position: absolute;
 	z-index: 120;
 	top: calc(100% + var(--sp-2));
-	right: 0;
+	left: 0;
+	right: auto;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(150px, 1fr));
 	gap: var(--sp-3);
-	width: min(720px, calc(100vw - var(--nav-w) - var(--sp-7)));
+	width: min(720px, 100%);
 	padding: var(--sp-4);
 	border: 1px solid var(--c-border);
 	border-radius: var(--r-lg);
