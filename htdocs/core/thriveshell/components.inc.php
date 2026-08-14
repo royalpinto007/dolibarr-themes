@@ -938,7 +938,7 @@ td.tdoverflowmax200 .classforajaxtooltip { white-space: nowrap; }
 	table.border:not(.liste) input[type="password"],
 	table.border:not(.liste) textarea,
 	table.border:not(.liste) select,
-	table.border:not(.liste) .select2-container {
+	table.border:not(.liste) td:not(.ts-measure-cell) .select2-container {
 		width: 100% !important;
 		max-width: 100% !important;
 		min-width: 0 !important;
@@ -1777,8 +1777,8 @@ div.tabBar table.editmode:not(.liste):not(.tableforfield) > tbody > tr > td:nth-
    width doing nothing while every control huddled against the left edge. The
    fields now take the column they are in, with a cap so a single line of text
    never runs to an unreadable length. */
-div.tabBar table.border:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]),
-div.tabBar table.editmode:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]) {
+div.tabBar table.border:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]):not([class~="ts-measure"]),
+div.tabBar table.editmode:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]):not([class~="ts-measure"]) {
 	width: 100% !important;
 	max-width: 760px !important;
 	box-sizing: border-box;
@@ -1805,7 +1805,7 @@ div.tabBar table td > input[class~="maxwidth100"] {
 div.tabBar table.editmode:not(.liste) td > textarea,
 div.tabBar table.border:not(.liste) td > textarea { width: 100%; max-width: 760px; box-sizing: border-box; }
 div.tabBar table.editmode:not(.liste) td > .select2-container,
-div.tabBar table.border:not(.liste) td > .select2-container { width: 100% !important; max-width: 760px !important; }
+div.tabBar table.border:not(.liste) td:not(.ts-measure-cell) > .select2-container { width: 100% !important; max-width: 760px !important; }
 
 
 /* ---- Dashboard widget cards ----
@@ -1896,14 +1896,14 @@ div.tabsAction a.butAction:not(:first-of-type):hover {
 	   max-width:100% does not clamp it: these tables use auto layout, so the
 	   cell simply grows to fit its widest child and 100% then resolves to the
 	   same 420px. Only an explicit width relative to the cell actually binds. */
-	div.tabBar table.border:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not(.button),
-	div.tabBar table.editmode:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not(.button),
+	div.tabBar table.border:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not(.button):not([class~="ts-measure"]),
+	div.tabBar table.editmode:not(.liste) td > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not(.button):not([class~="ts-measure"]),
 	div.tabBar table.border:not(.liste) td > textarea,
 	div.tabBar table.editmode:not(.liste) td > textarea {
 		width: 100% !important;
 		min-width: 0 !important;
 	}
-	div.tabBar table.border:not(.liste) td > .select2-container,
+	div.tabBar table.border:not(.liste) td:not(.ts-measure-cell) > .select2-container,
 	div.tabBar table.editmode:not(.liste) td > .select2-container {
 		width: 100% !important;
 		min-width: 0 !important;
@@ -1966,7 +1966,7 @@ td.cal_other_month, td.cal_other_month a { opacity: 0.75; }
 	   input exactly 8px past its cell -- which is precisely the overflow the
 	   sweep reported on every mobile create form. The gap is only meaningful
 	   while the picto sits inline before the field; once rows stack it is not. */
-	td span[class*="fa-"] + input,
+	td span[class*="fa-"] + input:not([class~="ts-measure"]),
 	td span[class*="fa-"] + select,
 	td span[class*="fa-"] + textarea,
 	td span[class*="fa-"] + .select2-container,
@@ -2680,19 +2680,19 @@ table.cal_pannel .cal_event, table.cal_pannel .cal_event * {
    row stayed on one line. Those 27px have to come off the field's width.
    The selector repeats the width rule's :not() chain so it can outrank it;
    a shorter selector loses no matter where it sits in the file. */
-div.tabBar table.border:not(.liste) td > span[class*="fa-"] + input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]),
-div.tabBar table.editmode:not(.liste) td > span[class*="fa-"] + input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]),
+div.tabBar table.border:not(.liste) td > span[class*="fa-"] + input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]):not([class~="ts-measure"]),
+div.tabBar table.editmode:not(.liste) td > span[class*="fa-"] + input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]):not([class~="ts-measure"]),
 div.tabBar table.border:not(.liste) td > span[class*="fa-"] + textarea,
 div.tabBar table.editmode:not(.liste) td > span[class*="fa-"] + textarea,
-div.tabBar table.border:not(.liste) td > span[class*="fa-"] ~ .select2-container,
+div.tabBar table.border:not(.liste) td:not(.ts-measure-cell) > span[class*="fa-"] ~ .select2-container,
 div.tabBar table.editmode:not(.liste) td > span[class*="fa-"] ~ .select2-container {
 	width: 100% !important;	/* the picto is out of flow; nothing to subtract */
 }
 @media only screen and (max-width: 767px) {
 	/* Rows stack on narrow screens; the picto no longer shares the line. */
-	div.tabBar table td > span[class*="fa-"] + input,
+	div.tabBar table td > span[class*="fa-"] + input:not([class~="ts-measure"]),
 	div.tabBar table td > span[class*="fa-"] + textarea,
-	div.tabBar table td > span[class*="fa-"] ~ .select2-container {
+	div.tabBar table td:not(.ts-measure-cell) > span[class*="fa-"] ~ .select2-container {
 		width: 100% !important;
 	}
 }
@@ -2799,8 +2799,8 @@ div.divsection { line-height: 1.7; }
    The selector repeats the width rule's :not() chain. Without it this scores
    far lower than that rule's fourteen clauses and never applies, however much
    !important it carries. */
-div.tabBar table.border:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]),
-div.tabBar table.editmode:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]),
+div.tabBar table.border:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]):not([class~="ts-measure"]),
+div.tabBar table.editmode:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="number"]):not(.button):not([class~="width25"]):not([class~="width50"]):not([class~="width75"]):not([class~="width100"]):not([class~="width125"]):not([class~="maxwidth50"]):not([class~="maxwidth75"]):not([class~="maxwidth100"]):not([class~="ts-measure"]),
 div.tabBar table.border:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > textarea,
 div.tabBar table.editmode:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > textarea,
 div.tabBar table.border:not(.liste):not(.tableforfield) > tbody > tr > td:nth-child(even):has(> span[class*="fa-info"], > span.linkobject, > span[class*="fa-redo"], > a.linkobject) > .select2-container,

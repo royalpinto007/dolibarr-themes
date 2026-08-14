@@ -3538,6 +3538,71 @@
 		return true;
 	}
 
+
+	/* Kanban surface for every module.
+
+	   The third-party adapter above also promotes that module's own filters, so
+	   it is gated on third-party cards. The classes it sets for the surface
+	   itself -- the card container, the table wrapper and the grid -- are not
+	   module-specific, but nothing applied them anywhere else, so every other
+	   module's Kanban kept Dolibarr's raw markup.
+
+	   This runs after that adapter and only where it declined, so the third-party
+	   view is untouched and every other module gets the same surface. */
+	function applyKanbanSurface() {
+		var grids = Array.prototype.slice.call(document.querySelectorAll('div.box-flex-container.kanban'));
+		var changed = false;
+		grids.forEach(function (grid) {
+			if (grid.getAttribute('data-ts-kanban')) { return; }
+			if (!grid.querySelector(':scope > .box-flex-item')) { return; }
+			grid.setAttribute('data-ts-kanban', 'shared');
+			grid.classList.add('ts-command-kanban');
+			var table = grid.closest('table.liste');
+			if (table) { table.classList.add('ts-kanban-table'); }
+			var listCard = table && table.closest('.ts-list-card');
+			if (listCard) { listCard.classList.add('ts-kanban-card-surface'); }
+			changed = true;
+		});
+		return changed;
+	}
+
+
+	/* Compound measurement fields (value + unit).
+
+	   Marks the parts so the shared pattern can size them. Nothing is moved and
+	   no value, name or unit option is touched -- the marker exists because the
+	   stylesheet's own full-width rules exclude inputs carrying a width marker,
+	   which is how Dolibarr's dimension fields already escape them. */
+	function markMeasurementFields() {
+		var units = Array.prototype.slice.call(document.querySelectorAll('select[name$="_units"]'));
+		if (!units.length) { return false; }
+		var changed = false;
+		units.forEach(function (unit) {
+			var cell = unit.closest('td') || unit.parentElement;
+			if (!cell || cell.classList.contains('ts-measure-cell')) { return; }
+			cell.classList.add('ts-measure-cell');
+			Array.prototype.slice.call(cell.querySelectorAll('input')).forEach(function (input) {
+				var type = (input.getAttribute('type') || '').toLowerCase();
+				if (type === 'hidden' || type === 'checkbox' || type === 'radio') { return; }
+				input.classList.add('ts-measure');
+				input.classList.add(/^size/.test(input.name || '') ? 'ts-measure-dim' : 'ts-measure-value');
+			});
+			/* The separators between length, width and height are bare text nodes;
+			   wrap them so they can be aligned with the fields they sit between. */
+			Array.prototype.slice.call(cell.childNodes).forEach(function (node) {
+				if (node.nodeType !== 3) { return; }
+				var text = (node.nodeValue || '').trim();
+				if (text !== 'x' && text !== '×') { return; }
+				var span = document.createElement('span');
+				span.className = 'ts-measure-x';
+				span.textContent = '×';
+				node.parentNode.replaceChild(span, node);
+			});
+			changed = true;
+		});
+		return changed;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -3549,10 +3614,12 @@
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
+		try { applyKanbanSurface(); } catch (e) { /* retain the native Kanban surface */ }
 		try { enhanceThirdPartyForm(); } catch (e) { /* retain Dolibarr's native edit table */ }
 		try { enhanceSharedFormPage(); } catch (e) { /* retain the native standard form */ }
 		/* After the form is rebuilt, not before: enhanceThirdPartyForm replaces the
 		   select containers, which discarded the classification when it ran first. */
+		try { markMeasurementFields(); } catch (e) { /* leave measurement fields native */ }
 		try { classifySelects(); } catch (e) { /* leave selects as they are */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { normalizePageTitleIcons(); } catch (e) { /* retain Dolibarr's title layout */ }

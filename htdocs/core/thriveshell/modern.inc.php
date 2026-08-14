@@ -7375,3 +7375,95 @@ span.badge.badge-dot,
 	border-radius: var(--r-lg);
 	box-shadow: var(--sh-lg);
 }
+
+/* ==========================================================================
+   Compound measurement fields (value + unit)
+
+   Dolibarr renders weight, dimensions, area and volume as a value input and a
+   unit select loose in one cell. Two form rules stretched those inputs to the
+   full cell, which pushed the unit select onto its own line.
+
+   The winning one scored (0,33,5):
+     div.tabBar table.border:not(.liste) td > span[class*="fa-"] + input:not(...)
+   It matches because these fields carry an icon immediately before the input.
+   Dimensions escaped it only because they ship class="width50", which those
+   same rules already exclude.
+
+   So this follows the exclusion the stylesheet already uses -- the inputs are
+   marked .ts-measure and added to that :not() list -- rather than escalating
+   specificity. Sizing below is then plain, and one pattern covers every
+   measurement field wherever Dolibarr renders one.
+   ========================================================================== */
+.ts-measure-cell { white-space: nowrap; }
+.ts-measure-cell > span[class*="fa-"] {
+	display: inline-block;
+	width: 26px;
+	margin-right: 10px;
+	color: var(--c-accent);
+	text-align: center;
+	vertical-align: middle;
+}
+input.ts-measure {
+	display: inline-block;
+	height: 40px;
+	margin: 0;
+	vertical-align: middle;
+}
+input.ts-measure-value { width: 168px; }
+div.tabBar table td > input.ts-measure-dim { width: 116px; margin-right: 4px; }
+.ts-measure-cell .ts-measure-x {
+	display: inline-block;
+	width: 18px;
+	color: var(--c-ink-subtle);
+	text-align: center;
+	vertical-align: middle;
+}
+.ts-measure-cell > .select2-container {
+	display: inline-block !important;
+	/* Sized to the longest unit label it has to hold ("mm3 (ul)"), not to the
+	   space available -- a unit is a short enum, so a wide box reads as an empty
+	   field rather than a compact control. */
+	width: 138px !important;
+	min-width: 138px !important;
+	max-width: 138px !important;
+	margin-left: 12px;
+	vertical-align: middle;
+}
+.ts-measure-cell > .select2-container .select2-selection {
+	height: 40px !important;
+	min-height: 40px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-surface) !important;
+	box-shadow: none !important;
+}
+.ts-measure-cell > .select2-container .select2-selection__rendered {
+	height: 38px !important;
+	line-height: 38px !important;
+	padding: 0 26px 0 12px !important;
+	font-size: 0.8125rem !important;
+}
+.ts-measure-cell > .select2-container .select2-selection__arrow { height: 38px !important; right: 6px !important; }
+
+@media only screen and (max-width: 1100px) {
+	input.ts-measure-value { width: 132px; }
+	div.tabBar table td > input.ts-measure-dim { width: 92px; }
+	.ts-measure-cell > .select2-container { width: 126px !important; min-width: 126px !important; max-width: 126px !important; margin-left: 8px; }
+}
+@media only screen and (max-width: 700px) {
+	.ts-measure-cell { white-space: normal; }
+	input.ts-measure-value {
+		width: 168px !important;
+		max-width: 100% !important;
+	}
+	div.tabBar table td > input.ts-measure-dim {
+		width: 96px !important;
+		max-width: 96px !important;
+	}
+	.ts-measure-cell > .select2-container {
+		width: 138px !important;
+		min-width: 0 !important;
+		max-width: 100% !important;
+		margin-left: 8px;
+	}
+}
