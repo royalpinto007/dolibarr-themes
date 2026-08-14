@@ -3674,6 +3674,34 @@
 		return changed;
 	}
 
+
+	/* Some list pages reserve the leading select column but never fill it.
+	   Products (Stocks) is one: Dolibarr emits an empty <th> and no picker,
+	   no checkboxes and no mass-action handler, leaving an unexplained gap
+	   before the first real column.
+
+	   Collapse that column only where it is genuinely unused -- no picker, no
+	   select checkbox anywhere in the table -- so lists that do offer selection
+	   keep theirs. Emptiness has to be tested here; a stylesheet cannot ask
+	   whether a cell has content. */
+	function collapseUnusedSelectColumn() {
+		var changed = false;
+		Array.prototype.slice.call(document.querySelectorAll('table.liste')).forEach(function (table) {
+			if (table.getAttribute('data-ts-selectcol')) { return; }
+			var header = table.querySelector('tr.liste_titre');
+			if (!header || !header.cells.length) { return; }
+			var first = header.cells[0];
+			var hasPicker = Boolean(table.querySelector('dl.dropdown'));
+			var hasCheckbox = Boolean(table.querySelector('input[name="toselect[]"], input.checkforselect'));
+			var firstIsEmpty = !(first.textContent || '').trim() && !first.querySelector('input, a, dl, span[class*="fa-"]');
+			table.setAttribute('data-ts-selectcol', hasPicker || hasCheckbox ? 'used' : 'unused');
+			if (hasPicker || hasCheckbox || !firstIsEmpty) { return; }
+			table.classList.add('ts-list-no-select-col');
+			changed = true;
+		});
+		return changed;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -3684,6 +3712,7 @@
 		try { polishPartnershipForm(); } catch (e) { /* retain the native Partnership form */ }
 		try { markCount(); } catch (e) { /* leave the title as Dolibarr printed it */ }
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
+		try { collapseUnusedSelectColumn(); } catch (e) { /* keep the native column */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
 		try { applyKanbanSurface(); } catch (e) { /* retain the native Kanban surface */ }
 		try { composeKanbanCardMeta(); } catch (e) { /* retain the native card body */ }

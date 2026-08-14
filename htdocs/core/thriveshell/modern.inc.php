@@ -1572,14 +1572,20 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
    and each row measured independently so nothing lined up. Letting the labels
    share a content-sized column aligns them and gives each the width it needs. */
 .ui-tooltip.mytooltip .ts-tooltip-details {
-	display: grid;
-	grid-template-columns: max-content minmax(0, 1fr);
-	align-items: start;
-	gap: 7px var(--sp-3);
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
 	margin-top: var(--sp-3);
 }
 .ui-tooltip.mytooltip .ts-tooltip-row {
-	display: contents;
+	display: grid;
+	grid-template-columns: 118px minmax(0, 1fr);
+	align-items: start;
+	column-gap: var(--sp-3);
+}
+/* An icon standing in for a label still occupies the label track. */
+.ui-tooltip.mytooltip .ts-tooltip-row > [class*="fa-"]:first-child {
+	justify-self: start;
 }
 .ui-tooltip.mytooltip .ts-tooltip-label {
 	display: inline-flex;
@@ -7658,4 +7664,16 @@ span.editfielda > [class*="fa-"],
 	line-height: 1 !important;
 	font-size: 13px !important;
 	vertical-align: middle !important;
+}
+
+/* Lists whose leading select column is never filled -- see
+   collapseUnusedSelectColumn(). Marked in script because emptiness cannot be
+   tested in CSS. */
+table.liste.ts-list-no-select-col > tbody > tr > *:first-child {
+	width: 0 !important;
+	min-width: 0 !important;
+	max-width: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	overflow: hidden;
 }
