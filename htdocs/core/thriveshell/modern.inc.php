@@ -1579,7 +1579,12 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 }
 .ui-tooltip.mytooltip .ts-tooltip-row {
 	display: grid;
-	grid-template-columns: 118px minmax(0, 1fr);
+	/* Sized to the label, not to a fixed 118px. The email and phone rows label
+	   themselves with just an icon, so a fixed column left ~100px of dead space
+	   and stranded their values out to the right while the text-labelled rows
+	   sat snug against theirs. */
+	grid-template-columns: auto minmax(0, 1fr);
+	justify-content: start;
 	align-items: start;
 	column-gap: var(--sp-3);
 }
