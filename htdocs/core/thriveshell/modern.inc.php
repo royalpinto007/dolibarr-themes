@@ -7467,3 +7467,108 @@ div.tabBar table td > input.ts-measure-dim { width: 116px; margin-right: 4px; }
 		margin-left: 8px;
 	}
 }
+
+/* ==========================================================================
+   Kanban cards for modules without their own adapter
+
+   The third-party adapter rebuilds its cards into a ts-kanban-* structure.
+   Every other module keeps Dolibarr's native card: an .info-box holding
+   .info-box-img, .info-box-ref, a select checkbox, .info-box-label and
+   .info-box-status. Those parts are the same everywhere, so they can be given
+   the same treatment without rebuilding anything -- styling only, so each
+   module's own fields, links and tooltips stay exactly as Dolibarr wrote them.
+
+   Scoped to the shared marker so the third-party view, which is already
+   composed, is untouched.
+   ========================================================================== */
+[data-ts-kanban="shared"] > .box-flex-item {
+	position: relative;
+	padding: 0;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+	transition: border-color var(--t), box-shadow var(--t);
+}
+[data-ts-kanban="shared"] > .box-flex-item:hover {
+	border-color: var(--c-border-strong);
+	box-shadow: var(--sh-md, var(--sh-sm));
+}
+div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box,
+[data-ts-kanban="shared"] .info-box {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: flex-start;
+	gap: 12px;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 14px 16px !important;
+	border: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+/* Picto becomes the same soft tile the rest of the shell uses. */
+[data-ts-kanban="shared"] .info-box-img,
+[data-ts-kanban="shared"] .info-box-icon {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 38px !important;
+	height: 38px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border-radius: 10px;
+	background: var(--c-accent-soft) !important;
+	font-size: 15px;
+	line-height: 1;
+}
+[data-ts-kanban="shared"] .info-box-img [class*="fa-"],
+[data-ts-kanban="shared"] .info-box-icon [class*="fa-"] { color: var(--c-accent) !important; }
+div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box-content,
+[data-ts-kanban="shared"] .info-box-content {
+	display: block !important;
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+/* Reference reads as the card's title. */
+[data-ts-kanban="shared"] .info-box-ref,
+[data-ts-kanban="shared"] .info-box-ref a {
+	max-width: 100% !important;
+	font-size: 0.875rem !important;
+	font-weight: 650 !important;
+	color: var(--c-ink) !important;
+	text-decoration: none;
+}
+[data-ts-kanban="shared"] .info-box-ref a:hover { color: var(--c-accent) !important; }
+[data-ts-kanban="shared"] .info-box-label {
+	display: block !important;
+	max-width: 100% !important;
+	margin-top: 2px;
+	color: var(--c-ink-subtle) !important;
+	font-size: 0.8125rem !important;
+	opacity: 1 !important;
+}
+/* Remaining rows -- amounts, stock, dates -- read as quiet metadata. */
+[data-ts-kanban="shared"] .info-box-status {
+	display: flex !important;
+	align-items: center;
+	gap: 8px;
+	margin-top: 10px;
+	color: var(--c-ink-2) !important;
+	font-size: 0.8125rem !important;
+	opacity: 1 !important;
+}
+[data-ts-kanban="shared"] .info-box-status [class*="fa-"] { opacity: .6; }
+/* The select box belongs in the corner, not in the middle of the text. */
+[data-ts-kanban="shared"] input.checkforselect {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	float: none !important;
+	margin: 0 !important;
+}
+[data-ts-kanban="shared"] .info-box-content > br { display: none; }
