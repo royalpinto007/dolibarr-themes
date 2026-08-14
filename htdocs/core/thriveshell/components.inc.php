@@ -386,8 +386,16 @@ button.buttongen, .buttongen {
 	line-height: 1; white-space: nowrap; cursor: pointer;
 	transition: background var(--t), border-color var(--t), box-shadow var(--t);
 }
-.butAction, a.butAction, input.butAction { background: var(--c-accent); color: #fff; box-shadow: var(--sh-sm); }
-.butAction:hover, a.butAction:hover { background: var(--c-accent-hover); color: #fff; }
+.butAction, a.butAction, input.butAction, button.butAction {
+	background: var(--c-btn-action, var(--c-accent));
+	color: var(--c-btn-action-text, #fff);
+	box-shadow: var(--sh-sm);
+}
+.butAction:hover, a.butAction:hover, input.butAction:hover, button.butAction:hover {
+	background: var(--c-btn-action, var(--c-accent-hover));
+	color: var(--c-btn-action-text, #fff);
+	filter: brightness(0.94);
+}
 input.button, .buttongen, button.button, a.button { background: var(--c-surface); color: var(--c-ink); border-color: var(--c-border); }
 input.button:hover, .buttongen:hover, a.button:hover { background: var(--c-sunken); border-color: var(--c-border-strong); }
 .butActionDelete, a.butActionDelete { background: var(--c-surface); color: var(--c-danger); border-color: var(--c-border); }

@@ -115,16 +115,19 @@ a.butAction, a.butActionDelete, a.butActionRefused, a.butActionNew {
    first butAction in the bar. Only one is filled, so the eye has one target. */
 .butActionNew, a.butActionNew,
 div.tabsAction .butAction:first-of-type, div.tabsAction a.butAction:first-of-type {
-	background: var(--c-accent);
-	border-color: var(--c-accent);
-	color: #fff;
+	/* The filled action honours the colour configured in Display > Skin and
+	   colours, falling back to the theme accent when none is set. */
+	background: var(--c-btn-action, var(--c-accent));
+	border-color: var(--c-btn-action, var(--c-accent));
+	color: var(--c-btn-action-text, #fff);
 	box-shadow: 0 1px 2px var(--c-accent-ring);
 }
 .butActionNew:hover, a.butActionNew:hover,
 div.tabsAction .butAction:first-of-type:hover, div.tabsAction a.butAction:first-of-type:hover {
-	background: var(--c-accent-hover);
-	border-color: var(--c-accent-hover);
-	color: #fff;
+	background: var(--c-btn-action, var(--c-accent-hover));
+	border-color: var(--c-btn-action, var(--c-accent-hover));
+	color: var(--c-btn-action-text, #fff);
+	filter: brightness(0.94);
 }
 .butActionDelete, a.butActionDelete {
 	background: var(--c-surface);
@@ -350,9 +353,9 @@ div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] + * { margin-top: var(-
    original Dolibarr nodes inside a disclosure, preserving hooks and tokens. */
 div.tabsAction .ts-record-primary,
 div.tabsAction a.ts-record-primary:first-of-type {
-	background: var(--c-accent);
-	border-color: var(--c-accent);
-	color: #fff;
+	background: var(--c-btn-action, var(--c-accent));
+	border-color: var(--c-btn-action, var(--c-accent));
+	color: var(--c-btn-action-text, #fff);
 }
 div.tabsAction .ts-record-secondary {
 	background: var(--c-surface);
@@ -5346,9 +5349,9 @@ body.ts-command-form-page .ts-command-form-actions button {
 	font-weight: 650 !important;
 }
 body.ts-command-form-page .ts-command-submit-primary {
-	border-color: #5546e8 !important;
-	background: #5546e8 !important;
-	color: #fff !important;
+	border-color: var(--c-btn-action, #5546e8) !important;
+	background: var(--c-btn-action, #5546e8) !important;
+	color: var(--c-btn-action-text, #fff) !important;
 }
 body.ts-command-form-page .ts-command-submit-secondary {
 	border-color: #dfe4ec !important;
@@ -5508,9 +5511,9 @@ body.ts-thirdparty-overview .ts-header-actions .ts-record-primary {
 body.ts-thirdparty-overview .ts-header-actions .ts-record-secondary {
 	order: 1 !important;
 	min-height: 40px !important;
-	border: 1px solid #5546e8 !important;
-	background: #5546e8 !important;
-	color: #fff !important;
+	border: 1px solid var(--c-btn-action, #5546e8) !important;
+	background: var(--c-btn-action, #5546e8) !important;
+	color: var(--c-btn-action-text, #fff) !important;
 	box-shadow: 0 2px 5px rgba(79, 70, 229, .18) !important;
 }
 body.ts-thirdparty-overview .ts-header-actions .ts-record-primary,
@@ -7349,33 +7352,4 @@ span.badge.badge-dot,
 	color: var(--c-accent) !important;
 	font-size: 20px !important;
 	vertical-align: middle;
-}
-
-/* Active tab: an indigo pill with the underline kept as the anchor. */
-/* The active tab carries no class of its own -- it is identified by its
-   containing .tabsElemActive, and the anchor is not a direct child of it. */
-div.tabs a.tab.tabactive,
-.tabsElemActive a.tab,
-.tabsElemActive a {
-	position: relative;
-	border-radius: 999px !important;
-	background: var(--c-accent-soft) !important;
-	color: var(--c-accent) !important;
-	font-weight: 650 !important;
-}
-div.tabs a.tab.tabactive::after,
-.tabsElemActive a.tab::after {
-	content: '';
-	position: absolute;
-	right: 14%;
-	bottom: -9px;
-	left: 14%;
-	height: 3px;
-	border-radius: 999px;
-	background: var(--c-accent);
-}
-div.tabs a.tab:not(.tabactive):hover {
-	border-radius: 999px !important;
-	background: var(--c-sunken) !important;
-	color: var(--c-ink) !important;
 }

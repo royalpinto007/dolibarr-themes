@@ -84,6 +84,23 @@ $barheight = 60;
 	--c-accent-hover: #4338CA;
 	--c-accent-ink: #4338CA;
 	--c-accent-soft: #EEF0FE;
+
+	/* Display > Skin and colors lets an administrator set the action button
+	   colour. Dolibarr resolves that setting into $butactionbg before this file
+	   is included, but the theme was painting its buttons from the accent above,
+	   so changing the setting did nothing at all. Take the resolved values, which
+	   already fall back to the theme's own defaults when nothing is configured. */
+<?php
+	$tsCommandColor = function ($value, $fallback) {
+		$value = trim((string) $value);
+		if ($value === '') { return $fallback; }
+		if (strpos($value, '#') === 0) { return $value; }
+		if (strpos($value, ',') !== false) { return 'rgb('.$value.')'; }
+		return '#'.$value;
+	};
+	?>
+	--c-btn-action: <?php echo $tsCommandColor($butactionbg, '#4F46E5'); ?>;
+	--c-btn-action-text: <?php echo $tsCommandColor($textbutaction, '#ffffff'); ?>;
 	--c-accent-ring: rgba(79, 70, 229, 0.22);
 
 	--c-success: #0F7B4F;
