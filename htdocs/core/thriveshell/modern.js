@@ -3603,6 +3603,48 @@
 		return changed;
 	}
 
+
+	/* Kanban card metadata.
+
+	   Dolibarr emits the card body as a flat run of nodes separated by <br>:
+	   reference, select box, label, then one div per remaining field. Grouping
+	   the trailing fields lets them be laid out as rows instead of a stack of
+	   line breaks, without rebuilding anything -- each field keeps its own
+	   markup, links and tooltips. */
+	function composeKanbanCardMeta() {
+		var grids = Array.prototype.slice.call(document.querySelectorAll('[data-ts-kanban="shared"]'));
+		if (!grids.length) { return false; }
+		var changed = false;
+		grids.forEach(function (grid) {
+			Array.prototype.slice.call(grid.querySelectorAll('.info-box-content')).forEach(function (content) {
+				if (content.getAttribute('data-ts-meta') === '1') { return; }
+				content.setAttribute('data-ts-meta', '1');
+				var label = content.querySelector('.info-box-label');
+				if (!label) { return; }
+				/* Everything after the label is per-module detail. */
+				var meta = document.createElement('div');
+				meta.className = 'ts-kanban-meta';
+				var node = label.nextSibling;
+				var moved = [];
+				while (node) {
+					var next = node.nextSibling;
+					if (node.nodeType === 1 && node.tagName === 'BR') { node.remove(); }
+					else if (node.nodeType === 3 && !(node.nodeValue || '').trim()) { node.remove(); }
+					else { moved.push(node); }
+					node = next;
+				}
+				if (!moved.length) { return; }
+				moved.forEach(function (item) {
+					if (item.nodeType === 1) { item.classList.add('ts-kanban-meta-row'); }
+					meta.appendChild(item);
+				});
+				content.appendChild(meta);
+				changed = true;
+			});
+		});
+		return changed;
+	}
+
 	ready(function () {
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
@@ -3615,6 +3657,7 @@
 		try { composeListSurface(); } catch (e) { /* leave the list's native structure */ }
 		try { enhanceThirdPartyKanban(); } catch (e) { /* retain Dolibarr's native Kanban */ }
 		try { applyKanbanSurface(); } catch (e) { /* retain the native Kanban surface */ }
+		try { composeKanbanCardMeta(); } catch (e) { /* retain the native card body */ }
 		try { enhanceThirdPartyForm(); } catch (e) { /* retain Dolibarr's native edit table */ }
 		try { enhanceSharedFormPage(); } catch (e) { /* retain the native standard form */ }
 		/* After the form is rebuilt, not before: enhanceThirdPartyForm replaces the

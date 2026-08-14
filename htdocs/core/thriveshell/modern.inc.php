@@ -7572,3 +7572,30 @@ div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box-conte
 	margin: 0 !important;
 }
 [data-ts-kanban="shared"] .info-box-content > br { display: none; }
+
+/* Kanban card metadata rows: one field per line, aligned with the title. */
+[data-ts-kanban="shared"] .ts-kanban-meta {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+	margin-top: 10px;
+}
+[data-ts-kanban="shared"] .ts-kanban-meta-row {
+	display: flex !important;
+	align-items: center;
+	gap: 8px;
+	margin: 0 !important;
+	padding: 0 !important;
+	color: var(--c-ink-2);
+	font-size: 0.8125rem;
+	opacity: 1 !important;
+}
+[data-ts-kanban="shared"] .ts-kanban-meta-row [class*="fa-"] {
+	flex: 0 0 16px;
+	width: 16px;
+	text-align: center;
+	opacity: .6;
+}
+[data-ts-kanban="shared"] .ts-kanban-meta-row .badge-status { margin-left: 0; }
