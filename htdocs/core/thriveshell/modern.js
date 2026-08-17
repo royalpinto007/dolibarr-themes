@@ -1310,7 +1310,14 @@
 	}
 
 	function structureAjaxTooltip(root) {
-		(root || document).querySelectorAll('.ui-tooltip.mytooltip .centpercent:not([data-ts-structured])').forEach(function (content) {
+		/* Some classes wrap their tooltip in a full-width div and some do not --
+		   a third party opens one, an order writes its content straight into the
+		   tooltip -- so keying on that wrapper alone meant the ones without it were
+		   never looked at. Take the wrapper where there is one, and the tooltip's own
+		   content box where there is not, never both for the same tooltip. */
+		var TOOLTIP_CONTENT = '.ui-tooltip.mytooltip .centpercent:not([data-ts-structured])'
+			+ ', .ui-tooltip.mytooltip .ui-tooltip-content:not([data-ts-structured]):not(:has(.centpercent))';
+		(root || document).querySelectorAll(TOOLTIP_CONTENT).forEach(function (content) {
 			document.querySelectorAll('a.classforajaxtooltip:hover[title]').forEach(function (target) {
 				if ((target.getAttribute('title') || '').trim().toLowerCase() === 'tocomplete') { target.removeAttribute('title'); }
 			});
