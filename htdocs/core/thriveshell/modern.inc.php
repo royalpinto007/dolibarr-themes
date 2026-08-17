@@ -1409,6 +1409,31 @@ body.ts-command-stats form td:first-child {
 	white-space: nowrap;
 	padding-right: var(--sp-4);
 }
+/* Give the icon a gutter of its own so the fields line up in one column whether
+   a row has an icon or not. Previously a row without one started its field where
+   the icon would have been, and the form read as two ragged columns.
+
+   Only a leading icon moves into the gutter: some rows carry a trailing hint
+   icon after the field, and that one belongs where it is. */
+body.ts-command-stats form td + td {
+	position: relative;
+	padding-left: 40px;
+}
+/* The markup puts a hard space after a leading icon, and that space stays in
+   flow once the icon is lifted into the gutter, so an icon row still sat eight
+   pixels right of a plain one. Pad the plain rows by the same amount. */
+body.ts-command-stats form td + td:not(:has(> span.fas:first-child)):not(:has(> span.far:first-child)):not(:has(> img.pictofixedwidth:first-child)) {
+	padding-left: 48px;
+}
+body.ts-command-stats form td + td > span.fas:first-child,
+body.ts-command-stats form td + td > span.far:first-child,
+body.ts-command-stats form td + td > img.pictofixedwidth:first-child {
+	position: absolute;
+	left: var(--sp-3);
+	top: 50%;
+	transform: translateY(-50%);
+	margin: 0;
+}
 body.ts-command-stats form td > span.fas,
 body.ts-command-stats form td > span.far,
 body.ts-command-stats form td > img.pictofixedwidth {
