@@ -1677,11 +1677,15 @@ body.ts-command-stats .ts-stats-empty-icon {
 	justify-content: start;
 	align-items: center;
 }
+/* One line per heading. A heading that wrapped pushed its own control down a
+   row, so controls on the same line no longer started at the same height and the
+   panel read as though it were misaligned. The full wording stays available on
+   hover. */
 .ts-column-filters-panel > .ts-column-filter-control > .ts-column-filter-label {
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
+	display: block;
 	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	line-height: 1.3;
 }
 .ts-column-filters-panel > .ts-column-filter-control > .select2-container,

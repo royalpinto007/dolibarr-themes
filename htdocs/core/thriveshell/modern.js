@@ -2367,6 +2367,7 @@
 							var headingNode = document.createElement('span');
 							headingNode.className = 'ts-column-filter-label';
 							headingNode.textContent = heading;
+							headingNode.title = heading;
 							control.insertBefore(headingNode, control.firstChild);
 						}
 					}
