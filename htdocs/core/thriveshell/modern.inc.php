@@ -1397,6 +1397,31 @@ body.ts-command-module-index input[type="button"]:hover {
 	color: var(--c-primary);
 }
 
+/* Statistics filter forms, corrected in place rather than restyled. An earlier
+   pass rebuilt the table and made things worse -- the label column came out
+   narrower and wrapped more than before -- so this touches only the three things
+   that are actually wrong: labels wrapping mid-phrase, the picto sitting on its
+   own line above the field it belongs to, and the field stretching the row. */
+body.ts-command-stats form td {
+	vertical-align: middle;
+}
+body.ts-command-stats form td:first-child {
+	white-space: nowrap;
+	padding-right: var(--sp-4);
+}
+body.ts-command-stats form td > span.fas,
+body.ts-command-stats form td > span.far,
+body.ts-command-stats form td > img.pictofixedwidth {
+	vertical-align: middle;
+	margin-right: var(--sp-2);
+}
+body.ts-command-stats form td > .select2-container {
+	width: auto !important;
+	min-width: 220px;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {

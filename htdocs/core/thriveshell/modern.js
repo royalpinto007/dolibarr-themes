@@ -3833,6 +3833,7 @@
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+		if (/\/stats\//.test(window.location.pathname)) { document.body.classList.add('ts-command-stats'); }
 		/* select2 builds its container from an inline script that can run after this
 		   pass, so the cells hold no container yet on the first look. Check again once
 		   the page has settled. */
