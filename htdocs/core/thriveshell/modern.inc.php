@@ -1610,7 +1610,7 @@ body.ts-command-stats form tr:not(.liste_titre) > td {
 	background: var(--c-surface);
 }
 
-.ts-column-filters { position: static; flex: 0 0 auto; }
+.ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
 	display: inline-flex;
@@ -1634,18 +1634,40 @@ body.ts-command-stats form tr:not(.liste_titre) > td {
 	position: absolute;
 	z-index: 120;
 	top: calc(100% + var(--sp-2));
-	left: 0;
-	right: auto;
+	/* Anchored to the Filters control so the panel opens beneath the button that
+	   summons it. It was anchored to the toolbar instead because a fixed-width
+	   panel opening leftwards from a button could start left of the content and
+	   be clipped by the sidebar; the width below is capped against the space
+	   actually available, so it can shrink rather than overflow. */
+	left: auto;
+	right: 0;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(150px, 1fr));
 	gap: var(--sp-3);
-	width: min(720px, 100%);
+	width: min(720px, calc(100vw - var(--nav-w) - var(--sp-7)));
 	padding: var(--sp-4);
 	border: 1px solid var(--c-border);
 	border-radius: var(--r-lg);
 	background: var(--c-surface);
 	box-shadow: var(--sh-lg);
 }
+
+/* Below this width the Filters button sits far enough left that a panel hanging
+   from it would start outside the content and be clipped by the sidebar, which
+   CSS cannot prevent while the width is fixed and the anchor is the button. Fall
+   back to the toolbar edge, where it always fits. */
+@media (max-width: 1439px) {
+	/* Release the button as the anchor as well, or left:0 measures from the
+	   button and the panel runs off the other edge instead. */
+	.ts-column-filters {
+		position: static;
+	}
+	.ts-column-filters-panel {
+		left: 0;
+		right: auto;
+	}
+}
+
 .ts-column-filter-control { display: grid; gap: var(--sp-1); min-width: 0; }
 .ts-column-filter-label {
 	font-size: 0.6875rem;

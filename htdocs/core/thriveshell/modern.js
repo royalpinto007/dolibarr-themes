@@ -2349,6 +2349,27 @@
 				Array.prototype.slice.call(filter.querySelectorAll(':scope > .ts-toolbar-filter'), TOOLBAR_FILTER_BUDGET).forEach(function (control) {
 					control.className = control.className.replace(/\bts-toolbar-filter(-\d+)?\b/g, ' ').replace(/\s+/g, ' ').trim();
 					control.classList.add('ts-column-filter-control');
+					/* These arrived as toolbar controls, which name themselves through their
+					   own placeholder text. In the panel every other control is titled, so a
+					   bare one reads as though its heading went missing. Take the name the
+					   control already carries. */
+					if (!control.querySelector('.ts-column-filter-label')) {
+						var named = control.querySelector('select, input:not([type="hidden"])');
+						var heading = '';
+						if (named) {
+							heading = named.getAttribute('title') || named.getAttribute('aria-label') || named.getAttribute('placeholder') || '';
+							if (!heading && named.tagName === 'SELECT' && named.options.length) {
+								heading = named.options[0].textContent || '';
+							}
+						}
+						heading = heading.replace(/[\u2026.]+$/, '').replace(/\s+/g, ' ').trim();
+						if (heading) {
+							var headingNode = document.createElement('span');
+							headingNode.className = 'ts-column-filter-label';
+							headingNode.textContent = heading;
+							control.insertBefore(headingNode, control.firstChild);
+						}
+					}
 					panel.appendChild(control);
 				});
 				filterRow.classList.add('ts-filter-row-extracted');
