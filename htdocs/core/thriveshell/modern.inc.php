@@ -8281,6 +8281,35 @@ div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box-conte
 }
 [data-ts-kanban="shared"] .info-box-content > br { display: none; }
 
+/* Module cards keep their version marker inside the icon element.  Once the
+   shared Kanban surface turns that element into a fixed tile, the marker
+   must leave inline flow or it can paint over the module title. */
+body.page-modules div.box-flex-container[data-ts-kanban="shared"] .info-box-module .info-box {
+	position: relative;
+}
+body.page-modules div.box-flex-container[data-ts-kanban="shared"] .info-box-module .info-box-icon {
+	position: static;
+	overflow: visible;
+}
+body.page-modules div.box-flex-container[data-ts-kanban="shared"] .info-box-module .info-box-icon-version {
+	position: absolute;
+	top: 9px;
+	right: 12px;
+	z-index: 2;
+	max-width: 92px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: .6875rem;
+	line-height: 1.2;
+	font-weight: 600;
+	color: var(--c-muted);
+	background: var(--c-surface);
+}
+body.page-modules div.box-flex-container[data-ts-kanban="shared"] .info-box-module .info-box-title {
+	padding-right: 78px;
+}
+
 /* Kanban card metadata rows: one field per line, aligned with the title. */
 [data-ts-kanban="shared"] .ts-kanban-meta {
 	display: flex;
