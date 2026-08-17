@@ -1577,6 +1577,39 @@ td .select2-container .select2-search__field {
 	list-style: none;
 }
 
+/* The results table below these forms is composed into a card, but the filter
+   block above it kept the bare legacy table with a grey bar on top, so the two
+   halves of the same page did not look related. Give the filter the same card:
+   a bordered surface with its heading as the header row. Chrome only -- the
+   field alignment inside is left alone. */
+body.ts-command-stats form table.border,
+body.ts-command-stats form table.noborder,
+body.ts-command-stats form > table {
+	width: 100%;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+	box-shadow: var(--sh-sm);
+}
+body.ts-command-stats form tr.liste_titre > td,
+body.ts-command-stats form tr.liste_titre > th {
+	padding: var(--sp-3) var(--sp-4);
+	border: 0;
+	border-bottom: 1px solid var(--c-border);
+	background: #f6f8fb;
+	color: var(--c-text);
+	font-size: 0.75rem;
+	font-weight: 650;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+body.ts-command-stats form tr:not(.liste_titre) > td {
+	background: var(--c-surface);
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
