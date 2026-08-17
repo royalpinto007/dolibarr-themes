@@ -422,7 +422,8 @@
 			column.querySelectorAll('table.noborder, table.border').forEach(function (table) {
 				table.classList.add('ts-module-index-card');
 				var widestRow = Array.from(table.rows || []).reduce(function (count, row) { return Math.max(count, row.cells.length); }, 0);
-				table.classList.toggle('ts-module-index-data-card', widestRow >= 4);
+				table.classList.toggle('ts-module-index-data-card', widestRow >= 3);
+				if (widestRow) { table.classList.add('ts-module-index-cols-' + Math.min(widestRow, 6)); }
 				/* Many index widgets render one title cell followed by structural empty
 				   cells. Collapse only that exact pattern so the header remains one flat
 				   surface without altering the table's data-column geometry. */

@@ -115,19 +115,16 @@ a.butAction, a.butActionDelete, a.butActionRefused, a.butActionNew {
    first butAction in the bar. Only one is filled, so the eye has one target. */
 .butActionNew, a.butActionNew,
 div.tabsAction .butAction:first-of-type, div.tabsAction a.butAction:first-of-type {
-	/* The filled action honours the colour configured in Display > Skin and
-	   colours, falling back to the theme accent when none is set. */
-	background: var(--c-btn-action, var(--c-accent));
-	border-color: var(--c-btn-action, var(--c-accent));
-	color: var(--c-btn-action-text, #fff);
+	background: var(--c-accent);
+	border-color: var(--c-accent);
+	color: #fff;
 	box-shadow: 0 1px 2px var(--c-accent-ring);
 }
 .butActionNew:hover, a.butActionNew:hover,
 div.tabsAction .butAction:first-of-type:hover, div.tabsAction a.butAction:first-of-type:hover {
-	background: var(--c-btn-action, var(--c-accent-hover));
-	border-color: var(--c-btn-action, var(--c-accent-hover));
-	color: var(--c-btn-action-text, #fff);
-	filter: brightness(0.94);
+	background: var(--c-accent-hover);
+	border-color: var(--c-accent-hover);
+	color: #fff;
 }
 .butActionDelete, a.butActionDelete {
 	background: var(--c-surface);
@@ -353,9 +350,9 @@ div.tabBar.ts-entity-card > div.tabs[data-ts-placed="1"] + * { margin-top: var(-
    original Dolibarr nodes inside a disclosure, preserving hooks and tokens. */
 div.tabsAction .ts-record-primary,
 div.tabsAction a.ts-record-primary:first-of-type {
-	background: var(--c-btn-action, var(--c-accent));
-	border-color: var(--c-btn-action, var(--c-accent));
-	color: var(--c-btn-action-text, #fff);
+	background: var(--c-accent);
+	border-color: var(--c-accent);
+	color: #fff;
 }
 div.tabsAction .ts-record-secondary {
 	background: var(--c-surface);
@@ -962,15 +959,9 @@ body.ts-command-record-secondary .ts-list-composition .ts-filter-surface .ts-qui
 	max-width: none !important;
 }
 body.ts-command-record-secondary .ts-column-filters-panel {
-	/* This anchored left from when the disclosure sat at the start of the filter
-	   row. The toolbar now ends with it, so opening leftwards ran the panel off
-	   the card and over the table. Anchor it to the control it belongs to and
-	   size it to the filters it actually holds. */
-	left: auto;
-	right: 0;
-	grid-template-columns: repeat(auto-fit, minmax(180px, max-content));
-	width: max-content;
-	max-width: min(680px, calc(100vw - var(--nav-w) - 48px));
+	left: 0;
+	right: auto;
+	width: min(680px, calc(100vw - var(--nav-w) - 48px));
 }
 body.ts-command-record-secondary .ts-list-card { overflow: visible; }
 body.ts-command-record-secondary .ts-list-card .ts-record-tab-surface { margin: 0 !important; }
@@ -1218,9 +1209,7 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	top: calc(100% + 7px);
 	left: 0;
 	right: auto;
-	min-width: 280px;
-	width: max-content;
-	max-width: 380px;
+	width: 280px;
 	min-width: 280px;
 	max-width: calc(100vw - 32px);
 	max-height: min(380px, calc(100vh - 32px));
@@ -1296,482 +1285,7 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
 	}
 }
 
-/* Anchored to the toolbar rather than to the Filters button. Positioned against
-   the button the panel opened leftwards from wherever that button happened to
-   sit, and on a wide toolbar it started left of the content area and was clipped
-   under the sidebar. The toolbar's own left edge is a stable anchor, so the
-   panel stays inside the content whatever the button's position. */
-/* The content column scrolls (overflow-y:auto) and is only as tall as whatever
-   it holds, so on a page with no rows a dropdown opening near the bottom of the
-   filter panel was clipped by the column's own edge -- the same dropdown was
-   fine as soon as the list had data to make the column taller. Floor the column
-   at the viewport height so a short page still has somewhere to open into. */
-#id-right { min-height: calc(100vh - 108px); }
-
-/* Submit buttons sat in flex toolbars with the default flex-shrink, so a narrow
-   toolbar squeezed them below their own label -- the projects filter bar cut
-   "Refresh" down to "Refre" against an overflow:clip. A button is not the give
-   in a layout; let the fields around it take the pressure instead. */
-input[type="submit"],
-input[type="button"],
-button[type="submit"] {
-	flex-shrink: 0;
-	min-width: max-content;
-}
-
-/* A date range is two fields, and stacking them made its control twice the
-   height of every other filter, which set the row height for the whole grid.
-   Put the pair on one row under a full-width label so a range costs the same
-   height as a single field.
-
-   The field does not shrink on its own: the input sits inside a wrapper that
-   holds its own width, and the input carries a matching min-width, so
-   constraining either alone left the pair overflowing its box. Release both. */
-.ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) {
-	grid-column: span 2;
-	grid-template-columns: max-content max-content;
-	column-gap: var(--sp-3);
-	align-items: center;
-	justify-content: start;
-}
-.ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) > .ts-column-filter-label {
-	grid-column: 1 / -1;
-}
-.ts-column-filter-control > .nowrapfordate,
-.ts-column-filter-control > .nowrapfordate > .nowraponall {
-	display: flex;
-	align-items: center;
-	gap: var(--sp-1);
-	min-width: 0;
-	max-width: 100%;
-}
-.ts-column-filter-control > .nowrapfordate .nowraponall > *:not(input) {
-	flex: none;
-}
-
-/* A widget with no data still reserved a 200px placeholder box and then wrote
-   "Not enough data..." underneath it, so the card was mostly empty space with a
-   caption on the floor. There is nothing to plot, so drop the box and let the
-   message stand on its own. */
-body.ts-command-module-index .nographyet {
-	display: none;
-}
-
-/* Dashboard toolbar controls. The picker is a select2 like every other dropdown
-   in the theme, but it sits straight inside the form rather than in a record
-   table, so none of the field styling reached it and it kept the native look
-   next to its unstyled Refresh button. */
-body.ts-command-module-index form > .select2-container .select2-selection--single,
-body.ts-command-module-index .fichecenter .select2-container .select2-selection--single {
-	height: 38px;
-	border: 1px solid var(--c-border);
-	border-radius: var(--r-sm);
-	background: var(--c-surface);
-}
-body.ts-command-module-index form > .select2-container .select2-selection__rendered,
-body.ts-command-module-index .fichecenter .select2-container .select2-selection__rendered {
-	line-height: 36px;
-	color: var(--c-text);
-}
-body.ts-command-module-index form > .select2-container .select2-selection__arrow,
-body.ts-command-module-index .fichecenter .select2-container .select2-selection__arrow {
-	height: 36px;
-}
-body.ts-command-module-index input[type="submit"],
-body.ts-command-module-index input[type="button"] {
-	height: 38px;
-	padding: 0 var(--sp-4);
-	border: 1px solid var(--c-border);
-	border-radius: var(--r-sm);
-	background: var(--c-surface);
-	color: var(--c-text);
-	font-size: 0.8125rem;
-	font-weight: 600;
-	line-height: 1;
-	vertical-align: middle;
-	cursor: pointer;
-}
-body.ts-command-module-index input[type="submit"]:hover,
-body.ts-command-module-index input[type="button"]:hover {
-	border-color: var(--c-primary);
-	color: var(--c-primary);
-}
-
-/* Statistics filter forms, corrected in place rather than restyled. An earlier
-   pass rebuilt the table and made things worse -- the label column came out
-   narrower and wrapped more than before -- so this touches only the three things
-   that are actually wrong: labels wrapping mid-phrase, the picto sitting on its
-   own line above the field it belongs to, and the field stretching the row. */
-body.ts-command-stats form td {
-	vertical-align: middle;
-}
-body.ts-command-stats form td:first-child {
-	white-space: nowrap;
-	padding-right: var(--sp-4);
-}
-/* Give the icon a gutter of its own so the fields line up in one column whether
-   a row has an icon or not. Previously a row without one started its field where
-   the icon would have been, and the form read as two ragged columns.
-
-   Only a leading icon moves into the gutter: some rows carry a trailing hint
-   icon after the field, and that one belongs where it is. */
-body.ts-command-stats form td + td {
-	position: relative;
-	padding-left: 40px;
-}
-/* The markup puts a hard space after a leading icon, and that space stays in
-   flow once the icon is lifted into the gutter, so an icon row still sat eight
-   pixels right of a plain one. Pad the plain rows by the same amount. */
-body.ts-command-stats form td + td:not(:has(> span.fas:first-child)):not(:has(> span.far:first-child)):not(:has(> img.pictofixedwidth:first-child)) {
-	padding-left: 48px;
-}
-body.ts-command-stats form td + td > span.fas:first-child,
-body.ts-command-stats form td + td > span.far:first-child,
-body.ts-command-stats form td + td > img.pictofixedwidth:first-child {
-	position: absolute;
-	left: var(--sp-3);
-	top: 50%;
-	transform: translateY(-50%);
-	margin: 0;
-}
-body.ts-command-stats form td > span.fas,
-body.ts-command-stats form td > span.far,
-body.ts-command-stats form td > img.pictofixedwidth {
-	vertical-align: middle;
-	margin-right: var(--sp-2);
-}
-body.ts-command-stats form td .select2-container {
-	width: auto !important;
-	min-width: 220px !important;
-	max-width: 100%;
-	vertical-align: middle;
-}
-/* Every dropdown here draws its arrow hard against its own right border. On the
-   wide ones that only looks tight; on a short one such as the year it collides
-   with the value. Hold the arrow off the edge and keep the text clear of it. */
-body.ts-command-stats form .select2-container .select2-selection__arrow {
-	right: 6px !important;
-}
-body.ts-command-stats form .select2-container .select2-selection__rendered {
-	padding-right: 26px;
-}
-/* The bordered box does not inherit the width the container was given, so
-   widening the container alone left the year field small with its chevron
-   stranded outside the border. */
-body.ts-command-stats form td .select2-container .select2-selection--single,
-body.ts-command-stats form td .select2-container .select2-selection--multiple {
-	width: 100% !important;
-	box-sizing: border-box;
-}
-/* Tag pickers are multi-selects, which carry different markup from the single
-   selects beside them, so they kept the pre-theme box while everything else on
-   the form had been brought into line. */
-/* select2 puts its own search field inside the multi-select, so it must not pick
-   up the bordered field treatment or the control renders as a box in a box. */
-body.ts-command-stats form td .select2-search__field {
-	border: 0 !important;
-	background: transparent !important;
-	height: 30px !important;
-	padding: 0 !important;
-	min-width: 60px;
-}
-body.ts-command-stats form td .select2-container .select2-selection--multiple {
-	min-height: 38px;
-	padding: 2px var(--sp-2);
-	border: 1px solid var(--c-border);
-	border-radius: var(--r-sm);
-	background: var(--c-surface);
-}
-body.ts-command-stats form td input.flat:not(.select2-search__field):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]) {
-	height: 38px;
-	padding: 0 var(--sp-3);
-	border: 1px solid var(--c-border);
-	border-radius: var(--r-sm);
-	background: var(--c-surface);
-	box-sizing: border-box;
-	vertical-align: middle;
-}
-
-/* Avatars inside a dropdown. Dolibarr serves the full-size user photo and the
-   option row stretched to it, so picking an author opened a list of portraits.
-   The photo is an identifier here, not the content: size it to the line. */
-.select2-dropdown img,
-.select2-results__option img,
-.select2-container .select2-selection__rendered img,
-.select2-container .select2-selection__choice img {
-	width: 20px !important;
-	height: 20px !important;
-	max-width: 20px !important;
-	max-height: 20px !important;
-	border-radius: 50%;
-	object-fit: cover;
-	vertical-align: middle;
-	margin-right: 6px;
-}
-.select2-results__option {
-	display: flex;
-	align-items: center;
-	gap: 2px;
-}
-
-/* Date fields in a filter row. The wrapper was 118px while holding a 112px
-   input and a 34px picker, so the picker overflowed its own wrapper and came to
-   rest between the two fields, reading as though it belonged to neither. Let the
-   wrapper take the width its contents need, and trim the input to make room.
-   The inputs also ran shorter than the picker beside them and the search box
-   further along the bar, which is what made the row look ragged. */
-.ts-column-filter-control .nowrapfordate,
-.ts-column-filter-control .nowraponall {
-	width: auto !important;
-	max-width: none !important;
-	flex: 0 0 auto;
-}
-.ts-column-filter-control .nowrapfordate input.maxwidthdate {
-	width: 92px !important;
-	min-width: 0 !important;
-	max-width: none !important;
-}
-.ts-column-filter-control .nowrapfordate input:not([type="hidden"]),
-.ts-column-filter-control > input.flat:not([type="checkbox"]):not([type="radio"]) {
-	height: 34px;
-	box-sizing: border-box;
-	vertical-align: middle;
-}
-.ts-column-filter-control .nowrapfordate img.ui-datepicker-trigger {
-	width: 30px;
-	height: 30px;
-	flex: none;
-}
-
-/* select2 puts its own search field inside a multi-select. Given the bordered
-   field treatment the theme applies to inputs, that inner field draws a second
-   box inside the control -- most visible once the control is focused and the
-   search field appears. The control already has a border; the field inside it
-   should not. Applies wherever a multi-select is used, not just on the pages
-   where it was first noticed. */
-.select2-container .select2-search--inline .select2-search__field,
-.select2-container .select2-selection--multiple .select2-search__field,
-.select2-container .select2-search__field,
-td .select2-container .select2-search__field {
-	height: auto !important;
-	min-height: 26px;
-	margin: 0 !important;
-	padding: 0 2px !important;
-	border: 0 !important;
-	border-radius: 0 !important;
-	background: transparent !important;
-	box-shadow: none !important;
-	outline: none !important;
-}
-.select2-container .select2-selection--multiple {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 4px;
-	padding: 3px 6px;
-}
-.select2-container .select2-selection--multiple ul.select2-selection__rendered {
-	display: contents;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-/* The results table below these forms is composed into a card, but the filter
-   block above it kept the bare legacy table with a grey bar on top, so the two
-   halves of the same page did not look related. Give the filter the same card:
-   a bordered surface with its heading as the header row. Chrome only -- the
-   field alignment inside is left alone. */
-body.ts-command-stats form table.border,
-body.ts-command-stats form table.noborder,
-body.ts-command-stats form > table {
-	width: 100%;
-	border: 1px solid var(--c-border);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	border-collapse: separate;
-	border-spacing: 0;
-	overflow: hidden;
-	box-shadow: var(--sh-sm);
-}
-body.ts-command-stats form tr.liste_titre > td,
-body.ts-command-stats form tr.liste_titre > th {
-	padding: var(--sp-3) var(--sp-4);
-	border: 0;
-	border-bottom: 1px solid var(--c-border);
-	background: #f6f8fb;
-	color: var(--c-text);
-	font-size: 0.75rem;
-	font-weight: 650;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-}
-body.ts-command-stats form tr:not(.liste_titre) > td {
-	background: var(--c-surface);
-}
-
-/* Refresh submits the form, so it carries the action colour the theme uses for
-   every other primary button rather than the neutral chrome it inherited. */
-body.ts-command-stats form input[type="submit"] {
-	height: 38px;
-	padding: 0 var(--sp-5);
-	border: 1px solid var(--c-btn-action);
-	border-radius: var(--r-sm);
-	background: var(--c-btn-action);
-	color: var(--c-btn-action-text);
-	font-size: 0.8125rem;
-	font-weight: 600;
-	cursor: pointer;
-}
-body.ts-command-stats form input[type="submit"]:hover {
-	filter: brightness(1.07);
-}
-
-/* A statistics table with nothing to report rendered as a row of headings over
-   empty space, which reads as though it were still loading. */
-body.ts-command-stats .ts-stats-empty-row > td {
-	padding: var(--sp-6) var(--sp-4) !important;
-	border: 0 !important;
-	background: var(--c-surface) !important;
-	text-align: center;
-	color: var(--c-muted);
-	font-size: 0.8125rem;
-}
-body.ts-command-stats .ts-stats-empty-inner {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: var(--sp-2);
-}
-body.ts-command-stats .ts-stats-empty-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 42px;
-	height: 42px;
-	border-radius: 10px;
-	background: #f4f1ff;
-	color: var(--c-primary);
-	font-size: 18px;
-}
-
-/* Controls promoted out of the toolbar arrive carrying the toolbar's own layout
-   class, which seats a label beside its field. In the panel every control stacks
-   its label above a full-width field, so a promoted one squeezed its field into
-   whatever the heading left over -- a few characters wide, and its dropdown
-   rendered one letter per line. Put them in the panel's layout, and keep a long
-   heading to two lines so it cannot crowd the field again. */
-.ts-column-filters-panel > .ts-column-filter-control {
-	display: grid !important;
-	grid-template-columns: minmax(0, 1fr) !important;
-	gap: var(--sp-1);
-	align-items: start;
-	min-width: 0;
-}
-/* A date range still wants its two fields side by side; the single column above
-   is for the promoted controls, not for these. */
-.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) {
-	grid-template-columns: max-content max-content !important;
-	column-gap: var(--sp-3);
-	justify-content: start;
-	align-items: center;
-}
-/* One line per heading. A heading that wrapped pushed its own control down a
-   row, so controls on the same line no longer started at the same height and the
-   panel read as though it were misaligned. The full wording stays available on
-   hover. */
-.ts-column-filters-panel > .ts-column-filter-control > .ts-column-filter-label {
-	display: block;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	line-height: 1.3;
-}
-.ts-column-filters-panel > .ts-column-filter-control > .select2-container,
-.ts-column-filters-panel > .ts-column-filter-control > select,
-.ts-column-filters-panel > .ts-column-filter-control > input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]) {
-	width: 100% !important;
-	min-width: 0 !important;
-	max-width: none !important;
-	box-sizing: border-box;
-}
-
-/* While the column picker is open its panel must be allowed out of the boxes
-   that hold the list, which otherwise cut it off on a short or empty list. The
-   marker is removed as soon as the picker closes, so scrolling a wide list is
-   unaffected the rest of the time. */
-.ts-list-card.ts-picker-open,
-.div-table-responsive.ts-picker-open,
-.div-table-responsive-no-min.ts-picker-open {
-	overflow: visible !important;
-}
-
-/* Module logos are shown at whatever size the file happens to be, and a handful
-   ship large -- a 300px and two 256px images sat among icons drawn at 18px, so
-   those rows towered over the rest of the list. Cap them and let the image keep
-   its proportions inside that box. A ceiling, not a size, so the many logos that
-   are already small are left alone. */
-img.pictomodule {
-	max-width: 24px;
-	max-height: 24px;
-	object-fit: contain;
-	vertical-align: middle;
-}
-
-/* Held only while a widget table is measured. Every cap inside it is lifted so
-   each column reports the width its content actually needs -- including the
-   nested table a reference sits in, which is otherwise capped at the width of
-   the cell being measured. Removed again in the same pass. */
-body.ts-command-module-index .ts-module-index-card.ts-measuring table,
-body.ts-command-module-index .ts-module-index-card.ts-measuring td,
-body.ts-command-module-index .ts-module-index-card.ts-measuring a,
-body.ts-command-module-index .ts-module-index-card.ts-measuring span {
-	max-width: none !important;
-	min-width: 0 !important;
-	overflow: visible !important;
-	text-overflow: clip !important;
-}
-
-/* A reference link in a widget carries an icon, which is enough for the
-   icon-button treatment elsewhere in the theme to claim it: it was laid out as a
-   flex box with a floor of one icon width and its own overflow hidden, so the
-   reference beside the icon was cut off whatever width the column had. These
-   links are text with an icon in front, not buttons. */
-body.ts-command-module-index .ts-module-index-card td a,
-body.ts-command-module-index .ts-module-index-card td a.classforajaxtooltip {
-	display: inline !important;
-	min-width: 0 !important;
-	max-width: none !important;
-	overflow: visible !important;
-	white-space: nowrap;
-}
-body.ts-command-module-index .ts-module-index-card td a > .fas,
-body.ts-command-module-index .ts-module-index-card td a > .far,
-body.ts-command-module-index .ts-module-index-card td a > img {
-	display: inline-block !important;
-	vertical-align: middle;
-	margin-right: 4px;
-	min-width: 0 !important;
-}
-
-/* A user photo standing in a column heading is an identifier, not the content:
-   the everybody placeholder came through at its own 64px and towered over the
-   headings around it. Size it to the line, as the same photo already is in a
-   dropdown. */
-table tr.liste_titre img.photouserphoto,
-table tr.liste_titre img.userphoto {
-	width: 24px !important;
-	height: 24px !important;
-	max-width: 24px;
-	max-height: 24px;
-	border-radius: 50%;
-	object-fit: cover;
-	vertical-align: middle;
-}
-
 .ts-column-filters { position: relative; flex: 0 0 auto; }
-.ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
 	display: inline-flex;
 	align-items: center;
@@ -1794,12 +1308,6 @@ table tr.liste_titre img.userphoto {
 	position: absolute;
 	z-index: 120;
 	top: calc(100% + var(--sp-2));
-	/* Anchored to the Filters control so the panel opens beneath the button that
-	   summons it. It was anchored to the toolbar instead because a fixed-width
-	   panel opening leftwards from a button could start left of the content and
-	   be clipped by the sidebar; the width below is capped against the space
-	   actually available, so it can shrink rather than overflow. */
-	left: auto;
 	right: 0;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(150px, 1fr));
@@ -1811,23 +1319,6 @@ table tr.liste_titre img.userphoto {
 	background: var(--c-surface);
 	box-shadow: var(--sh-lg);
 }
-
-/* Below this width the Filters button sits far enough left that a panel hanging
-   from it would start outside the content and be clipped by the sidebar, which
-   CSS cannot prevent while the width is fixed and the anchor is the button. Fall
-   back to the toolbar edge, where it always fits. */
-@media (max-width: 1439px) {
-	/* Release the button as the anchor as well, or left:0 measures from the
-	   button and the panel runs off the other edge instead. */
-	.ts-column-filters {
-		position: static;
-	}
-	.ts-column-filters-panel {
-		left: 0;
-		right: auto;
-	}
-}
-
 .ts-column-filter-control { display: grid; gap: var(--sp-1); min-width: 0; }
 .ts-column-filter-label {
 	font-size: 0.6875rem;
@@ -1939,14 +1430,7 @@ table tr.liste_titre img.userphoto {
    content-sized while giving record cards an opaque, structured surface. */
 .ui-tooltip.mytooltip {
 	box-sizing: border-box;
-	/* Content decides, within a ceiling: a fixed width clipped longer values
-	   and left short ones padded out. */
-	/* Content decides. An earlier floor of 300px was meant to stop long values
-	   clipping, but it also inflated a two-word tooltip into a slab; max-width
-	   alone does the job. */
-	width: max-content;
-	min-width: 0;
-	max-width: 420px;
+	width: 400px;
 	max-width: calc(100vw - 24px);
 	padding: 16px;
 	border: 1px solid var(--c-border);
@@ -2000,29 +1484,16 @@ table tr.liste_titre img.userphoto {
 	font-weight: 600;
 }
 .ui-tooltip.mytooltip .badge-status {
-	/* Absolute positioning pinned every badge to the same corner, so a record
-	   carrying two statuses -- a product that is neither for sale nor for
-	   purchase -- drew them on top of each other. Let them flow to the right so
-	   any number sit side by side. */
-	position: static;
-	float: right;
-	margin: 0 0 0 6px;
-}
-/* Contain the floated badges so they cannot ride over the line beneath. */
-.ui-tooltip.mytooltip .ui-tooltip-content::after {
-	content: '';
-	display: table;
-	clear: both;
+	position: absolute;
+	top: 5px;
+	right: 0;
+	float: none;
+	margin: 0;
 }
 .ui-tooltip.mytooltip b,
 .ui-tooltip.mytooltip strong {
 	display: inline-block;
-	/* A fixed width here collided with its own value: labels longer than 112px,
-	   such as "Amount (excl. tax):", overflowed straight into the number. Treat
-	   it as a floor and keep a gap after it. */
-	min-width: 0;
-	padding-right: 0;
-	margin-right: 0;
+	width: 112px;
 	color: var(--c-muted);
 	font-weight: 550;
 	white-space: nowrap;
@@ -2065,42 +1536,16 @@ table tr.liste_titre img.userphoto {
 	margin: 0 0 0 auto;
 	flex: 0 0 auto;
 }
-/* One grid for the whole list rather than a fixed column per row: at 112px a
-   longer label such as "Amount (excl. tax):" ran straight into its own value,
-   and each row measured independently so nothing lined up. Letting the labels
-   share a content-sized column aligns them and gives each the width it needs. */
-/* The separator Dolibarr writes between contact details and accounting codes,
-   drawn as the rule it stands for rather than left as blank space. */
-.ui-tooltip.mytooltip .ts-tooltip-rule {
-	height: 1px;
-	margin: 3px 0;
-	background: var(--c-border);
-}
-/* Any break that survives into the structured list would add space of its own on
-   top of the row spacing. */
-.ui-tooltip.mytooltip .ts-tooltip-details br {
-	display: none;
-}
 .ui-tooltip.mytooltip .ts-tooltip-details {
-	display: flex;
-	flex-direction: column;
+	display: grid;
 	gap: 7px;
 	margin-top: var(--sp-3);
 }
 .ui-tooltip.mytooltip .ts-tooltip-row {
 	display: grid;
-	/* Sized to the label, not to a fixed 118px. The email and phone rows label
-	   themselves with just an icon, so a fixed column left ~100px of dead space
-	   and stranded their values out to the right while the text-labelled rows
-	   sat snug against theirs. */
-	grid-template-columns: auto minmax(0, 1fr);
-	justify-content: start;
+	grid-template-columns: 112px minmax(0, 1fr);
 	align-items: start;
 	column-gap: var(--sp-3);
-}
-/* An icon standing in for a label still occupies the label track. */
-.ui-tooltip.mytooltip .ts-tooltip-row > [class*="fa-"]:first-child {
-	justify-self: start;
 }
 .ui-tooltip.mytooltip .ts-tooltip-label {
 	display: inline-flex;
@@ -2170,8 +1615,7 @@ table tr.liste_titre img.userphoto {
 .ts-results-nav li { display: inline-flex; align-items: center; min-height: 38px; }
 .ts-results-nav li.paginationcombolimit {
 	position: relative;
-	min-width: 126px;
-	width: auto;
+	width: 126px;
 	height: 38px;
 	box-sizing: border-box;
 	padding: 0;
@@ -3277,7 +2721,7 @@ body.ts-category-dialog-create-page .ts-category-select2-dropdown .select2-resul
 body.ts-category-dialog-create-page .ts-category-select2-dropdown .select2-results__option--highlighted[aria-selected] { background: var(--c-accent-soft); color: var(--c-accent); }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) { display: flex; justify-content: center; gap: 10px; margin-top: 24px; padding-bottom: 4px; }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) input.button { min-width: 110px; height: 40px; margin: 0; border-radius: 8px; }
-body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="creation"] { border: 1px solid var(--c-btn-action, var(--c-accent)) !important; background: var(--c-btn-action, var(--c-accent)) !important; color: var(--c-btn-action-text, #fff) !important; box-shadow: 0 3px 8px var(--c-accent-ring); }
+body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="creation"] { border: 1px solid var(--c-accent) !important; background: var(--c-accent) !important; color: #fff !important; box-shadow: 0 3px 8px var(--c-accent-ring); }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="cancel"] { border: 1px solid #e0e6ef !important; background: #fff !important; color: var(--c-ink-2) !important; }
 body .ts-form-select2-dropdown[data-ts-select-name="country_id"] .select2-results__option img,
 body .ts-form-select2-dropdown[data-ts-select-name="state_id"] .select2-results__option img {
@@ -3466,14 +2910,14 @@ form.ts-modern-form .ts-modern-form-actions input.button {
 	font-weight: 600;
 }
 form.ts-modern-form .ts-modern-form-actions input.button-save {
-	background: var(--c-btn-action, var(--c-accent));
-	border-color: var(--c-btn-action, var(--c-accent));
-	color: var(--c-btn-action-text, #fff);
+	background: var(--c-accent);
+	border-color: var(--c-accent);
+	color: #fff;
 	box-shadow: 0 2px 5px var(--c-accent-ring);
 }
 form.ts-modern-form .ts-modern-form-actions input.button-save:hover {
-	background: var(--c-btn-action, var(--c-accent-hover));
-	border-color: var(--c-btn-action, var(--c-accent-hover));
+	background: var(--c-accent-hover);
+	border-color: var(--c-accent-hover);
 }
 
 @media only screen and (max-width: 900px) {
@@ -4555,15 +3999,6 @@ body.ts-thirdparty-dashboard .ts-statistics-total-row > td:last-child {
 	font-size: 21px;
 	font-weight: 700;
 }
-/* The tile is a deliberate exception to the generic "leading icon in a table
-   cell" rule, which sets display:inline-block, width:1.25em and an 8px gap from a
-   selector of higher specificity than a plain class. That is why the tile kept
-   rendering 23x36 instead of a 36px square however the class was declared: the
-   rule was correct and simply never won. Stated here at the specificity of the
-   rule it has to override, and scoped to the same td > span:first-child shape so
-   it cannot leak onto other icons. */
-body.ts-thirdparty-dashboard table td > span.ts-total-icon:first-child,
-body.ts-thirdparty-dashboard td > span.ts-total-icon:first-child,
 body.ts-thirdparty-dashboard .ts-total-icon {
 	display: inline-flex;
 	align-items: center;
@@ -5519,16 +4954,50 @@ body.ts-command-module-index .ts-module-index-card {
 	table-layout: auto !important;
 }
 body.ts-command-module-index .ts-module-index-data-card { table-layout: fixed !important; }
-/* Scoped to the card's own rows. A reference cell holds a nested table of its
-   own -- Dolibarr's picto-and-ref layout -- whose row is not a heading row, so an
-   unscoped rule reached into it and applied the zero max-width meant for the
-   card's cells. The inner cells collapsed and the reference showed as an
-   ellipsis, while the cell around it was the full width all along. */
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td {
-	max-width: 0;
+/* Three-column transaction widgets (proposals/orders) contain a reference,
+   customer and amount. Let the browser size these compact columns from their
+   real content; fixed layout treats the colspan heading as a column and can
+   collapse every data cell to a few pixels. */
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 { table-layout: auto !important; }
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	box-sizing: border-box;
+	min-width: 0 !important;
+	max-width: none !important;
+}
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 tr:not(.liste_titre) > td:first-child {
+	width: 22% !important;
+}
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 tr:not(.liste_titre) > td:nth-child(2) {
+	width: 48% !important;
+}
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 tr:not(.liste_titre) > td:nth-child(3) {
+	width: 30% !important;
+}
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	max-width: 100%;
+	min-width: 0;
+	vertical-align: middle;
+}
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-4 tr:not(.liste_titre) > td:nth-child(1) { width: 18% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-4 tr:not(.liste_titre) > td:nth-child(2) { width: 34% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-4 tr:not(.liste_titre) > td:nth-child(3) { width: 28% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-4 tr:not(.liste_titre) > td:nth-child(4) { width: 20% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-6 tr:not(.liste_titre) > td:nth-child(1) { width: 16% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-6 tr:not(.liste_titre) > td:nth-child(2) { width: 14% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-6 tr:not(.liste_titre) > td:nth-child(3) { width: 18% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-6 tr:not(.liste_titre) > td:nth-child(4) { width: 20% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-6 tr:not(.liste_titre) > td:nth-child(5) { width: 20% !important; }
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-6 tr:not(.liste_titre) > td:nth-child(6) { width: 12% !important; }
+body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > span:last-child {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > th,
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
@@ -5546,31 +5015,6 @@ body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
 	white-space: normal !important;
 	line-height: 1.35;
 	vertical-align: middle;
-}
-/* The widget title shares this row with the column labels. Under auto layout
-   the labels claimed width by content ratio and left the title 137px, so
-   "Latest 3 modified Vendor invoices" wrapped to four lines and longer titles
-   truncated. Let each label take only its own width and give the rest to the
-   title. */
-/* The card carries a min-height so the columns line up, and a table row will
-   happily absorb that slack -- the Statistics header stretched to 126px against
-   47px on every other card. Pin the header to its content height so the body
-   row takes the extra instead. */
-body.ts-command-module-index .ts-module-index-card tr.liste_titre {
-	height: 1px;
-}
-/* Keep the labels and the title on one line each and let auto layout size the
-   columns from that. Forcing widths here instead starved the data columns: the
-   title cell spans two of them, so a percentage on it truncated the reference
-   and customer beneath. */
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > th,
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > td {
-	white-space: nowrap !important;
-}
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > th:first-child,
-body.ts-command-module-index .ts-module-index-card tr.liste_titre > td:first-child {
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 body.ts-command-module-index .ts-module-index-card tr.liste_titre > :first-child {
 	position: relative;
@@ -5608,49 +5052,26 @@ body.ts-command-module-index .ts-module-index-card tr:not(.liste_titre) > td {
 	font-size: 13px;
 }
 body.ts-command-module-index .ts-module-index-empty-row td {
-	/* display:flex on a td drops its table-cell behaviour, so the colspan is
-	   ignored and the cell shrinks to its own content -- "None" ended up 32px
-	   wide against the left edge while sibling widgets centred theirs across the
-	   card. Keep the cell a table cell and centre its contents instead. */
-	display: table-cell !important;
-	height: 112px;
-	color: var(--c-muted);
-	text-align: center;
-	vertical-align: middle;
-}
-body.ts-command-module-index .ts-module-index-empty-inner {
-	display: flex;
+	display: flex !important;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
+	min-height: 112px;
+	color: var(--c-muted);
+	text-align: center;
 }
-body.ts-command-module-index .ts-module-index-empty-row .ts-module-index-empty-icon {
-	flex: none;
+body.ts-command-module-index .ts-module-index-empty-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 10px;
+	background: #f4f1ff;
+	color: var(--c-primary);
+	font-size: 18px;
 }
-
-/* These links ship as inline-flex, and a flex container cannot render an
-   ellipsis: the name overflowed the anchor and was sheared off by the cell
-   instead. Constraining the flex items only made it worse -- the text collapsed
-   to zero and the anchor shrank to its icon. Lay the anchor out as inline-block
-   so text-overflow applies to it directly, keeping the icon inline. */
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a,
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > span {
-	display: inline-block !important;
-	max-width: 100%;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-}
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > img,
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > .fas,
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > .far,
-body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > .fa {
-	vertical-align: middle;
-	margin-right: 4px;
-}
-
 body.ts-command-module-index .ts-module-stat-summary {
 	display: grid;
 	gap: 14px;
@@ -5893,9 +5314,9 @@ body.ts-command-form-page .ts-command-form-actions button {
 	font-weight: 650 !important;
 }
 body.ts-command-form-page .ts-command-submit-primary {
-	border-color: var(--c-btn-action, #5546e8) !important;
-	background: var(--c-btn-action, #5546e8) !important;
-	color: var(--c-btn-action-text, #fff) !important;
+	border-color: #5546e8 !important;
+	background: #5546e8 !important;
+	color: #fff !important;
 }
 body.ts-command-form-page .ts-command-submit-secondary {
 	border-color: #dfe4ec !important;
@@ -6055,9 +5476,9 @@ body.ts-thirdparty-overview .ts-header-actions .ts-record-primary {
 body.ts-thirdparty-overview .ts-header-actions .ts-record-secondary {
 	order: 1 !important;
 	min-height: 40px !important;
-	border: 1px solid var(--c-btn-action, #5546e8) !important;
-	background: var(--c-btn-action, #5546e8) !important;
-	color: var(--c-btn-action-text, #fff) !important;
+	border: 1px solid #5546e8 !important;
+	background: #5546e8 !important;
+	color: #fff !important;
 	box-shadow: 0 2px 5px rgba(79, 70, 229, .18) !important;
 }
 body.ts-thirdparty-overview .ts-header-actions .ts-record-primary,
@@ -6445,7 +5866,7 @@ body.ts-thirdparty-events .ts-events-filter-form tr {
 }
 body.ts-thirdparty-events .ts-events-filter-form .liste_titre {
 	display: grid;
-	grid-template-columns: minmax(240px, 1fr) 210px 240px minmax(196px, max-content);
+	grid-template-columns: minmax(220px, 1.25fr) minmax(180px, .8fr) minmax(220px, .9fr) 132px;
 	align-items: center;
 	gap: 10px;
 	width: 100%;
@@ -6499,25 +5920,16 @@ body.ts-thirdparty-events .ts-events-date-control {
 	height: 40px;
 	padding: 0 12px;
 	border: 1px solid #dfe4ec;
-	border-radius: 8px !important;
+	border-radius: 8px;
 	background: #fff;
 	color: #475569;
 	font-size: 13px;
 	font-weight: 500;
 	text-decoration: none;
-	justify-content: flex-start !important;
 }
 body.ts-thirdparty-events .ts-events-filter-form th:nth-child(2) > .nowrap,
 body.ts-thirdparty-events .ts-events-filter-form th:nth-child(4) > [class*="fa-square"] { display: none !important; }
-body.ts-thirdparty-events .ts-events-filter-form .select2-container {
-	/* Select2's container is inline and unsized, so the 40px selection inside it
-	   sat below the row's shared baseline. Give the container the control height
-	   it is standing in for. */
-	width: 100% !important;
-	display: block;
-	height: 40px;
-	align-self: center;
-}
+body.ts-thirdparty-events .ts-events-filter-form .select2-container { width: 100% !important; }
 body.ts-thirdparty-events .ts-events-filter-form .select2-selection--single {
 	height: 40px !important;
 	min-height: 40px !important;
@@ -6549,13 +5961,9 @@ body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter {
 	font-size: 13px;
 }
 body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) { gap: 8px; justify-content: flex-end; }
-body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) button.button_search { flex: 0 0 auto; min-width: 92px; }
-body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter { flex: 0 0 auto; width: 40px; padding: 0 !important; }
-/* Dolibarr wraps only part of this column's buttons, so the wrapper box laid
-   the group out from its own origin and ran the reset control past the card
-   edge. Take the wrapper out of layout entirely and let the column align both
-   buttons as one row. */
-body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) > .nowraponall { display: contents; }
+body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) button.button_search { flex: 1 1 auto; min-width: 92px; }
+body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter { width: 40px; padding: 0 !important; }
+body.ts-thirdparty-events .ts-events-filter-form th:nth-child(1) > .nowraponall { display: flex; width: 100%; gap: 8px; }
 body.ts-thirdparty-events .ts-events-filter-label { font-weight: 550; }
 body.ts-thirdparty-events .select2-dropdown.ts-events-select-dropdown {
 	border: 1px solid #dfe4ec !important;
@@ -6752,1466 +6160,4 @@ body.ts-thirdparty-events .ts-events-entry-status .badge-status {
 	body.ts-partnership-form-page .ts-partnership-field-grid { grid-template-columns: minmax(0, 1fr); }
 	body.ts-partnership-form-page .ts-partnership-actions { flex-wrap: wrap; }
 	body.ts-partnership-form-page .ts-partnership-actions input.button { flex: 1 1 180px; }
-}
-
-/* Filters promoted into the record-tab toolbar (Events/Agenda, Contacts).
-   These reuse .ts-column-filter-control, which is a stacked grid built for the
-   Filters disclosure -- inside the toolbar that stacked the label over the
-   control and broke a date range onto two lines, pushing its picker buttons
-   over the neighbouring field. Lay them out as one row at the shared 40px
-   control height instead. Scoped to controls carrying both classes, so the
-   disclosure panel and the main list pages keep their own layout. */
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 8px;
-	height: 40px;
-	min-height: 40px;
-	padding: 0 10px;
-	border: 1px solid var(--c-line);
-	border-radius: var(--r);
-	background: var(--c-surface);
-	overflow: hidden;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter:focus-within {
-	border-color: var(--c-accent);
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter > .ts-column-filter-label {
-	/* The disclosure-panel rule lays this label out full width above its control.
-	   In a row it must size to its text, or it consumes the slot and collapses
-	   the field it names to zero. */
-	flex: none;
-	display: inline-block;
-	width: auto;
-	min-width: 0;
-	max-width: none;
-	font-size: 12px;
-	font-weight: 600;
-	text-transform: none;
-	color: var(--c-ink-subtle);
-	white-space: nowrap;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .divfordateinput {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-	min-width: 0;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter input[type="text"] {
-	width: 74px;
-	min-width: 0;
-	height: 28px;
-	padding: 0 6px;
-	border: 1px solid var(--c-line);
-	border-radius: 6px;
-	background: var(--c-surface);
-	font-size: 13px;
-	text-align: center;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter img.ui-datepicker-trigger {
-	width: 15px;
-	height: 15px;
-	flex: none;
-	cursor: pointer;
-	opacity: .6;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter img.ui-datepicker-trigger:hover { opacity: 1; }
-/* The select carries Dolibarr's own max-width utilities; the toolbar slot is
-   the authority on width here. */
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-container {
-	flex: 1 1 auto;
-	width: auto !important;
-	min-width: 0 !important;
-	max-width: none !important;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-selection {
-	min-height: 28px;
-	height: 28px;
-	border: 1px solid var(--c-line);
-	border-radius: 6px;
-	background: var(--c-surface);
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-selection__rendered {
-	line-height: 26px;
-	font-size: 13px;
-	padding-left: 6px;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter .select2-selection__arrow { height: 26px; }
-/* A date range needs both inputs plus their pickers; the enum next to it does not. */
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter-1 {
-	flex-basis: 300px;
-	width: 300px;
-	min-width: 300px;
-}
-.ts-filter-surface .ts-column-filter-control.ts-toolbar-filter-2 {
-	flex-basis: 230px;
-	width: 230px;
-	min-width: 230px;
-}
-/* Dolibarr's view switch lived in a title table that is now empty. */
-table.table-fiche-title.ts-events-native-title-source { display: none !important; }
-
-/* ==========================================================================
-   Display > Skin and colors (admin/ihm.php?mode=template)
-
-   Route-gated by composeDisplaySettings() in modern.js. Every selector below
-   is scoped to body.ts-display-settings, so no other admin screen is touched.
-   ========================================================================== */
-body.ts-display-settings .ts-settings-shell {
-	display: grid;
-	gap: 20px;
-	min-width: 0;
-}
-body.ts-display-settings .ts-settings-card {
-	min-width: 0;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	overflow: hidden;
-}
-body.ts-display-settings .ts-settings-card-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 16px 20px;
-	border-bottom: 1px solid var(--c-hairline);
-}
-body.ts-display-settings .ts-settings-card-title {
-	margin: 0;
-	font-size: 0.9375rem;
-	font-weight: 650;
-	color: var(--c-ink);
-}
-body.ts-display-settings .ts-settings-card-aside {
-	flex: 0 0 auto;
-	font-size: 0.8125rem;
-	white-space: nowrap;
-}
-body.ts-display-settings .ts-settings-card-aside a { color: var(--c-accent); text-decoration: none; }
-body.ts-display-settings .ts-settings-card-aside a:hover { text-decoration: underline; }
-
-/* ---- skin picker ---- */
-body.ts-display-settings .ts-theme-grid {
-	/* Flex rather than grid: the skin count is whatever is installed, and a
-	   trailing partial row should centre rather than strand itself at column 1. */
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 16px;
-	padding: 20px;
-}
-body.ts-display-settings .ts-theme-card { flex: 0 1 158px; }
-body.ts-display-settings .ts-theme-card {
-	display: flex !important;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
-	min-width: 0;
-	padding: 10px;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r);
-	background: var(--c-surface);
-	text-align: center;
-}
-body.ts-display-settings .ts-theme-card:hover { border-color: var(--c-border); }
-body.ts-display-settings .ts-theme-card-selected {
-	border-color: var(--c-accent);
-	box-shadow: 0 0 0 2px var(--c-accent-soft);
-}
-/* One thumbnail ratio for every skin, whatever each theme ships. */
-body.ts-display-settings .ts-theme-card img.img-skinthumb {
-	display: block;
-	width: 100%;
-	height: 92px;
-	margin: 0 !important;
-	border: 1px solid var(--c-hairline) !important;
-	border-radius: 6px;
-	object-fit: cover;
-	object-position: top center;
-	box-shadow: none !important;
-}
-body.ts-display-settings .ts-theme-card br { display: none; }
-body.ts-display-settings .ts-theme-card input[type="radio"] { margin: 0; }
-body.ts-display-settings .ts-theme-card label {
-	font-size: 0.8125rem;
-	font-weight: 550;
-	color: var(--c-ink-2);
-	cursor: pointer;
-}
-body.ts-display-settings .ts-theme-card-selected label { color: var(--c-accent-ink); }
-
-/* ---- general preferences ---- */
-body.ts-display-settings .ts-settings-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0 32px;
-	padding: 4px 20px 20px;
-	border-top: 1px solid var(--c-hairline);
-}
-body.ts-display-settings .ts-setting {
-	display: grid;
-	grid-template-columns: minmax(0, 150px) minmax(0, 1fr);
-	align-items: center;
-	gap: 16px;
-	min-height: 64px;
-	padding: 8px 0;
-	border-bottom: 1px solid var(--c-hairline);
-}
-body.ts-display-settings .ts-settings-grid .ts-setting:nth-last-child(-n + 2) { border-bottom: 0; }
-body.ts-display-settings .ts-setting-label {
-	font-size: 0.8125rem;
-	font-weight: 550;
-	color: var(--c-ink-2);
-}
-body.ts-display-settings .ts-setting-control {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	min-width: 0;
-}
-body.ts-display-settings .ts-setting-control select { max-width: 100%; }
-body.ts-display-settings .ts-setting-control .select2-container {
-	width: min(100%, 240px) !important;
-	min-width: 0 !important;
-}
-body.ts-display-settings .ts-setting-control .select2-selection { min-height: 40px; }
-body.ts-display-settings .ts-setting-control .select2-selection__rendered { line-height: 38px; }
-body.ts-display-settings .ts-setting-control .select2-selection__arrow { height: 38px; }
-/* Dolibarr's AJAX switch ships both states; only the live one should show. */
-body.ts-display-settings .ts-setting-control span.valignmiddle { display: inline-flex; align-items: center; }
-
-/* ---- colour fields ---- */
-body.ts-display-settings .ts-color-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0 32px;
-	padding: 4px 20px 12px;
-}
-body.ts-display-settings .ts-color-item {
-	display: grid;
-	/* A fixed control track, so the swatch and hex field share one x down the
-	   column instead of drifting with each label's hint length. */
-	grid-template-columns: minmax(0, 1fr) 332px;
-	align-items: center;
-	gap: 12px;
-	min-height: 52px;
-	padding: 8px 0;
-	border-bottom: 1px solid var(--c-hairline);
-}
-body.ts-display-settings .ts-color-grid .ts-color-item:nth-last-child(-n + 2) { border-bottom: 0; }
-body.ts-display-settings .ts-color-label {
-	font-size: 0.8125rem;
-	font-weight: 550;
-	line-height: 1.35;
-	color: var(--c-ink-2);
-}
-body.ts-display-settings .ts-color-control {
-	/* Fixed tracks, not flex: the default hints differ in length, and on flex
-	   that pushed every row's swatch and field to a different x. */
-	display: grid;
-	grid-template-columns: 38px 118px minmax(0, 1fr) 16px;
-	align-items: center;
-	gap: 10px;
-	min-width: 0;
-}
-/* Every cell is pinned to row 1: the picker markup follows the input in the
-   DOM, so assigning it an earlier column alone wrapped it onto a second row. */
-body.ts-display-settings .ts-color-control span.jPicker { grid-column: 1; grid-row: 1; }
-body.ts-display-settings .ts-color-control input[id^="colorpicker"] { grid-column: 2; grid-row: 1; }
-body.ts-display-settings .ts-color-control .ts-color-default { grid-column: 3; grid-row: 1; }
-body.ts-display-settings .ts-color-control .classfortooltip { grid-column: 4; grid-row: 1; }
-/* jPicker renders the swatch as a bound container next to its input. */
-/* jPicker already renders a live swatch; it just needs a size and to sit
-   before the hex field, the way the value reads. */
-body.ts-display-settings .ts-color-control span.jPicker {
-	flex: 0 0 auto;
-	margin: 0 !important;
-}
-body.ts-display-settings .ts-color-control span.jPicker span.Icon {
-	display: block !important;
-	width: 38px !important;
-	height: 36px !important;
-	border: 1px solid var(--c-border);
-	border-radius: 6px;
-	background-image: none !important;
-	overflow: hidden;
-}
-body.ts-display-settings .ts-color-control span.jPicker span.Color {
-	display: block !important;
-	width: 100% !important;
-	height: 100% !important;
-	border: 0 !important;
-	background-image: none !important;
-}
-body.ts-display-settings .ts-color-control span.jPicker span.Alpha { display: none !important; }
-/* Image is jPicker's click target -- hiding it made the swatch inert and took
-   the picker away. Keep it, sized over the swatch with its sprite dropped, so
-   it stays the trigger while the colour underneath shows through. */
-body.ts-display-settings .ts-color-control span.jPicker span.Image {
-	display: block !important;
-	width: 100% !important;
-	height: 100% !important;
-	background-image: none !important;
-	background-color: transparent !important;
-	border: 0 !important;
-	cursor: pointer;
-}
-body.ts-display-settings .ts-color-control span.jPicker span.Icon { cursor: pointer; }
-/* Dolibarr emits both halves of its AJAX switch and hides the inactive one with
-   .hideobject; that rule is not reaching here, so both were rendering. */
-body.ts-display-settings .ts-setting-control .hideobject { display: none !important; }
-body.ts-display-settings .ts-color-control input[type="text"] {
-	width: 118px;
-	height: 36px;
-	padding: 0 10px;
-	border: 1px solid var(--c-border);
-	border-radius: 6px;
-	background: var(--c-surface);
-	font-size: 0.8125rem;
-	font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
-}
-body.ts-display-settings .ts-color-default {
-	font-size: 0.75rem;
-	color: var(--c-ink-subtle);
-	white-space: nowrap;
-}
-/* Dolibarr bolds and link-colours the default value; it is a hint, not a link. */
-body.ts-display-settings .ts-color-control b,
-body.ts-display-settings .ts-color-control strong,
-body.ts-display-settings .ts-color-default-value {
-	font-weight: 500 !important;
-	color: var(--c-ink-subtle) !important;
-}
-body.ts-display-settings .ts-color-item .ts-color-control > img,
-body.ts-display-settings .ts-setting-control > img {
-	flex: 0 0 auto;
-	opacity: .55;
-}
-body.ts-display-settings .ts-results-footer {
-	padding: 12px 20px;
-	border-top: 1px solid var(--c-hairline);
-	font-size: 0.8125rem;
-	color: var(--c-ink-subtle);
-}
-
-/* ---- action footer ---- */
-body.ts-display-settings .ts-settings-actions {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	margin: 24px 0 8px;
-}
-body.ts-display-settings .ts-settings-action {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	height: 42px;
-	min-width: 108px;
-	padding: 0 20px !important;
-	border-radius: var(--r);
-	font-size: 0.875rem;
-	font-weight: 600;
-	cursor: pointer;
-}
-body.ts-display-settings input.ts-settings-action-primary {
-	border: 1px solid var(--c-btn-action, var(--c-accent)) !important;
-	background: var(--c-btn-action, var(--c-accent)) !important;
-	color: var(--c-btn-action-text, #fff) !important;
-}
-body.ts-display-settings input.ts-settings-action-primary:hover { filter: brightness(1.06); }
-body.ts-display-settings .ts-settings-action-secondary,
-body.ts-display-settings .ts-settings-actions a.butAction {
-	border: 1px solid var(--c-border) !important;
-	background: var(--c-surface) !important;
-	color: var(--c-ink-2) !important;
-}
-
-@media only screen and (max-width: 1100px) {
-	body.ts-display-settings .ts-settings-grid,
-	body.ts-display-settings .ts-color-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-	body.ts-display-settings .ts-settings-grid .ts-setting:nth-last-child(-n + 2),
-	body.ts-display-settings .ts-color-grid .ts-color-item:nth-last-child(-n + 2) {
-		border-bottom: 1px solid var(--c-hairline);
-	}
-	body.ts-display-settings .ts-settings-grid .ts-setting:last-child,
-	body.ts-display-settings .ts-color-grid .ts-color-item:last-child { border-bottom: 0; }
-}
-@media only screen and (max-width: 700px) {
-	body.ts-display-settings .ts-theme-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; padding: 16px; }
-	body.ts-display-settings .ts-setting,
-	body.ts-display-settings .ts-color-item { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
-	body.ts-display-settings .ts-settings-card-head { flex-wrap: wrap; gap: 8px; }
-	body.ts-display-settings .ts-settings-actions { flex-wrap: wrap; }
-	body.ts-display-settings .ts-settings-action { flex: 1 1 140px; }
-}
-
-/* ==========================================================================
-   Third party > Customer tab, right-hand summary column (comm/card.php)
-   Route-gated by composeCustomerSummary(); scoped to body.ts-customer-summary.
-   ========================================================================== */
-body.ts-customer-summary .ts-cust-stack { display: grid; gap: 16px; min-width: 0; }
-body.ts-customer-summary div.fichehalfright > br,
-body.ts-customer-summary div.fichehalfright > .underbanner { display: none; }
-
-/* ---- stat cards ---- */
-body.ts-customer-summary .ts-kpi-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 16px;
-	min-width: 0;
-}
-body.ts-customer-summary a.ts-kpi-card {
-	display: block !important;
-	min-width: 0;
-	padding: 16px 18px;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	text-decoration: none !important;
-}
-body.ts-customer-summary a.ts-kpi-card:hover { border-color: var(--c-accent); }
-body.ts-customer-summary a.ts-kpi-card .boxstats {
-	display: grid !important;
-	grid-template-columns: 44px minmax(0, 1fr);
-	grid-template-rows: auto auto;
-	align-items: center;
-	gap: 2px 14px;
-	width: auto !important;
-	min-height: 0 !important;
-	padding: 0 !important;
-	border: 0 !important;
-	background: none !important;
-	text-align: left;
-}
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-icon {
-	display: inline-flex;
-	grid-column: 1;
-	grid-row: 1 / span 2;
-	align-items: center;
-	justify-content: center;
-	width: 44px;
-	height: 44px;
-	border-radius: 10px;
-	background: var(--c-accent-soft);
-	color: var(--c-accent);
-}
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-icon [class*="fa-"] {
-	color: var(--c-accent) !important;
-	font-size: 17px !important;
-}
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-label {
-	grid-column: 2;
-	grid-row: 1;
-	font-size: 0.8125rem;
-	font-weight: 550;
-	color: var(--c-ink-2);
-}
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-value {
-	grid-column: 2;
-	grid-row: 2;
-	font-size: 1.375rem;
-	font-weight: 700;
-	color: var(--c-ink);
-}
-body.ts-customer-summary a.ts-kpi-card br { display: none; }
-
-/* ---- record list cards ---- */
-body.ts-customer-summary .ts-latest-card {
-	min-width: 0;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	overflow: hidden;
-}
-body.ts-customer-summary .ts-latest-head {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 14px 18px;
-	border-bottom: 1px solid var(--c-hairline);
-}
-body.ts-customer-summary .ts-latest-title {
-	flex: 1 1 auto;
-	min-width: 0;
-	font-size: 0.9375rem;
-	font-weight: 650;
-	color: var(--c-ink);
-}
-body.ts-customer-summary .ts-latest-aside { flex: 0 0 auto; font-size: 0.8125rem; }
-body.ts-customer-summary .ts-latest-aside a { color: var(--c-accent); text-decoration: none; }
-body.ts-customer-summary .ts-latest-aside a:hover { text-decoration: underline; }
-body.ts-customer-summary .ts-latest-aside .badge {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 22px;
-	height: 22px;
-	margin-left: 6px;
-	padding: 0 7px;
-	border-radius: 999px;
-	background: var(--c-sunken);
-	color: var(--c-ink-2);
-	font-size: 0.75rem;
-	font-weight: 600;
-}
-body.ts-customer-summary .ts-latest-card .div-table-responsive-no-min,
-body.ts-customer-summary .ts-latest-card .div-table-responsive { margin: 0 !important; overflow-x: auto; }
-body.ts-customer-summary table.ts-latest-table {
-	width: 100%;
-	margin: 0 !important;
-	border: 0 !important;
-	background: transparent !important;
-}
-body.ts-customer-summary table.ts-latest-table tr.oddeven,
-body.ts-customer-summary table.ts-latest-table tr.impair,
-body.ts-customer-summary table.ts-latest-table tr.pair { background: transparent !important; }
-body.ts-customer-summary table.ts-latest-table tr + tr > td { border-top: 1px solid var(--c-hairline); }
-body.ts-customer-summary table.ts-latest-table td {
-	padding: 12px 14px !important;
-	border-bottom: 0 !important;
-	font-size: 0.8125rem;
-	vertical-align: middle;
-}
-body.ts-customer-summary table.ts-latest-table td:first-child { padding-left: 18px !important; }
-body.ts-customer-summary table.ts-latest-table td:last-child { padding-right: 18px !important; text-align: right; }
-body.ts-customer-summary table.ts-latest-table a { text-decoration: none; }
-body.ts-customer-summary table.ts-latest-table td [class*="fa-"] { margin-right: 6px; opacity: .85; }
-/* Dolibarr's status label, as a pill. */
-body.ts-customer-summary table.ts-latest-table span.badge-status,
-body.ts-customer-summary table.ts-latest-table .badge {
-	display: inline-flex;
-	align-items: center;
-	height: 24px;
-	padding: 0 10px;
-	border-radius: 999px;
-	font-size: 0.75rem;
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-@media only screen and (max-width: 1100px) {
-	body.ts-customer-summary .ts-kpi-grid { gap: 12px; }
-}
-@media only screen and (max-width: 700px) {
-	body.ts-customer-summary .ts-kpi-grid { grid-template-columns: minmax(0, 1fr); }
-	body.ts-customer-summary a.ts-kpi-card { padding: 14px; }
-	body.ts-customer-summary table.ts-latest-table td { padding: 10px !important; }
-}
-
-/* Corrections after measuring the composed column. */
-/* The stat anchor carries Dolibarr's own thumbstat width; the grid cell is the
-   authority here, and the label span is hidden by the native boxstats rules. */
-body.ts-customer-summary a.ts-kpi-card {
-	width: 100% !important;
-	max-width: none !important;
-	min-width: 0 !important;
-	box-sizing: border-box;
-}
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-label,
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-label > span {
-	display: inline !important;
-	visibility: visible !important;
-	overflow: visible !important;
-	width: auto !important;
-	height: auto !important;
-	font-size: 0.8125rem !important;
-	color: var(--c-ink-2) !important;
-}
-body.ts-customer-summary a.ts-kpi-card .ts-kpi-value {
-	display: block !important;
-	width: auto !important;
-}
-/* Let the record tables size to their content and scroll inside the card
-   rather than clipping refs and stacking dates one character per line. */
-body.ts-customer-summary table.ts-latest-table {
-	table-layout: auto !important;
-	min-width: 100%;
-}
-body.ts-customer-summary table.ts-latest-table td { white-space: nowrap; }
-body.ts-customer-summary table.ts-latest-table td:first-child { width: 38%; }
-body.ts-customer-summary table.ts-latest-table td a { white-space: nowrap; }
-
-/* Events/Agenda toolbar: target proportions -- 44px controls, 12px gaps, the
-   search taking the slack, Date and Type at fixed widths, reset only when it
-   has something to clear. */
-body.ts-thirdparty-events .ts-events-toolbar { gap: 12px; padding: 0 24px 20px; }
-body.ts-thirdparty-events .ts-events-filter-form .liste_titre {
-	grid-template-columns: minmax(260px, 1fr) 190px 210px max-content;
-	gap: 12px;
-}
-body.ts-thirdparty-events .ts-events-filter-form th { height: 44px !important; }
-body.ts-thirdparty-events .ts-events-view-switch { height: 44px; }
-body.ts-thirdparty-events .ts-events-search-control,
-body.ts-thirdparty-events .ts-events-date-control { height: 44px; }
-body.ts-thirdparty-events .ts-events-search-input { height: 42px !important; font-size: 0.875rem; }
-body.ts-thirdparty-events .ts-events-filter-form .select2-container { height: 44px; }
-body.ts-thirdparty-events .ts-events-filter-form .select2-selection--single {
-	height: 44px !important;
-	min-height: 44px !important;
-}
-body.ts-thirdparty-events .ts-events-filter-form .select2-selection__rendered {
-	height: 42px !important;
-	line-height: 42px !important;
-	font-size: 0.875rem !important;
-}
-body.ts-thirdparty-events .ts-events-filter-form .select2-selection__arrow { height: 42px !important; }
-body.ts-thirdparty-events .ts-events-filter-form button.button_search,
-body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter {
-	height: 44px !important;
-	padding: 0 16px !important;
-	font-size: 0.875rem;
-}
-/* Reset carries a word now, so it is no longer a bare square. */
-body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter {
-	width: auto !important;
-	gap: 8px;
-}
-body.ts-thirdparty-events .ts-events-filter-form button.button_removefilter[hidden] { display: none !important; }
-body.ts-thirdparty-events .ts-events-date-order { margin-left: auto; font-size: 11px; opacity: .6; }
-body.ts-thirdparty-events .ts-events-date-control { justify-content: flex-start !important; gap: 10px; }
-/* Segmented view switch: two equal, clearly-stated views. */
-body.ts-thirdparty-events .ts-events-view-option {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 38px;
-	height: 38px;
-	border-radius: 7px;
-}
-
-/* ==========================================================================
-   Shared COMMAND settings surface -- every Dolibarr admin screen composed by
-   composeAdminSettings(). Scoped to body.ts-settings-page.
-   ========================================================================== */
-body.ts-settings-page .ts-settings-card {
-	min-width: 0;
-	margin: 0 0 20px;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	overflow: hidden;
-}
-body.ts-settings-page .ts-settings-card-head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 15px 20px;
-	border-bottom: 1px solid var(--c-hairline);
-	background: var(--c-sunken);
-}
-body.ts-settings-page .ts-settings-card-title {
-	display: flex;
-	align-items: center;
-	gap: 9px;
-	margin: 0;
-	font-size: 0.9375rem;
-	font-weight: 650;
-	color: var(--c-accent);
-}
-body.ts-settings-page .ts-settings-card-title [class*="fa-"] { color: var(--c-accent) !important; }
-body.ts-settings-page .ts-settings-card-aside { flex: 0 0 auto; font-size: 0.8125rem; color: var(--c-ink-subtle); }
-body.ts-settings-page .ts-settings-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
-body.ts-settings-page .ts-setting {
-	display: grid;
-	grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
-	align-items: center;
-	gap: 18px;
-	padding: 12px 20px;
-	border-bottom: 1px solid var(--c-hairline);
-}
-body.ts-settings-page .ts-settings-grid .ts-setting:last-child { border-bottom: 0; }
-body.ts-settings-page .ts-setting-label {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-wrap: wrap;
-	font-size: 0.8125rem;
-	font-weight: 550;
-	line-height: 1.4;
-	color: var(--c-ink-2);
-}
-body.ts-settings-page .ts-setting-label [class*="fa-info"] { opacity: .55; }
-body.ts-settings-page .ts-setting-control {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	min-width: 0;
-}
-/* Width bands, so a toggle does not occupy the same room as a URL field. */
-body.ts-settings-page .ts-setting-control.ts-control-compact { max-width: 120px; }
-body.ts-settings-page .ts-setting-control.ts-control-medium { max-width: 320px; }
-body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 420px; }
-body.ts-settings-page .ts-setting-control.ts-control-full { max-width: 100%; }
-body.ts-settings-page .ts-setting-control input[type="text"],
-body.ts-settings-page .ts-setting-control input[type="number"],
-body.ts-settings-page .ts-setting-control input[type="email"],
-body.ts-settings-page .ts-setting-control input[type="url"],
-body.ts-settings-page .ts-setting-control input[type="password"],
-body.ts-settings-page .ts-setting-control textarea {
-	width: 100%;
-	min-width: 0;
-	height: 40px;
-	padding: 0 12px;
-	border: 1px solid var(--c-border);
-	border-radius: var(--r);
-	background: var(--c-surface);
-	font-size: 0.8125rem;
-}
-body.ts-settings-page .ts-setting-control textarea { height: auto; min-height: 80px; padding: 10px 12px; }
-body.ts-settings-page .ts-setting-control.ts-control-compact input { text-align: left; }
-body.ts-settings-page .ts-setting-control select { max-width: 100%; }
-body.ts-settings-page .ts-setting-control .select2-container {
-	width: 100% !important;
-	min-width: 0 !important;
-}
-body.ts-settings-page .ts-setting-control .select2-selection { min-height: 40px; }
-body.ts-settings-page .ts-setting-control .select2-selection__rendered { line-height: 38px; font-size: 0.8125rem; }
-body.ts-settings-page .ts-setting-control .select2-selection__arrow { height: 38px; }
-/* Dolibarr renders both halves of its AJAX switch and hides the inactive one
-   with .hideobject; that rule does not reach these composed rows. */
-body.ts-settings-page .ts-setting-control .hideobject { display: none !important; }
-body.ts-settings-page .ts-setting-control .fa-toggle-on,
-body.ts-settings-page .ts-setting-control .fa-toggle-off { font-size: 26px; }
-body.ts-settings-page .ts-setting-control > img,
-body.ts-settings-page .ts-setting-control .classfortooltip { flex: 0 0 auto; }
-
-/* Action row */
-body.ts-settings-page .ts-settings-actions {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	margin: 22px 0;
-}
-body.ts-settings-page .ts-settings-action {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	height: 42px;
-	min-width: 104px;
-	padding: 0 20px !important;
-	border-radius: var(--r);
-	font-size: 0.875rem;
-	font-weight: 600;
-	cursor: pointer;
-}
-body.ts-settings-page .ts-settings-action-primary {
-	border: 1px solid var(--c-btn-action, var(--c-accent)) !important;
-	background: var(--c-btn-action, var(--c-accent)) !important;
-	color: var(--c-btn-action-text, #fff) !important;
-}
-body.ts-settings-page .ts-settings-action-secondary,
-body.ts-settings-page .ts-settings-actions a.butAction {
-	border: 1px solid var(--c-border) !important;
-	background: var(--c-surface) !important;
-	color: var(--c-ink-2) !important;
-}
-
-@media only screen and (max-width: 1100px) {
-	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 14px; }
-}
-@media only screen and (max-width: 700px) {
-	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
-	body.ts-settings-page .ts-setting-control.ts-control-compact,
-	body.ts-settings-page .ts-setting-control.ts-control-medium,
-	body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 100%; }
-	body.ts-settings-page .ts-settings-actions { flex-wrap: wrap; }
-	body.ts-settings-page .ts-settings-action { flex: 1 1 140px; }
-}
-
-/* ==========================================================================
-   Record card field panels (Proposal, Order, Invoice, Product, Contact ...)
-
-   Dolibarr renders each detail panel as table.tableforfield inside the
-   fichehalfleft/fichehalfright columns. Those rows carry nested tables and
-   inline edit links, so this is styling only -- no node is moved, which keeps
-   every edit link, tooltip and form exactly where Dolibarr put it.
-
-   The third-party record page has its own composition and is excluded.
-   ========================================================================== */
-body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfleft > table.tableforfield,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfright > table.tableforfield,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfleft > div > table.tableforfield,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) div.fichehalfright > div > table.tableforfield {
-	width: 100%;
-	margin: 0 0 16px;
-	border: 1px solid var(--c-hairline) !important;
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	border-collapse: separate;
-	border-spacing: 0;
-	overflow: hidden;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td {
-	padding: 11px 16px !important;
-	border: 0 !important;
-	border-bottom: 1px solid var(--c-hairline) !important;
-	font-size: 0.8125rem;
-	vertical-align: middle;
-	background: transparent !important;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr:last-child > td {
-	border-bottom: 0 !important;
-}
-/* First cell is the label column; keep every panel on one label axis. */
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child {
-	width: 38%;
-	color: var(--c-ink-2);
-	font-weight: 550;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child table {
-	width: 100%;
-	background: transparent !important;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child table td {
-	padding: 0 !important;
-	border: 0 !important;
-	font-weight: inherit;
-	color: inherit;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:last-child {
-	color: var(--c-ink);
-}
-/* Dolibarr stripes these rows; a card reads better flat. */
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr.oddeven,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr.impair,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr.pair {
-	background: transparent !important;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield a.editfielda {
-	opacity: .6;
-	margin-left: 6px;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield a.editfielda:hover { opacity: 1; }
-
-@media only screen and (max-width: 700px) {
-	body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td:first-child { width: 44%; }
-	body.ts-command-record-page:not(.ts-thirdparty-record-context) table.tableforfield > tbody > tr > td { padding: 9px 12px !important; }
-}
-
-/* ==========================================================================
-   Record card line items (Proposal, Order, Invoice)
-
-   All three render their lines as table#tablelines inside a responsive div,
-   so one selector covers the set. Styling only -- the drag handles, inline
-   edit forms and the "add new line" row keep their markup and behaviour.
-   ========================================================================== */
-body.ts-command-record-page:not(.ts-thirdparty-record-context) div.div-table-responsive-no-min:has(> table#tablelines),
-body.ts-command-record-page:not(.ts-thirdparty-record-context) div.div-table-responsive:has(> table#tablelines) {
-	margin: 0 0 16px;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	overflow: hidden;
-	overflow-x: auto;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines {
-	width: 100%;
-	margin: 0 !important;
-	border: 0 !important;
-	background: transparent !important;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.liste_titre > td,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.liste_titre > th {
-	padding: 11px 12px !important;
-	border: 0 !important;
-	border-bottom: 1px solid var(--c-hairline) !important;
-	background: var(--c-sunken) !important;
-	color: var(--c-ink-2) !important;
-	font-size: 0.75rem;
-	font-weight: 600;
-	white-space: nowrap;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr > td {
-	padding: 11px 12px !important;
-	border: 0 !important;
-	border-bottom: 1px solid var(--c-hairline) !important;
-	font-size: 0.8125rem;
-	vertical-align: middle;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr:last-child > td { border-bottom: 0 !important; }
-/* Dolibarr stripes these; a card reads better flat. */
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.pair,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.impair,
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr.oddeven {
-	background: transparent !important;
-}
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines > tbody > tr:hover > td { background: var(--c-sunken); }
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines input[type="text"],
-body.ts-command-record-page:not(.ts-thirdparty-record-context) table#tablelines select {
-	height: 36px;
-	border-radius: 6px;
-	font-size: 0.8125rem;
-}
-
-/* Narrow Select2 triggers.
-
-   Dolibarr sizes some selects with its own width50/width75/width100 classes.
-   Our Select2 rendering reserves 38px on the right for the arrow, which at
-   75px leaves too little room for the value itself -- a year read as "20…".
-   Give those triggers a workable floor and tighten their internal spacing so
-   the value fits. Applies wherever a narrow select appears, not just the
-   product statistics filter where it was noticed. */
-body span.select2-container.width50,
-body span.select2-container.width75 { min-width: 92px !important; }
-body span.select2-container.width100 { min-width: 108px !important; }
-body span.select2-container.width50 span.select2-selection__rendered,
-body span.select2-container.width75 span.select2-selection__rendered,
-body span.select2-container.width100 span.select2-selection__rendered {
-	width: auto !important;
-	min-width: 0 !important;
-	max-width: none !important;
-	padding-right: 24px !important;
-	padding-left: 9px !important;
-	text-overflow: clip !important;
-}
-body span.select2-container.width50 span.select2-selection__arrow,
-body span.select2-container.width75 span.select2-selection__arrow,
-body span.select2-container.width100 span.select2-selection__arrow { right: 4px !important; }
-
-/* Categories landing page summary table. Styling only -- the page has no filter
-   form, so there is nothing to compose, just a table sitting bare on the page. */
-body.ts-category-index table.ts-category-index-table {
-	width: 100%;
-	margin: 0 0 16px;
-	border: 1px solid var(--c-hairline) !important;
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	border-collapse: separate;
-	border-spacing: 0;
-	overflow: hidden;
-}
-body.ts-category-index table.ts-category-index-table > tbody > tr > td,
-body.ts-category-index table.ts-category-index-table > tbody > tr > th {
-	padding: 12px 16px !important;
-	border: 0 !important;
-	border-bottom: 1px solid var(--c-hairline) !important;
-	font-size: 0.8125rem;
-	vertical-align: middle;
-}
-body.ts-category-index table.ts-category-index-table > tbody > tr.liste_titre > th,
-body.ts-category-index table.ts-category-index-table > tbody > tr.liste_titre > td {
-	background: var(--c-sunken) !important;
-	color: var(--c-ink-2) !important;
-	font-size: 0.75rem;
-	font-weight: 600;
-}
-body.ts-category-index table.ts-category-index-table > tbody > tr:last-child > td { border-bottom: 0 !important; }
-body.ts-category-index table.ts-category-index-table > tbody > tr.oddeven,
-body.ts-category-index table.ts-category-index-table > tbody > tr.impair,
-body.ts-category-index table.ts-category-index-table > tbody > tr.pair { background: transparent !important; }
-
-
-/* Date filter controls and the jQuery UI picker.
-
-   The two halves of a range were sized by different rules, so "from" and "to"
-   did not match; the picker trigger was a bare 26px image; and the calendar
-   itself inherited jQuery UI's default metrics, which read as cramped next to
-   the rest of the toolbar. Size all three together. */
-.ts-filter-surface input.hasDatepicker,
-.ts-filter-surface .divfordateinput input[type="text"],
-.ts-setting-control input.hasDatepicker {
-	width: 112px !important;
-	min-width: 112px !important;
-	max-width: 112px !important;
-	height: 38px;
-	box-sizing: border-box;
-	text-align: center;
-}
-.ts-filter-surface img.ui-datepicker-trigger,
-.ts-setting-control img.ui-datepicker-trigger {
-	width: 34px !important;
-	height: 34px !important;
-	padding: 8px;
-	box-sizing: border-box;
-	border: 1px solid var(--c-border);
-	border-radius: var(--r);
-	background: var(--c-surface);
-	cursor: pointer;
-	opacity: .75;
-}
-.ts-filter-surface img.ui-datepicker-trigger:hover,
-.ts-setting-control img.ui-datepicker-trigger:hover {
-	border-color: var(--c-accent);
-	opacity: 1;
-}
-
-/* The calendar itself */
-#ui-datepicker-div.ui-datepicker {
-	width: 268px;
-	padding: 10px;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-lg);
-	font-size: 0.8125rem;
-}
-#ui-datepicker-div .ui-datepicker-header {
-	padding: 2px 0 8px;
-	border: 0;
-	background: transparent;
-}
-#ui-datepicker-div .ui-datepicker-title {
-	display: flex;
-	gap: 8px;
-	justify-content: center;
-	margin: 0 28px;
-}
-#ui-datepicker-div .ui-datepicker-title select.ui-datepicker-month,
-#ui-datepicker-div .ui-datepicker-title select.ui-datepicker-year {
-	width: auto !important;
-	min-width: 78px !important;
-	height: 32px;
-	padding: 0 6px !important;
-	border: 1px solid var(--c-border);
-	border-radius: 6px;
-	background: var(--c-surface);
-	font-size: 0.8125rem;
-}
-#ui-datepicker-div .ui-datepicker-prev,
-#ui-datepicker-div .ui-datepicker-next {
-	top: 4px;
-	width: 28px;
-	height: 28px;
-	border: 1px solid var(--c-border) !important;
-	border-radius: 6px;
-	background: var(--c-surface) !important;
-	cursor: pointer;
-}
-#ui-datepicker-div .ui-datepicker-prev { left: 4px; }
-#ui-datepicker-div .ui-datepicker-next { right: 4px; }
-#ui-datepicker-div table.ui-datepicker-calendar { margin: 0; font-size: 0.8125rem; }
-#ui-datepicker-div .ui-datepicker-calendar th {
-	padding: 6px 0;
-	color: var(--c-ink-subtle);
-	font-size: 0.6875rem;
-	font-weight: 600;
-}
-#ui-datepicker-div .ui-datepicker-calendar td { padding: 2px; border: 0; }
-#ui-datepicker-div .ui-datepicker-calendar td a,
-#ui-datepicker-div .ui-datepicker-calendar td span {
-	display: block;
-	width: 32px;
-	height: 32px;
-	padding: 0;
-	border: 0;
-	border-radius: 7px;
-	background: transparent;
-	color: var(--c-ink-2);
-	line-height: 32px;
-	text-align: center;
-}
-#ui-datepicker-div .ui-datepicker-calendar td a:hover { background: var(--c-sunken); }
-#ui-datepicker-div .ui-datepicker-calendar td a.ui-state-active,
-#ui-datepicker-div .ui-datepicker-calendar td a.ui-state-highlight {
-	background: var(--c-accent) !important;
-	color: #fff !important;
-	font-weight: 600;
-}
-
-/* Status dots.
-
-   Dolibarr's .badge-dot carries the pill padding of a full status badge, so it
-   measured 18x22 and a 999px radius drew an ellipse rather than a dot. Give it
-   equal sides and the radius follows. Scoped to badge-dot so the wider
-   badge-status pills keep their shape. */
-span.badge.badge-dot,
-.badge.badge-dot {
-	display: inline-block !important;
-	width: 11px !important;
-	height: 11px !important;
-	min-width: 11px !important;
-	min-height: 11px !important;
-	max-width: 11px !important;
-	padding: 0 !important;
-	border-radius: 50% !important;
-	font-size: 0 !important;
-	line-height: 0 !important;
-	vertical-align: middle;
-	overflow: hidden;
-}
-
-/* Colour rows carry the picker's own <link> and <script> tags inside the cell.
-   As grid items they auto-placed into a second row, padding each control to
-   67px for 36px of visible content -- the swatch stayed at the top while the
-   label centred against the taller box, which read as the labels sitting low.
-   Take them out of layout. */
-.ts-color-control > link,
-.ts-color-control > script,
-.ts-setting-control > link,
-.ts-setting-control > script {
-	display: none !important;
-}
-/* Only the first row holds real cells; template it and pin the extras to zero
-   so a stray anonymous item cannot pad the control. */
-.ts-color-control {
-	grid-template-rows: minmax(38px, auto) !important;
-	grid-auto-rows: 0 !important;
-	row-gap: 0 !important;
-	overflow: hidden;
-}
-
-/* The version in the top bar rendered at 8px -- below the point where it can be
-   read at all, and the smallest text anywhere in the shell. */
-#id-top .hideonsmartphone.small,
-.ts-topbar .hideonsmartphone.small {
-	font-size: 0.6875rem !important;
-	color: var(--c-ink-subtle) !important;
-	letter-spacing: 0.01em;
-}
-
-/* Page header and tab strip.
-
-   Applies wherever the shell renders a .ts-pagehead with a tab strip, so the
-   treatment is shared rather than per-page. */
-
-/* Any picto Dolibarr already prints beside a page title becomes a soft tile.
-   Only pages that ship an icon get one -- none is invented. */
-.ts-pagehead-title > .ts-pagehead-icon,
-.ts-pagehead-title .titre > img.pictotitle,
-.ts-pagehead-title .titre > span.pictotitle,
-.ts-pagehead-title .titre > [class*="fa-"]:first-child {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	width: 46px;
-	height: 46px;
-	margin: 0 14px 0 0 !important;
-	padding: 0 !important;
-	border-radius: 12px;
-	background: var(--c-accent-soft);
-	color: var(--c-accent) !important;
-	font-size: 20px !important;
-	vertical-align: middle;
-}
-
-/* Colour picker popup.
-
-   jPicker positions this itself, near the trigger, and a field in the right
-   column or low on the page opened it past the edge of the window -- partly
-   unreachable. Scripted repositioning proved unreliable because the plugin
-   lays the panel out on its own schedule, so pin it in the viewport instead:
-   centred, never larger than the window, and scrollable if it ever is. */
-.jPicker.Container {
-	position: fixed !important;
-	top: 50% !important;
-	left: 50% !important;
-	right: auto !important;
-	bottom: auto !important;
-	transform: translate(-50%, -50%) !important;
-	max-width: calc(100vw - 32px) !important;
-	max-height: calc(100vh - 32px) !important;
-	overflow: auto !important;
-	z-index: 2000 !important;
-	border-radius: var(--r-lg);
-	box-shadow: var(--sh-lg);
-}
-
-/* ==========================================================================
-   Compound measurement fields (value + unit)
-
-   Dolibarr renders weight, dimensions, area and volume as a value input and a
-   unit select loose in one cell. Two form rules stretched those inputs to the
-   full cell, which pushed the unit select onto its own line.
-
-   The winning one scored (0,33,5):
-     div.tabBar table.border:not(.liste) td > span[class*="fa-"] + input:not(...)
-   It matches because these fields carry an icon immediately before the input.
-   Dimensions escaped it only because they ship class="width50", which those
-   same rules already exclude.
-
-   So this follows the exclusion the stylesheet already uses -- the inputs are
-   marked .ts-measure and added to that :not() list -- rather than escalating
-   specificity. Sizing below is then plain, and one pattern covers every
-   measurement field wherever Dolibarr renders one.
-   ========================================================================== */
-.ts-measure-cell { white-space: nowrap; }
-.ts-measure-cell > span[class*="fa-"] {
-	display: inline-block;
-	width: 26px;
-	margin-right: 10px;
-	color: var(--c-accent);
-	text-align: center;
-	vertical-align: middle;
-}
-input.ts-measure {
-	display: inline-block;
-	height: 40px;
-	margin: 0;
-	vertical-align: middle;
-}
-input.ts-measure-value { width: 168px; }
-div.tabBar table td > input.ts-measure-dim { width: 116px; margin-right: 4px; }
-.ts-measure-cell .ts-measure-x {
-	display: inline-block;
-	width: 18px;
-	color: var(--c-ink-subtle);
-	text-align: center;
-	vertical-align: middle;
-}
-.ts-measure-cell > .select2-container {
-	display: inline-block !important;
-	/* Sized to the longest unit label it has to hold ("mm3 (ul)"), not to the
-	   space available -- a unit is a short enum, so a wide box reads as an empty
-	   field rather than a compact control. */
-	width: 138px !important;
-	min-width: 138px !important;
-	max-width: 138px !important;
-	margin-left: 12px;
-	vertical-align: middle;
-}
-.ts-measure-cell > .select2-container .select2-selection {
-	height: 40px !important;
-	min-height: 40px !important;
-	border: 1px solid var(--c-border) !important;
-	border-radius: var(--r) !important;
-	background: var(--c-surface) !important;
-	box-shadow: none !important;
-}
-.ts-measure-cell > .select2-container .select2-selection__rendered {
-	height: 38px !important;
-	line-height: 38px !important;
-	padding: 0 26px 0 12px !important;
-	font-size: 0.8125rem !important;
-}
-.ts-measure-cell > .select2-container .select2-selection__arrow { height: 38px !important; right: 6px !important; }
-
-@media only screen and (max-width: 1100px) {
-	input.ts-measure-value { width: 132px; }
-	div.tabBar table td > input.ts-measure-dim { width: 92px; }
-	.ts-measure-cell > .select2-container { width: 126px !important; min-width: 126px !important; max-width: 126px !important; margin-left: 8px; }
-}
-@media only screen and (max-width: 700px) {
-	.ts-measure-cell { white-space: normal; }
-	input.ts-measure-value {
-		width: 168px !important;
-		max-width: 100% !important;
-	}
-	div.tabBar table td > input.ts-measure-dim {
-		width: 96px !important;
-		max-width: 96px !important;
-	}
-	.ts-measure-cell > .select2-container {
-		width: 138px !important;
-		min-width: 0 !important;
-		max-width: 100% !important;
-		margin-left: 8px;
-	}
-}
-
-/* ==========================================================================
-   Kanban cards for modules without their own adapter
-
-   The third-party adapter rebuilds its cards into a ts-kanban-* structure.
-   Every other module keeps Dolibarr's native card: an .info-box holding
-   .info-box-img, .info-box-ref, a select checkbox, .info-box-label and
-   .info-box-status. Those parts are the same everywhere, so they can be given
-   the same treatment without rebuilding anything -- styling only, so each
-   module's own fields, links and tooltips stay exactly as Dolibarr wrote them.
-
-   Scoped to the shared marker so the third-party view, which is already
-   composed, is untouched.
-   ========================================================================== */
-[data-ts-kanban="shared"] > .box-flex-item {
-	position: relative;
-	padding: 0;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
-	overflow: hidden;
-	transition: border-color var(--t), box-shadow var(--t);
-}
-[data-ts-kanban="shared"] > .box-flex-item:hover {
-	border-color: var(--c-border-strong);
-	box-shadow: var(--sh-md, var(--sh-sm));
-}
-div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box,
-[data-ts-kanban="shared"] .info-box {
-	display: flex !important;
-	flex-direction: row !important;
-	align-items: flex-start;
-	gap: 12px;
-	min-height: 0 !important;
-	margin: 0 !important;
-	padding: 14px 16px !important;
-	border: 0 !important;
-	background: transparent !important;
-	box-shadow: none !important;
-}
-/* Picto becomes the same soft tile the rest of the shell uses. */
-[data-ts-kanban="shared"] .info-box-img,
-[data-ts-kanban="shared"] .info-box-icon {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 auto;
-	width: 38px !important;
-	height: 38px !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	border-radius: 10px;
-	background: var(--c-accent-soft) !important;
-	font-size: 15px;
-	line-height: 1;
-}
-[data-ts-kanban="shared"] .info-box-img [class*="fa-"],
-[data-ts-kanban="shared"] .info-box-icon [class*="fa-"] { color: var(--c-accent) !important; }
-div.box-flex-container[data-ts-kanban="shared"] > .box-flex-item .info-box-content,
-[data-ts-kanban="shared"] .info-box-content {
-	display: block !important;
-	flex: 1 1 auto;
-	min-width: 0;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-/* Reference reads as the card's title. */
-[data-ts-kanban="shared"] .info-box-ref,
-[data-ts-kanban="shared"] .info-box-ref a {
-	max-width: 100% !important;
-	font-size: 0.875rem !important;
-	font-weight: 650 !important;
-	color: var(--c-ink) !important;
-	text-decoration: none;
-}
-[data-ts-kanban="shared"] .info-box-ref a:hover { color: var(--c-accent) !important; }
-[data-ts-kanban="shared"] .info-box-label {
-	display: block !important;
-	max-width: 100% !important;
-	margin-top: 2px;
-	color: var(--c-ink-subtle) !important;
-	font-size: 0.8125rem !important;
-	opacity: 1 !important;
-}
-/* Remaining rows -- amounts, stock, dates -- read as quiet metadata. */
-[data-ts-kanban="shared"] .info-box-status {
-	display: flex !important;
-	align-items: center;
-	gap: 8px;
-	margin-top: 10px;
-	color: var(--c-ink-2) !important;
-	font-size: 0.8125rem !important;
-	opacity: 1 !important;
-}
-[data-ts-kanban="shared"] .info-box-status [class*="fa-"] { opacity: .6; }
-/* The select box belongs in the corner, not in the middle of the text. */
-[data-ts-kanban="shared"] input.checkforselect {
-	position: absolute;
-	top: 12px;
-	right: 12px;
-	float: none !important;
-	margin: 0 !important;
-}
-[data-ts-kanban="shared"] .info-box-content > br { display: none; }
-
-/* Kanban card metadata rows: one field per line, aligned with the title. */
-[data-ts-kanban="shared"] .ts-kanban-meta {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px 10px;
-	margin-top: 10px;
-}
-[data-ts-kanban="shared"] .ts-kanban-meta-row {
-	display: flex !important;
-	align-items: center;
-	gap: 8px;
-	margin: 0 !important;
-	padding: 0 !important;
-	color: var(--c-ink-2);
-	font-size: 0.8125rem;
-	opacity: 1 !important;
-}
-[data-ts-kanban="shared"] .ts-kanban-meta-row [class*="fa-"] {
-	flex: 0 0 16px;
-	width: 16px;
-	text-align: center;
-	opacity: .6;
-}
-[data-ts-kanban="shared"] .ts-kanban-meta-row .badge-status { margin-left: 0; }
-
-/* ==========================================================================
-   Icon-only actions
-
-   Dolibarr's inline edit/copy/view actions rendered at whatever size their
-   content and inherited line-height produced: measured across record cards the
-   same .editfielda was 14x17 bare inline in one place and 32x24 or 34x24 with a
-   radius in another, holding a 22px icon in a 24px box. The glyph is centred in
-   that box, but a squat rectangle around a nearly-overflowing icon reads as
-   off-centre, and the hover surface differed per page.
-
-   One square interaction box, with the icon's own line-height and spacing
-   neutralised so nothing can push it off centre. Only actions that are icon-only
-   are matched -- labelled buttons keep their own shape.
-   ========================================================================== */
-a.editfielda,
-a.editfield,
-span.editfielda,
-.ts-icon-action {
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	width: 32px !important;
-	height: 32px !important;
-	min-width: 32px !important;
-	padding: 0 !important;
-	margin: 0 2px !important;
-	border-radius: 8px;
-	line-height: 1 !important;
-	text-indent: 0 !important;
-	vertical-align: middle;
-	color: var(--c-ink-subtle);
-	transition: background var(--t), color var(--t);
-}
-a.editfielda:hover,
-a.editfield:hover,
-.ts-icon-action:hover {
-	background: var(--c-sunken);
-	color: var(--c-accent);
-}
-a.editfielda:focus-visible,
-a.editfield:focus-visible,
-.ts-icon-action:focus-visible {
-	outline: 2px solid var(--c-accent);
-	outline-offset: 1px;
-}
-/* The glyph itself carries Dolibarr's line-height and padding; neutralise both
-   so the flex centring is the only thing positioning it. */
-a.editfielda > [class*="fa-"],
-a.editfield > [class*="fa-"],
-span.editfielda > [class*="fa-"],
-.ts-icon-action > [class*="fa-"] {
-	display: block !important;
-	width: auto !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	line-height: 1 !important;
-	font-size: 13px !important;
-	vertical-align: middle !important;
-}
-
-/* Lists whose leading select column is never filled -- see
-   collapseUnusedSelectColumn(). Marked in script because emptiness cannot be
-   tested in CSS. */
-table.liste.ts-list-no-select-col > tbody > tr > *:first-child {
-	width: 0 !important;
-	min-width: 0 !important;
-	max-width: 0 !important;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
-	overflow: hidden;
 }
