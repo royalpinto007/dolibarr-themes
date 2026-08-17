@@ -238,14 +238,32 @@
 	function markPairedSelectCells(root) {
 		Array.prototype.forEach.call((root || document).querySelectorAll('div.tabBar table.border:not(.liste) td'), function (cell) {
 			if (cell.classList.contains('ts-measure-cell') || cell.classList.contains('ts-pair-cell')) { return; }
-			var select = cell.querySelector(':scope > .select2-container');
-			if (!select) { return; }
-			var partner = Array.prototype.some.call(cell.children, function (node) {
-				if (node === select || !node.matches('input, select, .select2-container')) { return false; }
-				if (node.matches('[type="hidden"]')) { return false; }
+			var fields = Array.prototype.filter.call(cell.children, function (node) {
+				if (!node.matches('input, .select2-container')) { return false; }
+				if (node.matches('[type="hidden"], [type="checkbox"], [type="radio"], [type="submit"], [type="button"]')) { return false; }
 				return node.getBoundingClientRect().width > 12;
 			});
-			if (partner) { cell.classList.add('ts-pair-cell'); }
+			if (fields.length < 2) { return; }
+			cell.classList.add('ts-pair-cell');
+			/* Two plain text fields sharing one cell -- a postcode beside its town --
+			   each stretched to the whole cell and so landed on separate lines under a
+			   single label. The width comes from a rule that outranks anything the
+			   theme can reasonably write, so set it on the element itself, which no
+			   stylesheet can outrank. Only when both fields are plain inputs: a cell
+			   built around a select is handled by the stylesheet. */
+			if (fields.length === 2 && !fields[0].matches('.select2-container') && !fields[1].matches('.select2-container')) {
+				fields[0].style.setProperty('width', '130px', 'important');
+				fields[0].style.setProperty('min-width', '0', 'important');
+				fields[0].style.setProperty('max-width', 'none', 'important');
+				fields[0].style.setProperty('display', 'inline-block', 'important');
+				fields[0].style.setProperty('margin-right', '8px', 'important');
+				fields[1].style.setProperty('width', 'calc(100% - 146px)', 'important');
+				fields[1].style.setProperty('min-width', '0', 'important');
+				fields[1].style.setProperty('max-width', 'none', 'important');
+				fields[1].style.setProperty('display', 'inline-block', 'important');
+				fields[1].style.setProperty('vertical-align', 'middle', 'important');
+				fields[0].style.setProperty('vertical-align', 'middle', 'important');
+			}
 		});
 	}
 
