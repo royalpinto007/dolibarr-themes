@@ -1697,6 +1697,16 @@ body.ts-command-stats .ts-stats-empty-icon {
 	box-sizing: border-box;
 }
 
+/* While the column picker is open its panel must be allowed out of the boxes
+   that hold the list, which otherwise cut it off on a short or empty list. The
+   marker is removed as soon as the picker closes, so scrolling a wide list is
+   unaffected the rest of the time. */
+.ts-list-card.ts-picker-open,
+.div-table-responsive.ts-picker-open,
+.div-table-responsive-no-min.ts-picker-open {
+	overflow: visible !important;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {

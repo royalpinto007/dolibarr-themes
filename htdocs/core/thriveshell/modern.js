@@ -321,6 +321,45 @@
 		table.insertBefore(group, table.firstChild);
 	}
 
+	/* The column picker opens inside the list header, so it is clipped by the two
+	   boxes that hold the list: the scroll wrapper and the card. On a long list
+	   those extend well past the panel and nothing shows; on a short or empty one
+	   they end just below the heading and the panel is cut off mid-list -- which is
+	   why this only appeared when there was little data.
+
+	   The markup carries no open state to hook, so mark the ancestors while the
+	   picker is open and release their overflow for that time only, restoring it as
+	   soon as the picker closes so a wide list can still be scrolled. */
+	function freeColumnPickerOverflow() {
+		var OPEN = 'ts-picker-open';
+		function clear() {
+			Array.prototype.forEach.call(document.querySelectorAll('.' + OPEN), function (node) {
+				node.classList.remove(OPEN);
+			});
+		}
+		function mark(node) {
+			var wrap = node.closest('.div-table-responsive, .div-table-responsive-no-min');
+			var card = node.closest('.ts-list-card');
+			if (wrap) { wrap.classList.add(OPEN); }
+			if (card) { card.classList.add(OPEN); }
+		}
+		document.addEventListener('click', function (event) {
+			var toggle = event.target.closest('dl.dropdown > dt');
+			if (!toggle) {
+				if (!event.target.closest('dl.dropdown')) { clear(); }
+				return;
+			}
+			var wasOpen = !!toggle.closest('dl.dropdown').querySelector('.' + OPEN);
+			clear();
+			if (!wasOpen) {
+				window.setTimeout(function () { mark(toggle); }, 0);
+			}
+		}, true);
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') { clear(); }
+		});
+	}
+
 	/* Standard module index pages reuse the same two-column dashboard boxes. The
 	   Home and Third Party dashboards have richer adapters and remain excluded. */
 	function polishSharedModuleIndex() {
@@ -3908,6 +3947,7 @@
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+		try { freeColumnPickerOverflow(); } catch (e) { /* leave the picker clipped */ }
 		if (/\/stats\//.test(window.location.pathname)) {
 			document.body.classList.add('ts-command-stats');
 			/* A statistics table with nothing to report rendered as a row of headings
