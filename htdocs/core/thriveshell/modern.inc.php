@@ -1327,14 +1327,14 @@ button[type="submit"] {
    The field does not shrink on its own: the input sits inside a wrapper that
    holds its own width, and the input carries a matching min-width, so
    constraining either alone left the pair overflowing its box. Release both. */
-.ts-column-filter-control:has(> .nowrapfordate + .nowrapfordate) {
+.ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) {
 	grid-column: span 2;
 	grid-template-columns: max-content max-content;
 	column-gap: var(--sp-3);
 	align-items: center;
 	justify-content: start;
 }
-.ts-column-filter-control:has(> .nowrapfordate + .nowrapfordate) > .ts-column-filter-label {
+.ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) > .ts-column-filter-label {
 	grid-column: 1 / -1;
 }
 .ts-column-filter-control > .nowrapfordate,
@@ -1671,7 +1671,7 @@ body.ts-command-stats .ts-stats-empty-icon {
 }
 /* A date range still wants its two fields side by side; the single column above
    is for the promoted controls, not for these. */
-.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrapfordate + .nowrapfordate) {
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) {
 	grid-template-columns: max-content max-content !important;
 	column-gap: var(--sp-3);
 	justify-content: start;
@@ -1717,6 +1717,20 @@ img.pictomodule {
 	max-height: 24px;
 	object-fit: contain;
 	vertical-align: middle;
+}
+
+/* Held only while a widget table is measured. Every cap inside it is lifted so
+   each column reports the width its content actually needs -- including the
+   nested table a reference sits in, which is otherwise capped at the width of
+   the cell being measured. Removed again in the same pass. */
+body.ts-command-module-index .ts-module-index-card.ts-measuring table,
+body.ts-command-module-index .ts-module-index-card.ts-measuring td,
+body.ts-command-module-index .ts-module-index-card.ts-measuring a,
+body.ts-command-module-index .ts-module-index-card.ts-measuring span {
+	max-width: none !important;
+	min-width: 0 !important;
+	overflow: visible !important;
+	text-overflow: clip !important;
 }
 
 .ts-column-filters { position: relative; flex: 0 0 auto; }

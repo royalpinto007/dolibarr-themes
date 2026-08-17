@@ -293,6 +293,11 @@
 		/* Measure against auto layout, which sizes each column to its content. The
 		   stylesheet pins fixed layout with !important, so the override has to carry
 		   the same weight to take effect for the measurement. */
+		/* Measure with every cap inside the table lifted. A reference sits in a
+		   nested table capped at the width of the cell holding it, so asking what it
+		   wants while that cap is on returns the width it has, not the width it
+		   needs -- and the column is then sized from its own constraint. */
+		table.classList.add('ts-measuring');
 		table.style.setProperty('table-layout', 'auto', 'important');
 		var want = [];
 		for (var index = 0; index < columnCount; index++) {
@@ -305,11 +310,37 @@
 			want.push(Math.max(widest, 20));
 		}
 		table.style.removeProperty('table-layout');
+		table.classList.remove('ts-measuring');
 
 		var total = want.reduce(function (sum, value) { return sum + value; }, 0);
 		if (!total) { return; }
-		var floor = Math.min(100 / (columnCount * 2.5), 12);
-		var shares = want.map(function (value) { return Math.max((value / total) * 100, floor); });
+		var available = table.getBoundingClientRect().width || total;
+
+		/* Sharing the width in proportion to what each column wants sounds fair and
+		   is not: a reference is a fixed string in a nested table of its own and
+		   cannot give anything up, while a customer name can end in an ellipsis and
+		   read perfectly well. Proportion handed the long column most of the width
+		   and left the reference a few pixels short, which is enough to shear it.
+
+		   So settle the columns that cannot shrink first -- anything whose measured
+		   need is modest -- and let the columns that can, share what remains. If even
+		   the modest ones do not fit, fall back to proportion, which at least fails
+		   evenly. */
+		var RIGID = 170;
+		var rigid = want.map(function (value) { return value <= RIGID; });
+		var rigidTotal = want.reduce(function (sum, value, index) { return sum + (rigid[index] ? value : 0); }, 0);
+		var flexTotal = total - rigidTotal;
+		var shares;
+		if (rigidTotal < available * 0.8 && flexTotal > 0) {
+			var remaining = available - rigidTotal;
+			shares = want.map(function (value, index) {
+				var px = rigid[index] ? value : (value / flexTotal) * remaining;
+				return (px / available) * 100;
+			});
+		} else {
+			var floor = Math.min(100 / (columnCount * 2.5), 12);
+			shares = want.map(function (value) { return Math.max((value / total) * 100, floor); });
+		}
 		var scale = 100 / shares.reduce(function (sum, value) { return sum + value; }, 0);
 		var group = document.createElement('colgroup');
 		group.className = 'ts-module-index-cols';
