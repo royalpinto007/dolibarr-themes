@@ -1308,6 +1308,17 @@ body.ts-command-record-secondary .ts-list-card .ts-results-footer { border-radiu
    at the viewport height so a short page still has somewhere to open into. */
 #id-right { min-height: calc(100vh - 108px); }
 
+/* Submit buttons sat in flex toolbars with the default flex-shrink, so a narrow
+   toolbar squeezed them below their own label -- the projects filter bar cut
+   "Refresh" down to "Refre" against an overflow:clip. A button is not the give
+   in a layout; let the fields around it take the pressure instead. */
+input[type="submit"],
+input[type="button"],
+button[type="submit"] {
+	flex-shrink: 0;
+	min-width: max-content;
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
