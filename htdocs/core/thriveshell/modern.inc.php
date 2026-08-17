@@ -1610,6 +1610,52 @@ body.ts-command-stats form tr:not(.liste_titre) > td {
 	background: var(--c-surface);
 }
 
+/* Refresh submits the form, so it carries the action colour the theme uses for
+   every other primary button rather than the neutral chrome it inherited. */
+body.ts-command-stats form input[type="submit"] {
+	height: 38px;
+	padding: 0 var(--sp-5);
+	border: 1px solid var(--c-btn-action);
+	border-radius: var(--r-sm);
+	background: var(--c-btn-action);
+	color: var(--c-btn-action-text);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+body.ts-command-stats form input[type="submit"]:hover {
+	filter: brightness(1.07);
+}
+
+/* A statistics table with nothing to report rendered as a row of headings over
+   empty space, which reads as though it were still loading. */
+body.ts-command-stats .ts-stats-empty-row > td {
+	padding: var(--sp-6) var(--sp-4) !important;
+	border: 0 !important;
+	background: var(--c-surface) !important;
+	text-align: center;
+	color: var(--c-muted);
+	font-size: 0.8125rem;
+}
+body.ts-command-stats .ts-stats-empty-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2);
+}
+body.ts-command-stats .ts-stats-empty-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 10px;
+	background: #f4f1ff;
+	color: var(--c-primary);
+	font-size: 18px;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {

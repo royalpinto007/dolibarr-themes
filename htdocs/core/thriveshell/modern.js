@@ -3865,7 +3865,36 @@
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
-		if (/\/stats\//.test(window.location.pathname)) { document.body.classList.add('ts-command-stats'); }
+		if (/\/stats\//.test(window.location.pathname)) {
+			document.body.classList.add('ts-command-stats');
+			/* A statistics table with nothing to report rendered as a row of headings
+			   over empty space, which reads as though it were still loading. Say so
+			   instead, the way the dashboard widgets do. */
+			try {
+				document.querySelectorAll('.fiche table').forEach(function (table) {
+					var header = table.querySelector('tr.liste_titre');
+					if (!header || table.querySelector('.ts-stats-empty-row')) { return; }
+					var bodyRows = Array.prototype.filter.call(table.rows, function (row) {
+						return !row.classList.contains('liste_titre') && (row.textContent || '').trim().length;
+					});
+					if (bodyRows.length) { return; }
+					var span = Array.prototype.reduce.call(header.cells, function (sum, cell) { return sum + (cell.colSpan || 1); }, 0);
+					if (!span) { return; }
+					var row = (table.tBodies[0] || table).insertRow(-1);
+					row.className = 'ts-stats-empty-row';
+					var cell = row.insertCell(0);
+					cell.colSpan = span;
+					var glyph = document.createElement('span');
+					glyph.className = 'ts-stats-empty-icon fas fa-inbox';
+					var message = document.createElement('span');
+					message.textContent = 'No data for this selection';
+					var inner = document.createElement('div');
+					inner.className = 'ts-stats-empty-inner';
+					inner.append(glyph, message);
+					cell.appendChild(inner);
+				});
+			} catch (e) { /* leave the bare table */ }
+		}
 		/* select2 builds its container from an inline script that can run after this
 		   pass, so the cells hold no container yet on the first look. Check again once
 		   the page has settled. */
