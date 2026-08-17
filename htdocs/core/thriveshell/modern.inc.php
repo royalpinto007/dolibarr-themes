@@ -1707,6 +1707,18 @@ body.ts-command-stats .ts-stats-empty-icon {
 	overflow: visible !important;
 }
 
+/* Module logos are shown at whatever size the file happens to be, and a handful
+   ship large -- a 300px and two 256px images sat among icons drawn at 18px, so
+   those rows towered over the rest of the list. Cap them and let the image keep
+   its proportions inside that box. A ceiling, not a size, so the many logos that
+   are already small are left alone. */
+img.pictomodule {
+	max-width: 24px;
+	max-height: 24px;
+	object-fit: contain;
+	vertical-align: middle;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
