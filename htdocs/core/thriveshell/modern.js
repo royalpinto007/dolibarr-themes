@@ -3750,6 +3750,23 @@
 		return true;
 	}
 
+	/* The accounting source-export screen is a standalone search form rather
+	   than an admin settings table. Give it the same COMMAND surface/control
+	   language without moving or recreating any of its real fields. */
+	function polishAccountingExport() {
+		if (!/\/compta\/accounting-files\.php$/.test(window.location.pathname)) { return false; }
+		var form = document.querySelector('form[name="searchfiles"]');
+		if (!form) { return false; }
+		document.body.classList.add('ts-accounting-files');
+		form.classList.add('ts-accounting-export-form');
+		var intro = form.querySelector('.opacitymedium');
+		if (intro) { intro.classList.add('ts-accounting-export-intro'); }
+		form.querySelectorAll('input.hasDatepicker, .select2-container, select, button.datenowlink, input[type="submit"], button[type="submit"]').forEach(function (node) {
+			node.classList.add('ts-accounting-export-control');
+		});
+		return true;
+	}
+
 	/* Categories landing page. Its summary table carries no filter form, so the
 	   shared list composition -- which exists to relocate filter controls -- has
 	   nothing to do here. Mark the page and let CSS give the table a card, the
@@ -4044,6 +4061,7 @@
 			}, 400);
 		});
 		try { composeAdminSettings(); } catch (e) { /* retain the native admin settings tables */ }
+		try { polishAccountingExport(); } catch (e) { /* retain the native export form */ }
 		try { tameColorPickers(); } catch (e) { /* leave jPicker's own popup behaviour */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }

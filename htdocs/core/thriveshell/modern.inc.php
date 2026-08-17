@@ -7589,6 +7589,90 @@ body.ts-settings-page .ts-settings-actions a.butAction {
 	color: var(--c-ink-2) !important;
 }
 
+/* Accounting source export: a standalone form that does not pass through the
+   settings-table composer. Keep its existing fields/submission intact while
+   applying the shared COMMAND card and control geometry. */
+body.ts-accounting-files form.ts-accounting-export-form {
+	margin: 0;
+	padding: 24px 28px 28px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	color: var(--c-ink-2);
+	line-height: 1.45;
+}
+body.ts-accounting-files .ts-accounting-export-intro {
+	display: block;
+	margin: 0 0 18px;
+	color: var(--c-muted);
+	font-size: .875rem;
+}
+body.ts-accounting-files form[name="searchfiles"] .divfordateinput {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+}
+body.ts-accounting-files form[name="searchfiles"] input.hasDatepicker {
+	box-sizing: border-box;
+	width: 150px;
+	height: 40px;
+	padding: 0 12px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+	font-size: .875rem;
+}
+body.ts-accounting-files form[name="searchfiles"] img.ui-datepicker-trigger {
+	width: 18px;
+	height: 18px;
+	margin-left: -28px;
+	opacity: .65;
+}
+body.ts-accounting-files form[name="searchfiles"] button.datenowlink {
+	height: 32px;
+	margin: 0 8px;
+	padding: 0 10px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-sunken);
+	color: var(--c-muted);
+}
+body.ts-accounting-files form[name="searchfiles"] .select2-container {
+	width: 320px !important;
+	max-width: min(320px, 100%);
+	vertical-align: middle;
+}
+body.ts-accounting-files form[name="searchfiles"] .select2-selection,
+body.ts-accounting-files form[name="searchfiles"] select {
+	min-height: 40px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r);
+	background: var(--c-surface);
+}
+body.ts-accounting-files form[name="searchfiles"] input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	margin: 0 5px 0 12px;
+	accent-color: var(--c-accent);
+	vertical-align: middle;
+}
+body.ts-accounting-files form[name="searchfiles"] input[type="submit"],
+body.ts-accounting-files form[name="searchfiles"] button[type="submit"] {
+	height: 40px;
+	margin-left: 12px;
+	padding: 0 20px;
+	border: 1px solid var(--c-accent) !important;
+	border-radius: var(--r);
+	background: var(--c-accent) !important;
+	color: #fff !important;
+	font-weight: 650;
+}
+@media only screen and (max-width: 700px) {
+	body.ts-accounting-files form.ts-accounting-export-form { padding: 18px 16px 20px; }
+	body.ts-accounting-files form[name="searchfiles"] .select2-container { width: 100% !important; }
+}
+
 @media only screen and (max-width: 1100px) {
 	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 14px; }
 }
