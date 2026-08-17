@@ -1340,7 +1340,8 @@
 			   optional status, then label-and-value lines -- but was left out, so its
 			   heading and status stayed in the body and the header held the picto
 			   alone, with a gap where the heading belonged. */
-			var STRUCTURED_KINDS = ['third party', 'user', 'order'];
+			var STRUCTURED_KINDS = ['third party', 'user', 'order', 'proposal', 'invoice',
+				'shipment', 'ticket', 'contract'];
 			var headingText = heading && (heading.textContent || '').trim().toLowerCase();
 			if (STRUCTURED_KINDS.indexOf(headingText) === -1) {
 				content.setAttribute('data-ts-structured', 'native');
