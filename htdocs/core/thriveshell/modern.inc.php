@@ -1755,6 +1755,21 @@ body.ts-command-module-index .ts-module-index-card td a > img {
 	min-width: 0 !important;
 }
 
+/* A user photo standing in a column heading is an identifier, not the content:
+   the everybody placeholder came through at its own 64px and towered over the
+   headings around it. Size it to the line, as the same photo already is in a
+   dropdown. */
+table tr.liste_titre img.photouserphoto,
+table tr.liste_titre img.userphoto {
+	width: 24px !important;
+	height: 24px !important;
+	max-width: 24px;
+	max-height: 24px;
+	border-radius: 50%;
+	object-fit: cover;
+	vertical-align: middle;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
