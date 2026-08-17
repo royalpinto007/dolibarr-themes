@@ -5468,7 +5468,12 @@ body.ts-command-module-index .ts-module-index-card {
 	table-layout: auto !important;
 }
 body.ts-command-module-index .ts-module-index-data-card { table-layout: fixed !important; }
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td {
+/* Scoped to the card's own rows. A reference cell holds a nested table of its
+   own -- Dolibarr's picto-and-ref layout -- whose row is not a heading row, so an
+   unscoped rule reached into it and applied the zero max-width meant for the
+   card's cells. The inner cells collapsed and the reference showed as an
+   ellipsis, while the cell around it was the full width all along. */
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td {
 	max-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -5578,8 +5583,8 @@ body.ts-command-module-index .ts-module-index-empty-row .ts-module-index-empty-i
    instead. Constraining the flex items only made it worse -- the text collapsed
    to zero and the anchor shrank to its icon. Lay the anchor out as inline-block
    so text-overflow applies to it directly, keeping the icon inline. */
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a,
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > span {
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a,
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > span {
 	display: inline-block !important;
 	max-width: 100%;
 	overflow: hidden;
@@ -5587,10 +5592,10 @@ body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > t
 	text-overflow: ellipsis;
 	vertical-align: middle;
 }
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > img,
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > .fas,
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > .far,
-body.ts-command-module-index .ts-module-index-data-card tr:not(.liste_titre) > td > a > .fa {
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > img,
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > .fas,
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > .far,
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > a > .fa {
 	vertical-align: middle;
 	margin-right: 4px;
 }
