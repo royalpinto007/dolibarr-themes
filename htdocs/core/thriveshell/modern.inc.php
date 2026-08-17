@@ -2076,9 +2076,7 @@ table tr.liste_titre img.userphoto {
 /* The separator Dolibarr writes between contact details and accounting codes,
    drawn as the rule it stands for rather than left as blank space. */
 .ui-tooltip.mytooltip .ts-tooltip-rule {
-	height: 1px;
-	margin: 3px 0;
-	background: var(--c-border);
+	display: none;
 }
 /* Any break that survives into the structured list would add space of its own on
    top of the row spacing. */
@@ -2117,6 +2115,15 @@ table tr.liste_titre img.userphoto {
 	flex: 0 0 14px;
 	width: 14px;
 	text-align: center;
+}
+/* Structured contact rows use a small predictable icon slot. Override
+   Dolibarr's legacy .pictofixedwidth treatment, which reserves a wide label
+   track and leaves email/phone values stranded far to the right. */
+.ui-tooltip.mytooltip .ts-tooltip-details .ts-tooltip-label > [class*="fa-"] {
+	flex: 0 0 16px !important;
+	width: 16px !important;
+	padding: 0 !important;
+	margin: 0 !important;
 }
 .ui-tooltip.mytooltip .ts-tooltip-value {
 	min-width: 0;
