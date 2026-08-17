@@ -3650,7 +3650,12 @@
 		   everything to the full column. */
 		var classifyControl = function (control) {
 			var field = control.querySelector('select, textarea, input:not([type="hidden"])');
-			if (!field) { return 'ts-control-compact'; }
+			/* Some admin rows put the radio/checkbox in the label cell and leave
+			   explanatory copy (plus an info icon) in the value cell. That value
+			   cell has no form control of its own and must be allowed to use the
+			   full column; classifying it as compact squeezed descriptions into a
+			   narrow strip. */
+			if (!field) { return 'ts-control-full'; }
 			if (field.tagName === 'TEXTAREA') { return 'ts-control-full'; }
 			if (field.tagName === 'SELECT') {
 				return field.options && field.options.length > 25 ? 'ts-control-full' : 'ts-control-medium';
