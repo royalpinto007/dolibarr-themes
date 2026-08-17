@@ -1733,6 +1733,28 @@ body.ts-command-module-index .ts-module-index-card.ts-measuring span {
 	text-overflow: clip !important;
 }
 
+/* A reference link in a widget carries an icon, which is enough for the
+   icon-button treatment elsewhere in the theme to claim it: it was laid out as a
+   flex box with a floor of one icon width and its own overflow hidden, so the
+   reference beside the icon was cut off whatever width the column had. These
+   links are text with an icon in front, not buttons. */
+body.ts-command-module-index .ts-module-index-card td a,
+body.ts-command-module-index .ts-module-index-card td a.classforajaxtooltip {
+	display: inline !important;
+	min-width: 0 !important;
+	max-width: none !important;
+	overflow: visible !important;
+	white-space: nowrap;
+}
+body.ts-command-module-index .ts-module-index-card td a > .fas,
+body.ts-command-module-index .ts-module-index-card td a > .far,
+body.ts-command-module-index .ts-module-index-card td a > img {
+	display: inline-block !important;
+	vertical-align: middle;
+	margin-right: 4px;
+	min-width: 0 !important;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
