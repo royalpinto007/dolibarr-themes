@@ -1805,7 +1805,21 @@ div.tabBar table td > input[class~="maxwidth100"] {
 div.tabBar table.editmode:not(.liste) td > textarea,
 div.tabBar table.border:not(.liste) td > textarea { width: 100%; max-width: 760px; box-sizing: border-box; }
 div.tabBar table.editmode:not(.liste) td > .select2-container,
-div.tabBar table.border:not(.liste) td:not(.ts-measure-cell) > .select2-container { width: 100% !important; max-width: 760px !important; }
+div.tabBar table.border:not(.liste) td:not(.ts-measure-cell):not(.ts-pair-cell) > .select2-container { width: 100% !important; max-width: 760px !important; }
+
+/* Cells that pair a select with a second control -- Lead status carries a status
+   dropdown and a win-probability percentage -- were stretching the select across
+   the whole cell, which pushed its partner onto its own line. Give the select a
+   share of the cell so the pair reads as the single field it is. Excluded from
+   the full-width rule above rather than fighting its specificity. */
+div.tabBar table.border:not(.liste) td.ts-pair-cell > .select2-container {
+	width: 320px !important;
+	max-width: calc(100% - 190px) !important;
+	vertical-align: middle;
+}
+div.tabBar table.border:not(.liste) td.ts-pair-cell > input {
+	vertical-align: middle;
+}
 
 
 /* ---- Dashboard widget cards ----

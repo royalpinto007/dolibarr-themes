@@ -231,6 +231,24 @@
 		return true;
 	}
 
+	/* A select followed by a second visible control in the same cell is one field
+	   in two parts -- a lead status and its win probability, for instance. Marked
+	   so the stylesheet can size the select to a share of the cell instead of
+	   stretching it and pushing its partner onto the next line. */
+	function markPairedSelectCells(root) {
+		Array.prototype.forEach.call((root || document).querySelectorAll('div.tabBar table.border:not(.liste) td'), function (cell) {
+			if (cell.classList.contains('ts-measure-cell') || cell.classList.contains('ts-pair-cell')) { return; }
+			var select = cell.querySelector(':scope > .select2-container');
+			if (!select) { return; }
+			var partner = Array.prototype.some.call(cell.children, function (node) {
+				if (node === select || !node.matches('input, select, .select2-container')) { return false; }
+				if (node.matches('[type="hidden"]')) { return false; }
+				return node.getBoundingClientRect().width > 12;
+			});
+			if (partner) { cell.classList.add('ts-pair-cell'); }
+		});
+	}
+
 	/* Standard module index pages reuse the same two-column dashboard boxes. The
 	   Home and Third Party dashboards have richer adapters and remain excluded. */
 	function polishSharedModuleIndex() {
@@ -3760,6 +3778,16 @@
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
+		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+		/* select2 builds its container from an inline script that can run after this
+		   pass, so the cells hold no container yet on the first look. Check again once
+		   the page has settled. */
+		window.addEventListener('load', function () {
+			try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+			window.setTimeout(function () {
+				try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+			}, 400);
+		});
 		try { composeAdminSettings(); } catch (e) { /* retain the native admin settings tables */ }
 		try { tameColorPickers(); } catch (e) { /* leave jPicker's own popup behaviour */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
