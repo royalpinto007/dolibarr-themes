@@ -1433,9 +1433,60 @@ body.ts-command-stats form .select2-container .select2-selection__rendered {
 /* The bordered box does not inherit the width the container was given, so
    widening the container alone left the year field small with its chevron
    stranded outside the border. */
-body.ts-command-stats form td .select2-container .select2-selection--single {
+body.ts-command-stats form td .select2-container .select2-selection--single,
+body.ts-command-stats form td .select2-container .select2-selection--multiple {
 	width: 100% !important;
 	box-sizing: border-box;
+}
+/* Tag pickers are multi-selects, which carry different markup from the single
+   selects beside them, so they kept the pre-theme box while everything else on
+   the form had been brought into line. */
+/* select2 puts its own search field inside the multi-select, so it must not pick
+   up the bordered field treatment or the control renders as a box in a box. */
+body.ts-command-stats form td .select2-search__field {
+	border: 0 !important;
+	background: transparent !important;
+	height: 30px !important;
+	padding: 0 !important;
+	min-width: 60px;
+}
+body.ts-command-stats form td .select2-container .select2-selection--multiple {
+	min-height: 38px;
+	padding: 2px var(--sp-2);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-sm);
+	background: var(--c-surface);
+}
+body.ts-command-stats form td input.flat:not(.select2-search__field):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]) {
+	height: 38px;
+	padding: 0 var(--sp-3);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-sm);
+	background: var(--c-surface);
+	box-sizing: border-box;
+	vertical-align: middle;
+}
+
+/* Avatars inside a dropdown. Dolibarr serves the full-size user photo and the
+   option row stretched to it, so picking an author opened a list of portraits.
+   The photo is an identifier here, not the content: size it to the line. */
+.select2-dropdown img,
+.select2-results__option img,
+.select2-container .select2-selection__rendered img,
+.select2-container .select2-selection__choice img {
+	width: 20px !important;
+	height: 20px !important;
+	max-width: 20px !important;
+	max-height: 20px !important;
+	border-radius: 50%;
+	object-fit: cover;
+	vertical-align: middle;
+	margin-right: 6px;
+}
+.select2-results__option {
+	display: flex;
+	align-items: center;
+	gap: 2px;
 }
 
 .ts-column-filters { position: static; flex: 0 0 auto; }
