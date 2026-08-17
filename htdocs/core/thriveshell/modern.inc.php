@@ -1319,6 +1319,36 @@ button[type="submit"] {
 	min-width: max-content;
 }
 
+/* A date range is two fields, and stacking them made its control twice the
+   height of every other filter, which set the row height for the whole grid.
+   Put the pair on one row under a full-width label so a range costs the same
+   height as a single field.
+
+   The field does not shrink on its own: the input sits inside a wrapper that
+   holds its own width, and the input carries a matching min-width, so
+   constraining either alone left the pair overflowing its box. Release both. */
+.ts-column-filter-control:has(> .nowrapfordate + .nowrapfordate) {
+	grid-column: span 2;
+	grid-template-columns: max-content max-content;
+	column-gap: var(--sp-3);
+	align-items: center;
+	justify-content: start;
+}
+.ts-column-filter-control:has(> .nowrapfordate + .nowrapfordate) > .ts-column-filter-label {
+	grid-column: 1 / -1;
+}
+.ts-column-filter-control > .nowrapfordate,
+.ts-column-filter-control > .nowrapfordate > .nowraponall {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-1);
+	min-width: 0;
+	max-width: 100%;
+}
+.ts-column-filter-control > .nowrapfordate .nowraponall > *:not(input) {
+	flex: none;
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
