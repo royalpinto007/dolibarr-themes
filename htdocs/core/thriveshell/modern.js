@@ -2340,6 +2340,17 @@
 						panel.appendChild(control);
 					}
 				});
+				var TOOLBAR_FILTER_BUDGET = 2;
+				/* Dolibarr's own toolbar can arrive with any number of filters already in
+				   it, and that path tagged every one of them for the bar, so a busy list
+				   wrapped its controls onto a second line. The bar holds the search field
+				   and two filters; anything beyond that belongs behind Filters, which is
+				   the same budget the other path already applies. */
+				Array.prototype.slice.call(filter.querySelectorAll(':scope > .ts-toolbar-filter'), TOOLBAR_FILTER_BUDGET).forEach(function (control) {
+					control.className = control.className.replace(/\bts-toolbar-filter(-\d+)?\b/g, ' ').replace(/\s+/g, ' ').trim();
+					control.classList.add('ts-column-filter-control');
+					panel.appendChild(control);
+				});
 				filterRow.classList.add('ts-filter-row-extracted');
 				if (panel.children.length) {
 					details.appendChild(disclosure);
