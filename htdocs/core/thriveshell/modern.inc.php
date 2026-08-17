@@ -1959,7 +1959,33 @@ table tr.liste_titre img.userphoto {
 	opacity: 1 !important;
 	z-index: 3000 !important;
 }
-.ui-tooltip.mytooltip .ui-tooltip-content { padding: 0; }
+.ui-tooltip.mytooltip .ui-tooltip-content {
+	position: relative;
+	padding: 0;
+}
+/* Company previews may include a 40px logo floated by Dolibarr. Take it out
+   of the legacy float flow and reserve a separate slot so the status pill and
+   image keep a small, intentional gap instead of colliding. */
+.ui-tooltip.mytooltip .ui-tooltip-content > .photointooltip {
+	position: absolute;
+	top: 0;
+	right: 0;
+	float: none !important;
+	margin: 0;
+}
+.ui-tooltip.mytooltip .ui-tooltip-content > .photointooltip img {
+	display: block;
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+	border-radius: 6px;
+}
+.ui-tooltip.mytooltip .ui-tooltip-content:has(> .photointooltip) .ts-tooltip-header {
+	padding-right: 124px;
+}
+.ui-tooltip.mytooltip .ui-tooltip-content:has(> .photointooltip) .ts-tooltip-status {
+	right: 52px;
+}
 .ui-tooltip.mytooltip .centpercent {
 	position: relative;
 }
