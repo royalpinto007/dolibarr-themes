@@ -2374,6 +2374,14 @@
 					panel.appendChild(control);
 				});
 				filterRow.classList.add('ts-filter-row-extracted');
+				/* Date ranges are the only controls here that take two fields, and they
+				   fall wherever the column order happens to put them, breaking the run of
+				   single fields around them. Send them to the end, keeping their order
+				   relative to each other, so the panel reads as plain filters first and
+				   ranges last. */
+				Array.prototype.forEach.call(panel.querySelectorAll(':scope > .ts-column-filter-control'), function (control) {
+					if (control.querySelector('.nowrapfordate')) { panel.appendChild(control); }
+				});
 				if (panel.children.length) {
 					details.appendChild(disclosure);
 					details.appendChild(panel);
