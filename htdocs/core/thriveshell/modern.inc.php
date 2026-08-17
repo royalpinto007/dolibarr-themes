@@ -1543,6 +1543,40 @@ body.ts-command-stats form td input.flat:not(.select2-search__field):not([type="
 	flex: none;
 }
 
+/* select2 puts its own search field inside a multi-select. Given the bordered
+   field treatment the theme applies to inputs, that inner field draws a second
+   box inside the control -- most visible once the control is focused and the
+   search field appears. The control already has a border; the field inside it
+   should not. Applies wherever a multi-select is used, not just on the pages
+   where it was first noticed. */
+.select2-container .select2-search--inline .select2-search__field,
+.select2-container .select2-selection--multiple .select2-search__field,
+.select2-container .select2-search__field,
+td .select2-container .select2-search__field {
+	height: auto !important;
+	min-height: 26px;
+	margin: 0 !important;
+	padding: 0 2px !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	outline: none !important;
+}
+.select2-container .select2-selection--multiple {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 6px;
+}
+.select2-container .select2-selection--multiple ul.select2-selection__rendered {
+	display: contents;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
