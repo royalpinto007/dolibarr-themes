@@ -1415,11 +1415,27 @@ body.ts-command-stats form td > img.pictofixedwidth {
 	vertical-align: middle;
 	margin-right: var(--sp-2);
 }
-body.ts-command-stats form td > .select2-container {
+body.ts-command-stats form td .select2-container {
 	width: auto !important;
-	min-width: 220px;
+	min-width: 220px !important;
 	max-width: 100%;
 	vertical-align: middle;
+}
+/* Every dropdown here draws its arrow hard against its own right border. On the
+   wide ones that only looks tight; on a short one such as the year it collides
+   with the value. Hold the arrow off the edge and keep the text clear of it. */
+body.ts-command-stats form .select2-container .select2-selection__arrow {
+	right: 6px !important;
+}
+body.ts-command-stats form .select2-container .select2-selection__rendered {
+	padding-right: 26px;
+}
+/* The bordered box does not inherit the width the container was given, so
+   widening the container alone left the year field small with its chevron
+   stranded outside the border. */
+body.ts-command-stats form td .select2-container .select2-selection--single {
+	width: 100% !important;
+	box-sizing: border-box;
 }
 
 .ts-column-filters { position: static; flex: 0 0 auto; }
