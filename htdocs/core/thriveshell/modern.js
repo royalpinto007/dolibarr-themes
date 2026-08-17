@@ -1305,7 +1305,19 @@
 			details.className = 'ts-tooltip-details';
 			lines.forEach(function (line) {
 				var text = line.map(function (node) { return node.textContent || ''; }).join('').replace(/\u00a0/g, ' ').trim();
-				if (!text) { return; }
+				if (!text) {
+					/* Dolibarr writes a bare break between the contact details and the
+					   accounting codes -- getTooltipContentArray sets a separator entry
+					   of its own on top of the break each entry already carries. Dropped,
+					   the two groups run together; left alone, it reads as a hole in the
+					   list. Draw the break it stands for. */
+					if (details.children.length && !details.lastElementChild.classList.contains('ts-tooltip-rule')) {
+						var rule = document.createElement('div');
+						rule.className = 'ts-tooltip-rule';
+						details.appendChild(rule);
+					}
+					return;
+				}
 				var labelNode = line.find(function (node) { return node.nodeType === Node.ELEMENT_NODE && node.matches('b, strong'); });
 				var iconNode = line.find(function (node) {
 					return node.nodeType === Node.ELEMENT_NODE && (node.matches('[class*="fa-"]') || node.querySelector('[class*="fa-"]'));
@@ -1336,6 +1348,10 @@
 				row.appendChild(valueCell);
 				details.appendChild(row);
 			});
+			/* A separator with nothing after it is just a trailing hole. */
+			while (details.lastElementChild && details.lastElementChild.classList.contains('ts-tooltip-rule')) {
+				details.lastElementChild.remove();
+			}
 			content.replaceChildren(header, details);
 			content.setAttribute('data-ts-structured', '1');
 		});

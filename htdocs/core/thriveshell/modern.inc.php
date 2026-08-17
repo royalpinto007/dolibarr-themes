@@ -1996,6 +1996,18 @@ body.ts-command-stats .ts-stats-empty-icon {
    longer label such as "Amount (excl. tax):" ran straight into its own value,
    and each row measured independently so nothing lined up. Letting the labels
    share a content-sized column aligns them and gives each the width it needs. */
+/* The separator Dolibarr writes between contact details and accounting codes,
+   drawn as the rule it stands for rather than left as blank space. */
+.ui-tooltip.mytooltip .ts-tooltip-rule {
+	height: 1px;
+	margin: 3px 0;
+	background: var(--c-border);
+}
+/* Any break that survives into the structured list would add space of its own on
+   top of the row spacing. */
+.ui-tooltip.mytooltip .ts-tooltip-details br {
+	display: none;
+}
 .ui-tooltip.mytooltip .ts-tooltip-details {
 	display: flex;
 	flex-direction: column;
