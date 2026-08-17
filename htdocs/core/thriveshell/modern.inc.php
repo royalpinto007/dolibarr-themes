@@ -1349,6 +1349,54 @@ button[type="submit"] {
 	flex: none;
 }
 
+/* A widget with no data still reserved a 200px placeholder box and then wrote
+   "Not enough data..." underneath it, so the card was mostly empty space with a
+   caption on the floor. There is nothing to plot, so drop the box and let the
+   message stand on its own. */
+body.ts-command-module-index .nographyet {
+	display: none;
+}
+
+/* Dashboard toolbar controls. The picker is a select2 like every other dropdown
+   in the theme, but it sits straight inside the form rather than in a record
+   table, so none of the field styling reached it and it kept the native look
+   next to its unstyled Refresh button. */
+body.ts-command-module-index form > .select2-container .select2-selection--single,
+body.ts-command-module-index .fichecenter .select2-container .select2-selection--single {
+	height: 38px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-sm);
+	background: var(--c-surface);
+}
+body.ts-command-module-index form > .select2-container .select2-selection__rendered,
+body.ts-command-module-index .fichecenter .select2-container .select2-selection__rendered {
+	line-height: 36px;
+	color: var(--c-text);
+}
+body.ts-command-module-index form > .select2-container .select2-selection__arrow,
+body.ts-command-module-index .fichecenter .select2-container .select2-selection__arrow {
+	height: 36px;
+}
+body.ts-command-module-index input[type="submit"],
+body.ts-command-module-index input[type="button"] {
+	height: 38px;
+	padding: 0 var(--sp-4);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-sm);
+	background: var(--c-surface);
+	color: var(--c-text);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	line-height: 1;
+	vertical-align: middle;
+	cursor: pointer;
+}
+body.ts-command-module-index input[type="submit"]:hover,
+body.ts-command-module-index input[type="button"]:hover {
+	border-color: var(--c-primary);
+	color: var(--c-primary);
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
