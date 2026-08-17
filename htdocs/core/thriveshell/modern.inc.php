@@ -2035,10 +2035,12 @@ table tr.liste_titre img.userphoto {
 }
 .ui-tooltip.mytooltip .centpercent[data-ts-structured="1"] { position: static; }
 .ui-tooltip.mytooltip .ts-tooltip-header {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: var(--sp-2);
 	min-width: 0;
+	padding-right: 72px;
 }
 .ui-tooltip.mytooltip .ts-tooltip-header .ts-tooltip-icon {
 	display: inline-flex;
@@ -2061,9 +2063,11 @@ table tr.liste_titre img.userphoto {
 	text-decoration: none;
 }
 .ui-tooltip.mytooltip .ts-tooltip-header .ts-tooltip-status {
-	position: static;
-	margin: 0 0 0 auto;
-	flex: 0 0 auto;
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	flex: none;
 }
 /* One grid for the whole list rather than a fixed column per row: at 112px a
    longer label such as "Amount (excl. tax):" ran straight into its own value,
@@ -2084,8 +2088,8 @@ table tr.liste_titre img.userphoto {
 .ui-tooltip.mytooltip .ts-tooltip-details {
 	display: flex;
 	flex-direction: column;
-	gap: 7px;
-	margin-top: var(--sp-3);
+	gap: 5px;
+	margin-top: 8px;
 }
 .ui-tooltip.mytooltip .ts-tooltip-row {
 	display: grid;
