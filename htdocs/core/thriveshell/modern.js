@@ -1327,8 +1327,15 @@
 			var heading = headerElements.find(function (node) { return node.matches('u'); });
 			var status = headerElements.find(function (node) { return node.matches('.badge-status'); });
 			var metadata = headerElements.find(function (node) { return node.matches('.customer-back, .vendor-back, .prospect-back'); });
+			/* Only the tooltips whose shape has been checked are restructured; the
+			   rest keep Dolibarr's own layout rather than being rearranged blind. An
+			   order carries the same shape as these -- a picto and heading, an
+			   optional status, then label-and-value lines -- but was left out, so its
+			   heading and status stayed in the body and the header held the picto
+			   alone, with a gap where the heading belonged. */
+			var STRUCTURED_KINDS = ['third party', 'user', 'order'];
 			var headingText = heading && (heading.textContent || '').trim().toLowerCase();
-			if (headingText !== 'third party' && headingText !== 'user') {
+			if (STRUCTURED_KINDS.indexOf(headingText) === -1) {
 				content.setAttribute('data-ts-structured', 'native');
 				return;
 			}
