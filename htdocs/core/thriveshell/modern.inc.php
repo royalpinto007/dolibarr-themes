@@ -1981,10 +1981,10 @@ table tr.liste_titre img.userphoto {
 	border-radius: 6px;
 }
 .ui-tooltip.mytooltip .ui-tooltip-content:has(> .photointooltip) .ts-tooltip-header {
-	padding-right: 124px;
+	padding-right: 136px;
 }
 .ui-tooltip.mytooltip .ui-tooltip-content:has(> .photointooltip) .ts-tooltip-status {
-	right: 52px;
+	right: 64px;
 }
 .ui-tooltip.mytooltip .centpercent {
 	position: relative;
