@@ -1514,6 +1514,35 @@ body.ts-command-stats form td input.flat:not(.select2-search__field):not([type="
 	gap: 2px;
 }
 
+/* Date fields in a filter row. The wrapper was 118px while holding a 112px
+   input and a 34px picker, so the picker overflowed its own wrapper and came to
+   rest between the two fields, reading as though it belonged to neither. Let the
+   wrapper take the width its contents need, and trim the input to make room.
+   The inputs also ran shorter than the picker beside them and the search box
+   further along the bar, which is what made the row look ragged. */
+.ts-column-filter-control .nowrapfordate,
+.ts-column-filter-control .nowraponall {
+	width: auto !important;
+	max-width: none !important;
+	flex: 0 0 auto;
+}
+.ts-column-filter-control .nowrapfordate input.maxwidthdate {
+	width: 92px !important;
+	min-width: 0 !important;
+	max-width: none !important;
+}
+.ts-column-filter-control .nowrapfordate input:not([type="hidden"]),
+.ts-column-filter-control > input.flat:not([type="checkbox"]):not([type="radio"]) {
+	height: 34px;
+	box-sizing: border-box;
+	vertical-align: middle;
+}
+.ts-column-filter-control .nowrapfordate img.ui-datepicker-trigger {
+	width: 30px;
+	height: 30px;
+	flex: none;
+}
+
 .ts-column-filters { position: static; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
