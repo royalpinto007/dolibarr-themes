@@ -7594,20 +7594,25 @@ body.ts-settings-page .ts-settings-actions a.butAction {
    applying the shared COMMAND card and control geometry. */
 body.ts-accounting-files form.ts-accounting-export-form {
 	margin: 0;
-	padding: 24px 28px 28px;
-	border: 1px solid var(--c-hairline);
-	border-radius: var(--r-lg);
-	background: var(--c-surface);
-	box-shadow: var(--sh-sm);
+	padding: 22px 28px 26px;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
 	color: var(--c-ink-2);
+	font-size: .8125rem;
 	line-height: 1.45;
 }
 body.ts-accounting-files .ts-accounting-export-intro {
 	display: block;
-	margin: 0 0 18px;
+	margin: 0 0 14px;
 	color: var(--c-muted);
 	font-size: .875rem;
 }
+/* The legacy form emits two literal breaks after the intro; the intro already
+   owns its spacing, so those breaks created the large blank band in the card. */
+body.ts-accounting-files .ts-accounting-export-intro + br,
+body.ts-accounting-files .ts-accounting-export-intro + br + br { display: none; }
 body.ts-accounting-files form[name="searchfiles"] .divfordateinput {
 	display: inline-flex;
 	align-items: center;
@@ -7639,8 +7644,8 @@ body.ts-accounting-files form[name="searchfiles"] button.datenowlink {
 	color: var(--c-muted);
 }
 body.ts-accounting-files form[name="searchfiles"] .select2-container {
-	width: 320px !important;
-	max-width: min(320px, 100%);
+	width: 260px !important;
+	max-width: min(260px, 100%);
 	vertical-align: middle;
 }
 body.ts-accounting-files form[name="searchfiles"] .select2-selection,
@@ -7653,9 +7658,12 @@ body.ts-accounting-files form[name="searchfiles"] select {
 body.ts-accounting-files form[name="searchfiles"] input[type="checkbox"] {
 	width: 16px;
 	height: 16px;
-	margin: 0 5px 0 12px;
+	margin: 0 4px 0 8px;
 	accent-color: var(--c-accent);
 	vertical-align: middle;
+}
+body.ts-accounting-files form[name="searchfiles"] input[type="checkbox"] + * {
+	font-size: .8125rem;
 }
 body.ts-accounting-files form[name="searchfiles"] input[type="submit"],
 body.ts-accounting-files form[name="searchfiles"] button[type="submit"] {
