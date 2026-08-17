@@ -249,6 +249,60 @@
 		});
 	}
 
+	/* Widget columns sized from what they actually hold. The header is usually a
+	   single title cell spanning every column, so fixed layout has nothing to size
+	   from and splits them evenly -- a customer name ends up as wide as a status
+	   dot. Guessing at column roles and pinning pixel widths starved the
+	   neighbours on some pages; letting content size them overflowed the card on
+	   others. So measure what each column wants, then express those as percentages
+	   of the table: a share cannot overflow the table, and a floor keeps any
+	   column from collapsing. */
+	function sizeModuleIndexColumns(table) {
+		var columnCount = Array.prototype.reduce.call(table.rows || [], function (count, row) {
+			return row.classList.contains('liste_titre') ? count : Math.max(count, row.cells.length);
+		}, 0);
+		if (columnCount < 2) { return; }
+		var rows = Array.prototype.filter.call(table.rows || [], function (row) {
+			return !row.classList.contains('liste_titre')
+				&& !row.classList.contains('ts-module-index-empty-row')
+				&& row.cells.length === columnCount
+				&& !Array.prototype.some.call(row.cells, function (cell) { return (cell.colSpan || 1) > 1; });
+		});
+		if (!rows.length) { return; }
+		var existing = table.querySelector(':scope > colgroup.ts-module-index-cols');
+		if (existing) { existing.remove(); }
+
+		/* Measure against auto layout, which sizes each column to its content. The
+		   stylesheet pins fixed layout with !important, so the override has to carry
+		   the same weight to take effect for the measurement. */
+		table.style.setProperty('table-layout', 'auto', 'important');
+		var want = [];
+		for (var index = 0; index < columnCount; index++) {
+			var widest = 0;
+			rows.forEach(function (row) {
+				var cell = row.cells[index];
+				if (!cell) { return; }
+				widest = Math.max(widest, cell.scrollWidth, Math.ceil(cell.getBoundingClientRect().width));
+			});
+			want.push(Math.max(widest, 20));
+		}
+		table.style.removeProperty('table-layout');
+
+		var total = want.reduce(function (sum, value) { return sum + value; }, 0);
+		if (!total) { return; }
+		var floor = Math.min(100 / (columnCount * 2.5), 12);
+		var shares = want.map(function (value) { return Math.max((value / total) * 100, floor); });
+		var scale = 100 / shares.reduce(function (sum, value) { return sum + value; }, 0);
+		var group = document.createElement('colgroup');
+		group.className = 'ts-module-index-cols';
+		shares.forEach(function (value) {
+			var col = document.createElement('col');
+			col.style.width = (value * scale).toFixed(3) + '%';
+			group.appendChild(col);
+		});
+		table.insertBefore(group, table.firstChild);
+	}
+
 	/* Standard module index pages reuse the same two-column dashboard boxes. The
 	   Home and Third Party dashboards have richer adapters and remain excluded. */
 	function polishSharedModuleIndex() {
@@ -3784,6 +3838,9 @@
 		   the page has settled. */
 		window.addEventListener('load', function () {
 			try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+			try {
+				document.querySelectorAll('.ts-module-index-data-card').forEach(sizeModuleIndexColumns);
+			} catch (e) { /* leave the even split */ }
 			window.setTimeout(function () {
 				try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
 			}, 400);
