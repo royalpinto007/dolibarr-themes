@@ -1656,6 +1656,43 @@ body.ts-command-stats .ts-stats-empty-icon {
 	font-size: 18px;
 }
 
+/* Controls promoted out of the toolbar arrive carrying the toolbar's own layout
+   class, which seats a label beside its field. In the panel every control stacks
+   its label above a full-width field, so a promoted one squeezed its field into
+   whatever the heading left over -- a few characters wide, and its dropdown
+   rendered one letter per line. Put them in the panel's layout, and keep a long
+   heading to two lines so it cannot crowd the field again. */
+.ts-column-filters-panel > .ts-column-filter-control {
+	display: grid !important;
+	grid-template-columns: minmax(0, 1fr) !important;
+	gap: var(--sp-1);
+	align-items: start;
+	min-width: 0;
+}
+/* A date range still wants its two fields side by side; the single column above
+   is for the promoted controls, not for these. */
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrapfordate + .nowrapfordate) {
+	grid-template-columns: max-content max-content !important;
+	column-gap: var(--sp-3);
+	justify-content: start;
+	align-items: center;
+}
+.ts-column-filters-panel > .ts-column-filter-control > .ts-column-filter-label {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	line-height: 1.3;
+}
+.ts-column-filters-panel > .ts-column-filter-control > .select2-container,
+.ts-column-filters-panel > .ts-column-filter-control > select,
+.ts-column-filters-panel > .ts-column-filter-control > input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]) {
+	width: 100% !important;
+	min-width: 0 !important;
+	max-width: none !important;
+	box-sizing: border-box;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
