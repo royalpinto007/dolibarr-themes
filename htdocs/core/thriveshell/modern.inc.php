@@ -5657,6 +5657,34 @@ body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_
 	vertical-align: middle;
 	margin-right: 4px;
 }
+/* Recent proposal/order widgets wrap each reference in a small nested table.
+   The card's ellipsis rule must not collapse that inner reference cell to the
+   icon alone; keep the nested table fluid and let its reference remain readable. */
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > table {
+	width: 100% !important;
+	table-layout: auto !important;
+}
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > table td {
+	max-width: none !important;
+	min-width: 0 !important;
+	overflow: visible !important;
+	text-overflow: clip !important;
+}
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > table td a {
+	display: inline-flex !important;
+	max-width: 100% !important;
+	overflow: visible !important;
+	text-overflow: clip !important;
+}
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > table > tbody > tr > td:first-child {
+	width: 96px !important;
+	min-width: 96px !important;
+}
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > table > tbody > tr > td:nth-child(2),
+body.ts-command-module-index .ts-module-index-data-card > tbody > tr:not(.liste_titre) > td > table > tbody > tr > td:nth-child(3) {
+	width: 16px !important;
+	min-width: 16px !important;
+}
 
 body.ts-command-module-index .ts-module-stat-summary {
 	display: grid;
