@@ -2849,6 +2849,39 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > 
 	margin: 0;
 	color: var(--c-muted);
 }
+/* Relational Select2 fields often carry Dolibarr's adjacent "new" link
+   (the fa-plus-circle action).  It is a sibling of the trigger in the
+   original table cell; the grid above otherwise auto-places that sibling on
+   a second row.  Compose these cells as one inline control group while
+   preserving the original link and form behaviour. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > .select2-container,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > span:has(> .select2-container),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > div:has(> .select2-container) {
+	flex: 1 1 auto;
+	width: auto !important;
+	min-width: 0 !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus-circle),
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 32px;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	border-radius: 7px;
+	color: var(--c-accent) !important;
+}
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus-circle):hover,
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus):hover {
+	background: var(--c-accent-soft);
+}
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(textarea),
 body#mainbody form.ts-modern-form table.ts-modern-form-table tr:has(.select2-selection--multiple) {
 	align-items: start;
@@ -5804,6 +5837,37 @@ body.ts-command-form-page .ts-command-form-fields > tbody > tr > td {
 	vertical-align: middle;
 }
 body.ts-command-form-page .ts-command-form-fields > tbody > tr:last-child > td { border-bottom: 0 !important; }
+/* Keep Dolibarr's adjacent "new" action beside relational selects.  The
+   legacy markup emits the plus-circle link as a sibling of Select2; without
+   an inline value-group it wraps onto its own line. */
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > .select2-container,
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > span:has(> .select2-container),
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > div:has(> .select2-container) {
+	flex: 1 1 auto;
+	width: auto !important;
+	min-width: 0 !important;
+}
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus-circle),
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 32px;
+	width: 32px;
+	height: 32px;
+	margin: 0;
+	border-radius: 7px;
+	color: var(--c-accent) !important;
+}
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus-circle):hover,
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus):hover {
+	background: var(--c-accent-soft);
+}
 body.ts-command-form-page .ts-command-form-fields > tbody > tr > td:first-child,
 body.ts-command-form-page .ts-command-form-fields .titlefield,
 body.ts-command-form-page .ts-command-form-fields .titlefieldcreate,
