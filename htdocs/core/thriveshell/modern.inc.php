@@ -8341,7 +8341,8 @@ table.cal_month .ts-agenda-month-more:focus-visible { background: color-mix(in s
 	   phone. Give every header a fixed share of the calendar and clip within its
 	   own cell instead of allowing neighbouring labels to run together. */
 	table.cal_month { table-layout: fixed !important; }
-	table.cal_month th {
+	table.cal_month th,
+	table.cal_month td.tdfordaytitle {
 		min-width: 0 !important;
 		padding-inline: 1px !important;
 		font-size: 9px !important;
