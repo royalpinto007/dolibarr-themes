@@ -4021,12 +4021,25 @@
 				field.className = 'ts-setting';
 				var label = document.createElement('div');
 				label.className = 'ts-setting-label';
-				Array.prototype.slice.call(row.cells[0].childNodes).forEach(function (node) { label.appendChild(node); });
 				var control = document.createElement('div');
 				control.className = 'ts-setting-control';
+				var cells = Array.prototype.slice.call(row.cells);
+				/* Most setup rows are Label | Control, but warning/threshold tables
+				   commonly use Icon | Label | Control.  Finding the first cell that
+				   carries a real editable control preserves every leading label cell
+				   (including its icon) and prevents prose from being squeezed into a
+				   compact numeric-control band.  Rows whose control is intentionally
+				   in their first cell (radio/checkbox settings) retain the old split. */
+				var controlStart = cells.findIndex(function (cell) {
+					return Boolean(cell.querySelector('input:not([type="hidden"]), select, textarea'));
+				});
+				if (controlStart < 1) { controlStart = 1; }
+				cells.slice(0, controlStart).forEach(function (cell) {
+					Array.prototype.slice.call(cell.childNodes).forEach(function (node) { label.appendChild(node); });
+				});
 				/* Trailing cells are usually help icons or units; keep them with the
-				   control rather than letting them form phantom columns. */
-				Array.prototype.slice.call(row.cells).slice(1).forEach(function (cell) {
+				   actual control rather than letting them form phantom columns. */
+				cells.slice(controlStart).forEach(function (cell) {
 					Array.prototype.slice.call(cell.childNodes).forEach(function (node) { control.appendChild(node); });
 				});
 				control.classList.add(classifyControl(control));
