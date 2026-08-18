@@ -92,6 +92,23 @@
 		return true;
 	}
 
+	function normalizeMemberContentSpacing() {
+		if (!document.body.classList.contains('mod-member')) { return false; }
+		var changed = false;
+		Array.from(document.querySelectorAll('table')).forEach(function (table) {
+			var title = Array.from(table.querySelectorAll('.col-title, .titre')).find(function (node) {
+				return /recent events/i.test((node.textContent || '').trim());
+			});
+			if (title) {
+				table.classList.add('ts-member-recent-events');
+				var section = table.closest('.ts-record-section-events');
+				if (section) { section.classList.add('ts-member-recent-events-section'); }
+				changed = true;
+			}
+		});
+		return changed;
+	}
+
 	function moveActionsIntoHeader() {
 		var bar = document.querySelector('div.tabsAction');
 		var banner = findBanner();
@@ -4108,6 +4125,7 @@
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { normalizeMemberRecordHeader(); } catch (e) { /* retain the native member header */ }
+		try { normalizeMemberContentSpacing(); } catch (e) { /* retain native member spacing */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { applyPageHeadIcon(); } catch (e) { /* leave the header without an icon */ }
 		try { polishThirdPartyDashboard(); } catch (e) { /* retain the native Third Parties module landing */ }
