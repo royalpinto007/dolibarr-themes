@@ -6000,6 +6000,9 @@ td.ts-command-empty-state::before {
 	left: 50%;
 	width: 36px;
 	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	transform: translateX(-50%);
 	border-radius: 10px;
 	background: var(--c-accent-soft);
@@ -6007,7 +6010,8 @@ td.ts-command-empty-state::before {
 	font-family: "Font Awesome 5 Free", "Font Awesome 6 Free", FontAwesome;
 	font-size: 16px;
 	font-weight: 900;
-	line-height: 36px;
+	line-height: 1;
+	box-sizing: border-box;
 }
 body.ts-command-form-page .ts-command-form-actions {
 	display: flex !important;
