@@ -8724,17 +8724,18 @@ body.ts-command-record-secondary div.tabBar.ts-entity-card > form > .tabs {
 	border-radius: var(--r-lg);
 	box-shadow: var(--sh-sm);
 }
-body.page-card_note .ts-member-note-layout { width: 100%; }
-body.page-card_note .ts-member-note-layout > .ts-member-note-details { width: min(100%, 720px) !important; margin: 0 0 16px !important; }
-body.page-card_note .ts-member-note-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; }
+body.page-card_note .ts-member-note-layout { display: grid; grid-template-columns: minmax(420px, 48%) minmax(0, 1fr); gap: 16px; width: 100%; align-items: start; }
+body.page-card_note .ts-member-note-layout > .ts-member-note-details { width: 100% !important; margin: 0 !important; }
+body.page-card_note .ts-member-note-grid { display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%; }
+body.page-card_note .ts-member-note-details td:first-child { width: 190px; white-space: nowrap; }
 body.page-card_note .ts-member-note-grid .ts-member-note-card { width: 100% !important; margin: 0 !important; min-height: 132px; }
 body.page-card_note .ts-member-note-grid .ts-member-note-card tr { min-height: 48px; padding: 0 20px; border-bottom: 1px solid #edf0f4; }
 body.page-card_note .ts-member-note-grid .ts-member-note-card .ts-member-note-empty { min-height: 74px; padding: 18px 20px; }
 body.page-card_note .ts-member-note-grid .ts-member-note-card .editfielda { width: 34px; height: 34px; border-radius: 8px; }
 body.page-card_note .ts-member-note-grid .ts-member-note-card .editfielda .fa-pencil-alt { font-size: 13px !important; }
 @media (max-width: 760px) {
-	body.page-card_note .ts-member-note-grid { grid-template-columns: 1fr; }
-	body.page-card_note .ts-member-note-layout > .ts-member-note-details { width: 100% !important; }
+	body.page-card_note .ts-member-note-layout { display: block; }
+	body.page-card_note .ts-member-note-layout > .ts-member-note-details { width: 100% !important; margin-bottom: 16px !important; }
 }
 
 body.ts-member-documents-page .ts-member-files-details { display:block; width:100% !important; margin:0 0 16px !important; padding:12px 18px !important; border:1px solid #e7e9ee !important; border-radius:12px !important; background:#fff !important; box-shadow:0 4px 16px rgba(15,23,42,.045) !important; border-collapse:separate !important; }
