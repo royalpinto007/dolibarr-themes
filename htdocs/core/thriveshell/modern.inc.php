@@ -156,6 +156,23 @@ div.tabsAction {
 	margin: var(--sp-4) 0;
 }
 div.tabsAction > * { margin: 0; }
+/* Only the commercial quick-create group gets a surface of its own.  Other
+   action rows stay on their page canvas and inherit no accidental card chrome. */
+.ts-commercial-create-actions {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 14px 16px;
+	margin: 0 0 var(--sp-4) !important;
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+}
+.ts-commercial-create-actions > * { flex: 0 0 auto; }
+@media (max-width: 640px) {
+	.ts-commercial-create-actions { justify-content: stretch; }
+	.ts-commercial-create-actions > * { flex: 1 1 180px; }
+}
 
 /* ==========================================================================
    List filter row

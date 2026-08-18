@@ -1465,6 +1465,27 @@
 		return true;
 	}
 
+	/* The commercial quick-create bar is the one action strip that intentionally
+	   sits on a white surface.  Keep that surface tied to the actual group of
+	   Create…/Bill orders controls instead of styling every Dolibarr action row
+	   as a card.  The controls remain untouched, so their links and permissions
+	   continue to come from Dolibarr. */
+	function scopeCommercialCreateActions() {
+		var labels = ['create proposal', 'create order', 'create contract',
+			'create intervention', 'create expense report',
+			'create invoice or credit note', 'bill orders'];
+		var changed = false;
+		Array.prototype.slice.call(document.querySelectorAll('div.tabsAction, div.center, .ts-pagehead-actions')).forEach(function (host) {
+			if (host.classList.contains('ts-commercial-create-actions')) { return; }
+			var text = (host.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+			var matches = labels.filter(function (label) { return text.indexOf(label) !== -1; }).length;
+			if (matches < 5) { return; }
+			host.classList.add('ts-commercial-create-actions');
+			changed = true;
+		});
+		return changed;
+	}
+
 	function structureAjaxTooltip(root) {
 		/* jQuery UI can leave the hover tooltip mounted while opening a second
 		   instance from the same classforajaxtooltip link on click. Keep one visible
@@ -4179,6 +4200,7 @@
 		try { normalizeContactRecordHeader(); } catch (e) { /* retain the native contact header */ }
 		try { normalizeMemberContentSpacing(); } catch (e) { /* retain native member spacing */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
+		try { scopeCommercialCreateActions(); } catch (e) { /* retain native action layout */ }
 		try { applyPageHeadIcon(); } catch (e) { /* leave the header without an icon */ }
 		try { polishThirdPartyDashboard(); } catch (e) { /* retain the native Third Parties module landing */ }
 		try { polishPartnershipForm(); } catch (e) { /* retain the native Partnership form */ }
