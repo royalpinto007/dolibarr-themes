@@ -153,7 +153,9 @@
 		var bar = document.querySelector('div.tabsAction[data-ts-moved="1"]');
 		if (!bar || bar.querySelector('.ts-more-actions')) { return false; }
 
-		var edit = bar.querySelector('a[href*="action=edit"], .butActionNew');
+		/* Dolibarr uses both action=edit and action=modif depending on the module.
+		   Treat both as the same primary record action. */
+		var edit = bar.querySelector('a[href*="action=edit"], a[href*="action=modif"], .butActionNew');
 		var send = bar.querySelector('#btn-send-mail, a[href*="action=presend"], a[href*="action=send"]');
 		if (edit) { edit.classList.add('ts-record-primary'); }
 		if (send) { send.classList.add('ts-record-secondary'); }
@@ -164,6 +166,25 @@
 			var control = bar.querySelector(selector);
 			if (control && overflow.indexOf(control) === -1) { overflow.push(control); }
 		});
+		/* Commerce and several other record modules expose a generic Create
+		   dropdown plus state-changing actions in the header. Once the action bar
+		   has been moved into the entity card, leaving that whole dropdown visible
+		   is what causes the header to wrap into unrelated rows. Move its original
+		   links, and only the companion state actions, into the existing disclosure.
+		   This is deliberately detected from Dolibarr's dropdown structure rather
+		   than a module URL so matching record headers inherit the same behaviour. */
+		var createHolder = bar.querySelector(':scope > .dropdown-holder');
+		var createMenu = createHolder && createHolder.querySelector(':scope > .dropdown-content');
+		if (createMenu && createMenu.querySelector('a[href]')) {
+			Array.prototype.slice.call(createMenu.querySelectorAll(':scope > a[href]')).forEach(function (control) {
+				if (overflow.indexOf(control) === -1) { overflow.push(control); }
+			});
+			['a[href*="action=shipped"]', 'a[href*="action=classify"]', 'a[href*="action=cancel"]'].forEach(function (selector) {
+				var control = bar.querySelector(selector);
+				if (control && overflow.indexOf(control) === -1) { overflow.push(control); }
+			});
+			createHolder.remove();
+		}
 		if (!overflow.length) { return Boolean(edit || send); }
 
 		var details = document.createElement('details');
