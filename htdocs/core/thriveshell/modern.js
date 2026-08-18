@@ -2134,6 +2134,18 @@
 				var compact = !select.multiple && (fixedEnumFields.has(select.name || select.id || '') || meaningfulOptions.length <= 12);
 				container.classList.toggle('ts-form-select2-compact', compact);
 				container.classList.toggle('ts-form-select2-searchable', !compact);
+				/* Short enums should not inherit the entire form value cell. Size the
+				   trigger from the longest visible option plus comfortable chrome, capped
+				   for responsive layouts; relational/searchable controls keep their
+				   deliberate full or large widths. */
+				if (compact && valueCell) {
+					var longest = meaningfulOptions.reduce(function (max, option) {
+						return Math.max(max, (option.textContent || '').replace(/\s+/g, ' ').trim().length);
+					}, 0);
+					var compactWidth = Math.min(340, Math.max(180, longest * 7 + 76));
+					container.style.setProperty('width', 'min(100%, ' + compactWidth + 'px)', 'important');
+					container.style.setProperty('max-width', compactWidth + 'px', 'important');
+				}
 				var selected = select.options[select.selectedIndex];
 				var rendered = container.querySelector('.select2-selection__rendered');
 				if (rendered && selected && !(selected.textContent || '').replace(/\u00a0/g, ' ').trim()) {
