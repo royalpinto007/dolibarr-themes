@@ -101,6 +101,10 @@ $barheight = 60;
 	?>
 	--c-btn-action: <?php echo $tsCommandColor($butactionbg, '#4F46E5'); ?>;
 	--c-btn-action-text: <?php echo $tsCommandColor($textbutaction, '#ffffff'); ?>;
+	/* Filled actions follow Dolibarr's Skin and colors settings.  Keep their
+	   focus/shadow tint derived from that same configured color too, so a
+	   custom action color never leaves an unrelated indigo halo behind. */
+	--c-btn-action-ring: color-mix(in srgb, var(--c-btn-action) 24%, transparent);
 	--c-accent-ring: rgba(79, 70, 229, 0.22);
 
 	--c-success: #0F7B4F;

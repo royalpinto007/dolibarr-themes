@@ -576,13 +576,13 @@ div.pagination a.btnTitle:has(.fa-plus-circle), div.pagination a.btnTitle:has(.f
 	display: inline-flex; align-items: center; gap: var(--sp-2);
 	min-height: 34px; padding: 0 var(--sp-4);
 	border-radius: var(--r);
-	background: var(--c-accent); border: 1px solid var(--c-accent); color: #fff;
+	background: var(--c-btn-action); border: 1px solid var(--c-btn-action); color: var(--c-btn-action-text);
 	font-size: 0.8125rem; font-weight: 600; line-height: 1;
-	box-shadow: 0 1px 2px var(--c-accent-ring);
+	box-shadow: 0 1px 2px var(--c-btn-action-ring);
 	transition: background var(--t), border-color var(--t);
 }
 div.pagination a.btnTitle:has(.fa-plus-circle):hover, div.pagination a.btnTitle:has(.fa-plus):hover {
-	background: var(--c-accent-hover); border-color: var(--c-accent-hover);
+	filter: brightness(.94);
 }
 div.pagination a.btnTitle:has(.fa-plus-circle)::after, div.pagination a.btnTitle:has(.fa-plus)::after {
 	content: attr(title);
@@ -591,7 +591,7 @@ div.pagination a.btnTitle:has(.fa-plus-circle)::after, div.pagination a.btnTitle
 div.pagination a.btnTitle:has(.fa-plus-circle) .btnTitle-label,
 div.pagination a.btnTitle:has(.fa-plus) .btnTitle-label { display: none; }   /* @title already prints it */
 div.pagination a.btnTitle:has(.fa-plus-circle) span[class*="fa-"],
-div.pagination a.btnTitle:has(.fa-plus) span[class*="fa-"] { color: #fff; }
+div.pagination a.btnTitle:has(.fa-plus) span[class*="fa-"] { color: currentColor; }
 /* Secondary title actions (view mode, tools) stay quiet next to it. */
 a.btnTitle:not(:has(.fa-plus-circle)):not(:has(.fa-plus)) {
 	display: inline-flex; align-items: center; justify-content: center;
@@ -990,13 +990,13 @@ div.pagination a.btnTitle:has(.fa-plus) {
 	display: inline-flex; align-items: center; gap: var(--sp-2);
 	min-height: 36px; padding: 0 var(--sp-4); min-width: 0;
 	border-radius: var(--r);
-	background: var(--c-accent); border: 1px solid var(--c-accent); color: #fff;
+	background: var(--c-btn-action); border: 1px solid var(--c-btn-action); color: var(--c-btn-action-text);
 	font-size: 0.8125rem; font-weight: 600; line-height: 1;
-	box-shadow: 0 1px 2px var(--c-accent-ring);
+	box-shadow: 0 1px 2px var(--c-btn-action-ring);
 	white-space: nowrap;
 }
-.ts-pagehead a.btnTitle.ts-primary-action:hover { background: var(--c-accent-hover); border-color: var(--c-accent-hover); }
-.ts-pagehead a.btnTitle.ts-primary-action span[class*="fa-"] { color: #fff; }
+.ts-pagehead a.btnTitle.ts-primary-action:hover { filter: brightness(.94); }
+.ts-pagehead a.btnTitle.ts-primary-action span[class*="fa-"] { color: currentColor; }
 .ts-action-label { font: inherit; }
 @media only screen and (max-width: 640px) {
 	.ts-pagehead { align-items: stretch; }
@@ -3400,11 +3400,11 @@ body.ts-category-dialog-page .ts-pagehead .ts-primary-action {
 	gap: 7px;
 	height: 40px;
 	padding: 0 15px !important;
-	border: 1px solid var(--c-accent) !important;
+	border: 1px solid var(--c-btn-action) !important;
 	border-radius: 8px !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
-	box-shadow: 0 3px 8px var(--c-accent-ring);
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
+	box-shadow: 0 3px 8px var(--c-btn-action-ring);
 }
 body.ts-category-dialog-page .fichecenter.ts-category-dialog-list {
 	border: 1px solid #e7e9ee;
@@ -5234,9 +5234,9 @@ body.ts-partnership-form-page .ts-partnership-actions input[name="cancel"] {
 body.ts-partnership-form-page .ts-partnership-actions input[name="add"],
 body.ts-partnership-form-page .ts-partnership-actions input[name="save"] {
 	min-width: 205px;
-	border: 1px solid #5b4cf0 !important;
-	background: #5b4cf0 !important;
-	color: #fff !important;
+	border: 1px solid var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 }
 body.ts-partnership-form-page .select2-dropdown.ts-partnership-select-dropdown {
 	border: 1px solid #dbe2ec !important;
@@ -6192,9 +6192,9 @@ body.ts-command-form-page .ts-command-form-actions button {
 	font-weight: 650 !important;
 }
 body.ts-command-form-page .ts-command-submit-primary {
-	border-color: var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border-color: var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 }
 body.ts-command-form-page .ts-command-submit-secondary {
 	border-color: #dfe4ec !important;
@@ -6206,16 +6206,16 @@ body.ts-command-form-page .ts-command-submit-secondary {
    .button-save. Keep that action in the shared COMMAND indigo hierarchy. */
 body.page-card input.button-save,
 body.page-card button.button-save {
-	border-color: var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border-color: var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 }
 /* Some native card forms expose only the shared action-row marker. */
 .ts-modern-form-actions input.button-save,
 .ts-modern-form-actions button.button-save {
-	border-color: var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border-color: var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 }
 @media (max-width: 760px) {
 	body.ts-command-form-page .fiche { padding: 16px 12px 30px !important; }
@@ -6719,8 +6719,8 @@ body.ts-thirdparty-events .ts-events-create {
 	min-height: 42px !important;
 	padding: 0 17px !important;
 	border-radius: 8px !important;
-	background: #5546e8 !important;
-	color: #fff !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 }
 body.ts-thirdparty-events .ts-events-native-title-source { display: none !important; }
 body.ts-thirdparty-events .ts-events-toolbar {
@@ -8054,25 +8054,37 @@ body.ts-settings-page .ts-settings-action {
 	cursor: pointer;
 }
 body.ts-settings-page .ts-settings-action-primary {
-	border: 1px solid var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border: 1px solid var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 }
 /* A number of native setup forms submit an unnamed input rather than the
    composed .ts-settings-action-primary class. Keep those real Save actions in
    the same COMMAND hierarchy instead of exposing Dolibarr's red default. */
 body.ts-settings-page input[type="submit"],
 body.ts-settings-page button[type="submit"] {
-	border: 1px solid var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	border: 1px solid var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 	min-height: 42px;
 	padding-inline: 20px !important;
 	border-radius: var(--r) !important;
 	font-weight: 600;
 }
 body.ts-settings-page input[type="submit"]:hover,
-body.ts-settings-page button[type="submit"]:hover { filter: brightness(1.06); }
+body.ts-settings-page button[type="submit"]:hover { filter: brightness(.94); }
+/* Native setup pages often implement Cancel as another submit control. It is
+   an escape route, not an action-color button, so it must retain the shared
+   neutral treatment even when the configured action color is changed. */
+body.ts-settings-page input[type="submit"][name="cancel"],
+body.ts-settings-page input[type="submit"].button-cancel,
+body.ts-settings-page button[type="submit"][name="cancel"],
+body.ts-settings-page button[type="submit"].button-cancel {
+	border-color: var(--c-border) !important;
+	background: var(--c-surface) !important;
+	color: var(--c-ink-2) !important;
+	filter: none !important;
+}
 body.ts-settings-page .ts-settings-action-secondary,
 body.ts-settings-page .ts-settings-actions a.butAction {
 	border: 1px solid var(--c-border) !important;
@@ -8161,10 +8173,10 @@ body.ts-accounting-files form[name="searchfiles"] button[type="submit"] {
 	height: 40px;
 	margin-left: 12px;
 	padding: 0 20px;
-	border: 1px solid var(--c-accent) !important;
+	border: 1px solid var(--c-btn-action) !important;
 	border-radius: var(--r);
-	background: var(--c-accent) !important;
-	color: #fff !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
 	font-weight: 650;
 }
 @media only screen and (max-width: 700px) {
