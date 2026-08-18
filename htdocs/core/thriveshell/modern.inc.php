@@ -8283,6 +8283,39 @@ body.ts-category-index table.ts-category-index-table > tbody > tr.pair { backgro
 
 /* Busy month cells retain their real event links but disclose surplus entries
    instead of stretching one week into a page-length column. */
+/* A single Dolibarr calendar event can contain a full title, an avatar, and a
+   status cell.  In month view that is information density, not a record card:
+   constrain the visual preview while preserving the original event link and
+   its native title tooltip. */
+table.cal_month .agendacell > .event > table.cal_event {
+	table-layout: fixed !important;
+	width: 100% !important;
+	margin: 0 !important;
+	font-size: 11px !important;
+}
+table.cal_month .agendacell > .event > table.cal_event td.cal_event {
+	min-width: 0 !important;
+	padding: 5px 4px !important;
+	white-space: normal !important;
+	vertical-align: top !important;
+}
+table.cal_month .agendacell > .event .cal_event_title {
+	display: -webkit-box !important;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden !important;
+	line-height: 1.35 !important;
+	word-break: break-word;
+}
+table.cal_month .agendacell > .event > table.cal_event td.cal_event > br,
+table.cal_month .agendacell > .event > table.cal_event td.cal_event > a.classforajaxtooltip:not(.cal_event_title) {
+	display: none !important;
+}
+table.cal_month .agendacell > .event {
+	max-height: 66px;
+	margin-bottom: 4px;
+	overflow: hidden;
+}
 table.cal_month .agendacell > .event.ts-agenda-month-overflow { display: none; }
 table.cal_month .agendacell.ts-agenda-month-expanded > .event.ts-agenda-month-overflow { display: block; }
 table.cal_month .ts-agenda-month-more {
