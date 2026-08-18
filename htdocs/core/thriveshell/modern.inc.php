@@ -1689,7 +1689,8 @@ body.ts-command-stats .ts-stats-empty-icon {
 /* Long relational Select2 fields (Dolibarr marks these minwidth500) need a
    deliberate wide slot in the advanced-filter grid. Keeping them in a single
    compact column is what caused their popup/options to look detached. */
-.ts-column-filters-panel > .ts-column-filter-control:has(.select2-container.minwidth500) {
+.ts-column-filters-panel > .ts-column-filter-control:has(.select2-container.minwidth500),
+.ts-column-filters-panel > .ts-column-filter-control:has(select.minwidth500) {
 	grid-column: span 2;
 }
 /* A date range still wants its two fields side by side; the single column above
