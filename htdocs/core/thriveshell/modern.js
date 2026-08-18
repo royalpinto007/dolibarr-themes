@@ -1455,6 +1455,16 @@
 	}
 
 	function structureAjaxTooltip(root) {
+		/* jQuery UI can leave the hover tooltip mounted while opening a second
+		   instance from the same classforajaxtooltip link on click. Keep one visible
+		   COMMAND preview; the newest instance is the one belonging to the current
+		   interaction. */
+		var mountedTooltips = Array.from(document.querySelectorAll('.ui-tooltip.mytooltip'));
+		if (mountedTooltips.length > 1) {
+			mountedTooltips.slice(0, -1).forEach(function (tip) {
+				tip.style.setProperty('display', 'none', 'important');
+			});
+		}
 		/* Some classes wrap their tooltip in a full-width div and some do not --
 		   a third party opens one, an order writes its content straight into the
 		   tooltip -- so keying on that wrapper alone meant the ones without it were
