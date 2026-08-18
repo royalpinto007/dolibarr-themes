@@ -3500,6 +3500,13 @@ body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value
 	gap: 8px;
 }
 form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > .select2-container { grid-column: 1; width: 100% !important; }
+/* The compound layout owns the two tracks, while the shared semantic select
+   classifier owns the compact trigger inside track one. This prevents a short
+   enum such as Incoterms from leaving a detached chevron across the whole row. */
+body#mainbody form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > .select2-container.ts-command-select-compact {
+	width: min(100%, 340px) !important;
+	justify-self: start;
+}
 form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value .select2-selection--single { width: 100% !important; }
 form.ts-modern-form tr.ts-form-compound-incoterms td.ts-form-value > input[name="location_incoterms"] { grid-column: 2; width: 100% !important; }
 body#mainbody form.ts-modern-form tr.ts-form-compound-capital td.ts-form-value { gap: 0; }

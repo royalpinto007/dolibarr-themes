@@ -1379,13 +1379,48 @@
 			var renderedId = rendered && rendered.id ? rendered.id.replace(/^select2-/, '').replace(/-container$/, '') : '';
 			return renderedId ? document.getElementById(renderedId) : null;
 		}
-		form.querySelectorAll('.select2-container').forEach(function (control) {
-			control.classList.add('ts-command-select');
-			var select = sourceSelectFor(control);
-			if (!select) { return; }
-			var options = Array.from(select.options || []).filter(function (option) { return (option.textContent || '').replace(/\s+/g, '').length; });
-			control.classList.toggle('ts-command-select-compact', !select.multiple && options.length > 0 && options.length <= 12);
-		});
+		/* Dolibarr's legacy width helpers describe a control's intended size, but
+		   several pages subsequently stretch the Select2 wrapper to the whole value
+		   cell. Classify the *source* control once, then give native and Select2
+		   renderings the same compact/relational contract. This deliberately keys off
+		   option cardinality and existing generic width hints, never field names. */
+		function applySemanticSelectSizing() {
+			form.querySelectorAll('select').forEach(function (select) {
+				if (select.closest('.select2-dropdown')) { return; }
+				var options = Array.from(select.options || []).filter(function (option) {
+					return (option.textContent || '').replace(/\s+/g, '').length;
+				});
+				var classes = select.className || '';
+				var legacyCompact = /(?:^|\s)(?:width(?:50|75|100|150|200|250|300)|maxwidth(?:100|150|200|250|300)|selectformat)(?:\s|$)/.test(classes);
+				var compact = !select.multiple && options.length > 0 && (options.length <= 12 || legacyCompact);
+				/* Select2 may be initialized after this enhancer and some Dolibarr
+				   versions insert helper nodes between the source and its renderer. */
+				var control = Array.from(form.querySelectorAll('.select2-container')).find(function (candidate) {
+					return sourceSelectFor(candidate) === select;
+				}) || select;
+				control.classList.add('ts-command-select');
+				control.classList.toggle('ts-command-select-compact', compact);
+				control.classList.toggle('ts-command-select-relational', !compact);
+				if (!compact) { return; }
+				var longest = options.reduce(function (max, option) {
+					return Math.max(max, (option.textContent || '').replace(/\s+/g, ' ').trim().length);
+				}, 0);
+				var width = Math.min(340, Math.max(180, longest * 7 + 76));
+				control.style.setProperty('width', 'min(100%, ' + width + 'px)', 'important');
+				control.style.setProperty('max-width', width + 'px', 'important');
+				/* The real select stays hidden under Select2, but native controls need the
+				   exact same geometry when Select2 is not active or is initialized later. */
+				if (control === select) {
+					select.style.setProperty('width', 'min(100%, ' + width + 'px)', 'important');
+					select.style.setProperty('max-width', width + 'px', 'important');
+				}
+			});
+		}
+		applySemanticSelectSizing();
+		/* Re-run once Select2 has mounted its visible wrapper. The observer is
+		   scoped to this form so unrelated body-mounted popovers cannot affect it. */
+		window.requestAnimationFrame(applySemanticSelectSizing);
+		new MutationObserver(function () { window.requestAnimationFrame(applySemanticSelectSizing); }).observe(form, { childList: true, subtree: true });
 		function polishOpenFormDropdown() {
 			window.requestAnimationFrame(function () {
 				var open = form.querySelector('.select2-selection[aria-expanded="true"]');
