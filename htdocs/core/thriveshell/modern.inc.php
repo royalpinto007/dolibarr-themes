@@ -1692,6 +1692,7 @@ body.ts-command-stats .ts-stats-empty-icon {
 .ts-column-filters-panel > .ts-column-filter-control:has(.select2-container.minwidth500),
 .ts-column-filters-panel > .ts-column-filter-control:has(select.minwidth500) {
 	grid-column: span 2;
+	width: 100% !important;
 }
 /* A date range still wants its two fields side by side; the single column above
    is for the promoted controls, not for these. */
