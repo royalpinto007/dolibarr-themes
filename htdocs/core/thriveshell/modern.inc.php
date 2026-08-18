@@ -8686,6 +8686,21 @@ body.ts-command-record-secondary div.tabBar.ts-entity-card > :first-child:not(.t
 	border-radius: var(--r-lg) !important;
 	box-shadow: var(--sh-sm) !important;
 }
+body.ts-command-record-secondary div.tabBar.ts-entity-card > form > .arearef,
+body.ts-command-record-secondary div.tabBar.ts-entity-card > form > .arearefnobottom,
+body.ts-command-record-secondary div.tabBar.ts-entity-card > form > .arearefnoborder {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-height: 104px;
+	margin: 0 0 var(--sp-4) !important;
+	padding: 20px 24px !important;
+	box-sizing: border-box;
+	background: var(--c-surface) !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r-lg) !important;
+	box-shadow: var(--sh-sm) !important;
+}
 body.ts-command-record-secondary div.tabBar.ts-entity-card > div.tabs {
 	margin: 0 0 var(--sp-4) !important;
 	padding: 0 var(--sp-3);
@@ -8695,6 +8710,15 @@ body.ts-command-record-secondary div.tabBar.ts-entity-card > div.tabs {
 	box-shadow: var(--sh-sm);
 }
 body.ts-command-record-secondary div.tabBar.ts-entity-card .tabs {
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+}
+body.ts-command-record-secondary div.tabBar.ts-entity-card > form > .tabs {
+	display: block;
+	margin: 0 0 var(--sp-4) !important;
+	padding: 0 var(--sp-3);
 	background: var(--c-surface);
 	border: 1px solid var(--c-border);
 	border-radius: var(--r-lg);
