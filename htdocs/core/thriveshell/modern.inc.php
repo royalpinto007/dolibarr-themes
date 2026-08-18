@@ -8788,6 +8788,28 @@ body.ts-member-documents-page .ts-member-files-linked-head .col-right .btnTitle 
 body.mod-member table.ts-member-recent-events { margin-top:16px !important; }
 body.mod-member .ts-member-recent-events-section { margin-top:16px !important; }
 body.mod-member .ts-record-section-events { margin-top:16px !important; }
+/* Member detail values (notably the linked Type label) must not collapse into
+   a clipped one-letter fragment when the legacy half-column table is placed in
+   the COMMAND card. Keep the value/link as one readable inline unit. */
+body.mod-member .fichecenter .fichehalfleft td.valeur,
+body.mod-member .fichecenter .fichehalfright td.valeur {
+	min-width: 0;
+	white-space: nowrap;
+	overflow: visible !important;
+}
+body.mod-member .fichecenter .fichehalfleft td.valeur a,
+body.mod-member .fichecenter .fichehalfright td.valeur a {
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+	white-space: nowrap;
+}
+@media (max-width:700px) {
+	body.mod-member .fichecenter .fichehalfleft td.valeur,
+	body.mod-member .fichecenter .fichehalfright td.valeur,
+	body.mod-member .fichecenter .fichehalfleft td.valeur a,
+	body.mod-member .fichecenter .fichehalfright td.valeur a { white-space: normal; }
+}
 @media (max-width:700px) { body.ts-member-documents-page .ts-member-files-details tr { grid-template-columns:1fr; gap:0; padding:5px 0; } body.ts-member-documents-page .ts-member-files-upload input[type=file] { width:100%; margin-bottom:8px; } body.ts-member-documents-page .ts-member-files-upload input[type=submit] { margin-left:0; } }
 body.page-card_note div.tabBar.ts-entity-card > form {
 	margin: 0 !important;
