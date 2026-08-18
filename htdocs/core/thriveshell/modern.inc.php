@@ -1730,13 +1730,14 @@ body.ts-command-stats .ts-stats-empty-icon {
 	align-items: start;
 	min-width: 0;
 }
-/* Long relational Select2 fields (Dolibarr marks these minwidth500) need a
-   deliberate wide slot in the advanced-filter grid. Keeping them in a single
-   compact column is what caused their popup/options to look detached. */
+/* Dolibarr marks several relational selectors minwidth500. That describes the
+   old table layout, not a COMMAND filter-panel slot: honoring it here makes one
+   filter spill across two columns and breaks the panel rhythm. The shared
+   control/popup sizing below already matches a bounded visible trigger. */
 .ts-column-filters-panel > .ts-column-filter-control:has(.select2-container.minwidth500),
 .ts-column-filters-panel > .ts-column-filter-control:has(select.minwidth500) {
-	grid-column: span 2;
-	width: 100% !important;
+	grid-column: auto;
+	width: auto !important;
 }
 /* A date range still wants its two fields side by side; the single column above
    is for the promoted controls, not for these. */
@@ -1783,6 +1784,17 @@ body.ts-command-stats .ts-stats-empty-icon {
 	min-width: 0 !important;
 	max-width: none !important;
 	box-sizing: border-box;
+}
+/* Some legacy multi-selects (notably role/contact filters) wrap Select2 in an
+   extra span and carry minwidth500 on the generated selection. The outer
+   container was bounded but the inner selection still expanded to 500px,
+   visually escaping its grid slot. Keep every level of an in-panel Select2
+   bound to the same filter-control width. */
+.ts-column-filters-panel > .ts-column-filter-control :is(.multiselectarraysearch, .multiselectarraysearch_roles, .select2-container, .select2-selection) {
+	box-sizing: border-box;
+	width: 100% !important;
+	min-width: 0 !important;
+	max-width: 100% !important;
 }
 
 /* While the column picker is open its panel must be allowed out of the boxes
