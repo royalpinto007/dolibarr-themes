@@ -2716,7 +2716,14 @@
 							var container = selection && selection.closest('.select2-container');
 							var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
 							if (!container || !dropdown) { return; }
-							var width = container.getBoundingClientRect().width;
+							/* Select2 can retain the width it measured before Dolibarr moved
+							   the control into the advanced-filter grid. Anchor to the visible
+							   filter slot first; this prevents a stale narrow popup (or a popup
+							   detached from a wide control) on every list module. */
+							var anchor = container.closest('.ts-column-filter-control') || container;
+							var anchorRect = anchor.getBoundingClientRect();
+							var width = Math.min(anchorRect.width, window.innerWidth - 24);
+							container.style.setProperty('width', width + 'px', 'important');
 							var source = container.parentElement && container.parentElement.querySelector('select.select2-hidden-accessible');
 							dropdown.classList.add('ts-column-filter-dropdown');
 							if (source && source.getAttribute('data-ts-compact-select2') === '1') {
@@ -2737,7 +2744,7 @@
 							   selects, clamping both axes to the viewport. */
 							var popupRoot = dropdown.parentElement;
 							if (popupRoot) {
-								var rect = container.getBoundingClientRect();
+								var rect = anchorRect;
 								var popupHeight = dropdown.getBoundingClientRect().height;
 								var left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
 								var openAbove = popupHeight > (window.innerHeight - rect.bottom) && rect.top > (window.innerHeight - rect.bottom);
