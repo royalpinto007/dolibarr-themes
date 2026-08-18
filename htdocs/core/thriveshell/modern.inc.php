@@ -8771,6 +8771,13 @@ body.ts-member-documents-page .ts-member-files-linked-head .col-title { flex:1 1
 body.ts-member-documents-page .ts-member-files-linked-head .col-right { margin-left:auto; }
 body.ts-member-documents-page .ts-member-files-linked-head .col-right .btnTitle { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; }
 @media (max-width:700px) { body.ts-member-documents-page .ts-member-files-details tr { grid-template-columns:1fr; gap:0; padding:5px 0; } body.ts-member-documents-page .ts-member-files-upload input[type=file] { width:100%; margin-bottom:8px; } body.ts-member-documents-page .ts-member-files-upload input[type=submit] { margin-left:0; } }
+/* Note keeps the shared tabs, but does not need an additional white banner
+   layer behind the member identity block. */
+body.page-card_note div.tabBar.ts-entity-card > form > .arearef {
+	background: transparent !important;
+	border-color: transparent !important;
+	box-shadow: none !important;
+}
 @media (max-width: 700px) {
 	body.page-card_note .ts-member-note-details tr { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
 	body.page-card_note .ts-member-note-details td { padding: 5px 0 !important; }
