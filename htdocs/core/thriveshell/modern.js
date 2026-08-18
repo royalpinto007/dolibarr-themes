@@ -563,6 +563,12 @@
 
 	function polishMemberNotePage() {
 		if (!document.body.classList.contains('page-card_note')) { return; }
+		/* Note has no record-level action bar, so its banner is the one member
+		   header variant that previously missed the shared header marker. Mark the
+		   existing banner (never recreate it) so the same flex/grid identity rules
+		   used by Contributions keep the status inside the header surface. */
+		var memberBanner = document.querySelector('div.tabBar.ts-entity-card .arearef');
+		if (memberBanner) { memberBanner.classList.add('ts-has-actions'); }
 		var info = document.querySelector('table.tableforfield');
 		if (info) { info.classList.add('ts-member-note-details'); }
 		var notes = [];
