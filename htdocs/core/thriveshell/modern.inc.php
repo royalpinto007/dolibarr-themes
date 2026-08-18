@@ -451,11 +451,13 @@ div.tabsAction .ts-record-secondary {
 .ts-more-actions-menu span.ts-more-action-item {
 	display: flex; align-items: center; justify-content: flex-start;
 	width: 100%; min-height: 36px; margin: 0; padding: 0 var(--sp-3);
-	border: 0; border-radius: var(--r-sm); box-shadow: none;
-	background: transparent; color: var(--c-ink-2); cursor: pointer;
+	border: 0; border-radius: var(--r-sm); box-shadow: none !important;
+	/* This overrides the legacy first-of-type filled-action rule for a moved
+	   Clone/Create link. Only genuinely destructive actions are red below. */
+	background: transparent !important; color: var(--c-ink-2) !important; cursor: pointer;
 }
-.ts-more-actions-menu .ts-more-action-item:hover { background: var(--c-sunken); color: var(--c-ink); }
-.ts-more-actions-menu .ts-more-action-item.butActionDelete { color: var(--c-danger); }
+.ts-more-actions-menu .ts-more-action-item:hover { background: var(--c-sunken) !important; color: var(--c-ink) !important; }
+.ts-more-actions-menu .ts-more-action-item.butActionDelete { color: var(--c-danger) !important; }
 
 @media only screen and (max-width: 900px) {
 	div.tabBar.ts-entity-card > div.arearef.ts-has-actions { padding: var(--sp-4); }
@@ -467,7 +469,7 @@ div.tabsAction .ts-record-secondary {
 @media only screen and (max-width: 640px) {
 	.ts-header-actions div.tabsAction > .ts-record-primary,
 	.ts-header-actions div.tabsAction > .ts-record-secondary { flex: 1 1 calc(50% - var(--sp-2)); }
-	.ts-more-actions { flex: 1 1 100%; }
+	.ts-header-actions div.tabsAction > .ts-more-actions { flex: 1 1 100%; }
 	.ts-more-actions-trigger { width: 100%; }
 	.ts-more-actions-menu { <?php echo $left; ?>: 0; <?php echo $right; ?>: 0; }
 }
