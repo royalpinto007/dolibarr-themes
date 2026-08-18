@@ -8525,6 +8525,7 @@ a.editfielda,
 a.editfield,
 span.editfielda,
 .ts-icon-action {
+	box-sizing: border-box !important;
 	display: inline-flex !important;
 	align-items: center !important;
 	justify-content: center !important;
@@ -8557,9 +8558,22 @@ a.editfield:focus-visible,
 a.editfielda > [class*="fa-"],
 a.editfield > [class*="fa-"],
 span.editfielda > [class*="fa-"],
-.ts-icon-action > [class*="fa-"] {
-	display: block !important;
-	width: auto !important;
+.ts-icon-action > [class*="fa-"],
+a.editfielda > svg,
+a.editfield > svg,
+span.editfielda > svg,
+.ts-icon-action > svg {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 14px !important;
+	height: 14px !important;
+	min-width: 14px !important;
+	max-width: 14px !important;
+	min-height: 14px !important;
+	max-height: 14px !important;
+	flex: 0 0 14px !important;
+	box-sizing: border-box !important;
 	margin: 0 !important;
 	padding: 0 !important;
 	line-height: 1 !important;
