@@ -108,7 +108,10 @@ $barheight = 60;
 	--c-danger: #B3261E;
 	--c-info: #2B5C8A;
 
-	--c-font: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+	/* Arial is available in every supported browser environment. Keeping one
+	   family avoids legacy table/button rules silently falling back to a second
+	   typeface beside the COMMAND shell. */
+	--c-font: Arial, sans-serif;
 	--c-mono: "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, monospace;
 
 	--sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
@@ -230,6 +233,16 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+/* Dolibarr still assigns Arial or inherited font stacks directly to several
+   legacy controls and tables. COMMAND uses one UI typeface everywhere, while
+   icon and code faces remain explicit exceptions below. */
+body :where(*) { font-family: var(--c-font) !important; }
+body :where(.fa, .fas, .far, .fab, [class*="fa-"], .icon, [class^="icon-"]) {
+	font-family: "Font Awesome 5 Free", "Font Awesome 6 Free", FontAwesome !important;
+}
+body :where(.fab, .fa-brands) { font-family: "Font Awesome 5 Brands" !important; }
+body :where(code, pre, kbd) { font-family: var(--c-mono) !important; }
 
 /* Figures align in columns -- the highest-value typographic choice in an ERP. */
 td, th, input, .amount, .refid, .badge, .cmd-kbd { font-variant-numeric: tabular-nums; }

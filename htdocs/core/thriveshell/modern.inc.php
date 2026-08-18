@@ -162,6 +162,28 @@ div.tabsAction {
 	margin: var(--sp-4) 0;
 }
 div.tabsAction > * { margin: 0; }
+/* Dolibarr often prints search and clear as adjacent icon submits inside a
+   nowrap helper. Give the real controls a deliberate gap and identical square
+   geometry everywhere instead of letting their borders fuse. */
+.nowraponall:has(> .button_search + .button_removefilter) {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+}
+.nowraponall:has(> .button_search + .button_removefilter) > .button_search,
+.nowraponall:has(> .button_search + .button_removefilter) > .button_removefilter {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	min-height: 40px;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r) !important;
+	line-height: 1;
+}
 /* Only the commercial quick-create group gets a surface of its own.  Other
    action rows stay on their page canvas and inherit no accidental card chrome. */
 .ts-commercial-create-actions {
@@ -8892,6 +8914,25 @@ body.mod-member .fichecenter .fichehalfright td.valeur a {
 	align-items: center;
 	max-width: 100%;
 	white-space: nowrap;
+}
+
+/* Translation administration is a data grid, not a centred presentation
+   table. Align headers, values, and the filter inputs to the same columns so
+   long translation keys remain visibly associated with their header. */
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) {
+	table-layout: fixed;
+}
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(1) { width: 8% !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(2) { width: 52% !important; text-align: left !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(3) { width: 32% !important; text-align: left !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(4) { width: 8% !important; text-align: center !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr:first-child > :nth-child(2),
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr:first-child > :nth-child(3) {
+	padding-left: var(--sp-3) !important;
+}
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr:first-child input[type="text"] {
+	width: min(100%, 280px) !important;
+	margin: 0 !important;
 }
 @media (max-width:700px) {
 	body.mod-member .fichecenter .fichehalfleft td.valeur,
