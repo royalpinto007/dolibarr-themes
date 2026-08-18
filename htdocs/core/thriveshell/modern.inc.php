@@ -410,6 +410,20 @@ div.tabsAction .ts-record-secondary {
 .ts-header-actions div.tabsAction > .ts-record-primary { order: 1; }
 .ts-header-actions div.tabsAction > .ts-record-secondary { order: 2; }
 .ts-header-actions div.tabsAction > .ts-more-actions { order: 3; }
+/* A legacy first-of-type rule can otherwise promote the first visible action
+   (often Send email) even after the composer has identified Modify as the
+   primary record action. The header classes are the semantic authority. */
+.ts-header-actions div.tabsAction > .ts-record-primary {
+	background: var(--c-btn-action, var(--c-accent)) !important;
+	border-color: var(--c-btn-action, var(--c-accent)) !important;
+	color: var(--c-btn-action-text, #fff) !important;
+}
+.ts-header-actions div.tabsAction > .ts-record-secondary {
+	background: var(--c-surface) !important;
+	border-color: var(--c-border) !important;
+	color: var(--c-ink-2) !important;
+	box-shadow: none !important;
+}
 .ts-more-actions { position: relative; flex: 0 0 auto; }
 .ts-more-actions > summary { list-style: none; }
 .ts-more-actions > summary::-webkit-details-marker { display: none; }
