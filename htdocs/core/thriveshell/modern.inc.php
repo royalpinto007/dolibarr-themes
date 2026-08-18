@@ -6223,6 +6223,14 @@ body.ts-thirdparty-overview .ts-overview-email [class*="fa-"] {
 	padding: 0 !important;
 	color: #64748b !important;
 }
+/* The entity icon already identifies the record in the header. Repeating it in
+   the first Overview tab consumes scarce horizontal space and is what causes
+   lower-priority tabs to clip at the right edge. Keep the existing link and
+   active state, but use the same text-only tab treatment as the other tabs. */
+body.ts-thirdparty-record-context .tabs a[href*="/societe/card.php"] > [class*="fa-"],
+body.ts-thirdparty-record-context .tabs a[href*="/societe/card.php"] > svg {
+	display: none !important;
+}
 body.ts-thirdparty-overview .ts-overview-info {
 	grid-column: 3;
 	grid-row: 1;
