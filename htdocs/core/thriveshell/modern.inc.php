@@ -5424,6 +5424,10 @@ body.ts-thirdparty-documents-tab table.ts-documents-heading {
 body.ts-thirdparty-customer-tab .ts-customer-overview-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	/* Independent record columns must retain their intrinsic height.  The default
+	   grid stretch makes a short activity stack look like an empty white slab
+	   whenever the detail panel beside it happens to be taller. */
+	align-items: start;
 	gap: 16px;
 	margin-top: 16px;
 	padding: 0 !important;
@@ -5432,6 +5436,7 @@ body.ts-thirdparty-customer-tab .ts-customer-overview-grid {
 	box-shadow: none !important;
 }
 body.ts-thirdparty-customer-tab .ts-customer-overview-card {
+	align-self: start;
 	width: auto !important;
 	margin: 0 !important;
 	padding: 20px !important;
