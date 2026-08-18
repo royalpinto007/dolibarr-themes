@@ -587,6 +587,13 @@
 			layout.appendChild(notesGrid);
 			notes.forEach(function (table) { notesGrid.appendChild(table); });
 		}
+		var noteForm = document.querySelector('body.page-card_note div.tabBar.ts-entity-card > form');
+		if (noteForm) {
+			noteForm.style.setProperty('background', 'transparent', 'important');
+			noteForm.style.setProperty('border', '0', 'important');
+			noteForm.style.setProperty('box-shadow', 'none', 'important');
+			noteForm.style.setProperty('padding', '0', 'important');
+		}
 	}
 
 	function polishMemberDocumentsPage() {
