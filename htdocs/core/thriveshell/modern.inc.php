@@ -6159,6 +6159,12 @@ body.ts-thirdparty-overview .ts-entity-identity > .refid > .ts-overview-name {
 }
 body.ts-thirdparty-overview .ts-entity-identity > .refid > a.refid { display: none !important; }
 body.ts-thirdparty-overview .ts-overview-secondary-hidden { display: none !important; }
+/* Some records emit an unclassified legacy secondary line alongside the
+   normalized location/email rows. It can overlap the email at narrow identity
+   widths; the concise overview rows are the only metadata shown in this shell. */
+body.ts-thirdparty-overview .ts-entity-identity > .refid > .refidno {
+	display: none !important;
+}
 body.ts-thirdparty-overview .ts-overview-location {
 	grid-column: 1 / -1;
 	grid-row: 2;
@@ -6169,6 +6175,9 @@ body.ts-thirdparty-overview .ts-overview-location {
 	color: #64748b;
 	font-size: 13px;
 	font-weight: 400;
+}
+body.ts-thirdparty-overview .ts-entity-identity > .refid > .ts-overview-location {
+	display: inline-flex !important;
 }
 body.ts-thirdparty-overview .ts-overview-location [class*="fa-"] { color: #8491a6 !important; }
 body.ts-thirdparty-overview .ts-overview-email {
