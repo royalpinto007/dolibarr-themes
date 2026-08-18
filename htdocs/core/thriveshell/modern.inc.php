@@ -2276,6 +2276,15 @@ table tr.liste_titre img.userphoto {
 }
 .ts-list-card tr.liste_titre > th:not(:first-child),
 .ts-list-card tr.liste_titre > td:not(:first-child) { text-align: center !important; }
+/* The Contacts/Addresses grid deliberately uses centered headings. Match its
+   visible data cells to those axes as well; leaving the names and metadata at
+   the far-left edge of each column made the table read as visibly skewed. The
+   leading bulk-selection slot remains untouched. */
+body.page-contact-list .ts-list-card tr.oddeven > td:not(:first-child),
+body.page-contact-list .ts-list-card tr.impair > td:not(:first-child),
+body.page-contact-list .ts-list-card tr.pair > td:not(:first-child) {
+	text-align: center !important;
+}
 .ts-list-card td a.opacitymedium:is(.customer-back, .vendor-back, .prospect-back) { opacity: 1; }
 .ts-results-footer {
 	display: flex;
