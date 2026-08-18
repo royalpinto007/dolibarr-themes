@@ -92,6 +92,15 @@
 		return true;
 	}
 
+	function normalizeContactRecordHeader() {
+		if (!document.body.classList.contains('mod-societe')) { return false; }
+		var contactTab = document.querySelector('div.tabBar.ts-entity-card a.tab[href*="/contact/card.php"]');
+		var banner = document.querySelector('div.tabBar.ts-entity-card .arearef');
+		if (!contactTab || !banner) { return false; }
+		banner.classList.add('ts-has-actions');
+		return true;
+	}
+
 	function normalizeMemberContentSpacing() {
 		if (!document.body.classList.contains('mod-member')) { return false; }
 		var changed = false;
@@ -595,7 +604,8 @@
 	}
 
 	function polishMemberNotePage() {
-		if (!document.body.classList.contains('page-card_note')) { return; }
+		if (!document.body.classList.contains('page-card_note') && !document.body.classList.contains('page-contact-card_note')) { return; }
+		document.body.classList.add('page-card_note');
 		/* Note has no record-level action bar, so its banner is the one member
 		   header variant that previously missed the shared header marker. Mark the
 		   existing banner (never recreate it) so the same flex/grid identity rules
@@ -636,7 +646,8 @@
 	}
 
 	function polishMemberDocumentsPage() {
-		if (!document.body.classList.contains('page-card_documents')) { return; }
+		if (!document.body.classList.contains('page-card_documents') && !document.body.classList.contains('page-contact-card_documents')) { return; }
+		document.body.classList.add('page-card_documents');
 		var memberBanner = document.querySelector('div.tabBar.ts-entity-card .arearef');
 		if (memberBanner) { memberBanner.classList.add('ts-has-actions'); }
 		document.body.classList.add('ts-member-documents-page');
@@ -4135,6 +4146,7 @@
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { normalizeMemberRecordHeader(); } catch (e) { /* retain the native member header */ }
+		try { normalizeContactRecordHeader(); } catch (e) { /* retain the native contact header */ }
 		try { normalizeMemberContentSpacing(); } catch (e) { /* retain native member spacing */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { applyPageHeadIcon(); } catch (e) { /* leave the header without an icon */ }
