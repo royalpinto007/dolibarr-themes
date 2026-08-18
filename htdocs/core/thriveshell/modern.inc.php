@@ -5586,10 +5586,19 @@ body.page-price_suppliers .ts-product-price-list-card table.liste {
 	border: 0 !important;
 	box-shadow: none !important;
 }
+
+/* Stock-card summary data lives inside the tab card, while the stock table
+   heading follows it as a fiche sibling. Reserve the normal record-section gap
+   so its title/action row never touches the summary or tab strip. */
+body.page-stock_card .fiche > .ts-pagehead {
+	margin-top: 20px !important;
+	margin-bottom: 20px !important;
+}
 @media only screen and (max-width: 700px) {
 	body.page-price_suppliers .ts-product-price-summary { margin: 12px 0 16px !important; }
 	body.page-price_suppliers .ts-product-price-details > tbody > tr > td { padding: 11px 12px !important; }
 	body.page-price_suppliers .ts-product-price-list-card > .ts-pagehead { padding: 0 14px; }
+	body.page-stock_card .fiche > .ts-pagehead { margin-top: 16px !important; margin-bottom: 16px !important; }
 }
 @media only screen and (max-width: 900px) {
 	body.page-stock_info .ts-warehouse-log-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
