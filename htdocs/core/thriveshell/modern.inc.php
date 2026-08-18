@@ -8922,8 +8922,8 @@ body.mod-member .fichecenter .fichehalfright td.valeur a {
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) {
 	table-layout: fixed;
 }
-body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(1) { width: 8% !important; }
-body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(2) { width: 52% !important; text-align: left !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(1) { width: 15% !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(2) { width: 45% !important; text-align: left !important; }
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(3) { width: 32% !important; text-align: left !important; }
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(4) { width: 8% !important; text-align: center !important; }
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr:first-child > :nth-child(2),
