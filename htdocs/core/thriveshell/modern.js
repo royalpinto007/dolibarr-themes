@@ -731,6 +731,43 @@
 		if (memberBanner) { memberBanner.classList.add('ts-has-actions'); }
 	}
 
+	/* Warehouse Log is a record tab whose native content is only three loose
+	   text lines. Compose those original values into the shared record-summary
+	   primitive without recreating the user link or changing any stock routes. */
+	function polishWarehouseLogPage() {
+		if (!/\/product\/stock\/info\.php$/.test(window.location.pathname)) { return; }
+		var content = document.querySelector('.fichecenter');
+		if (!content || content.dataset.tsWarehouseLog === '1') { return; }
+		var user = content.querySelector('a[href*="/user/card.php"]');
+		var text = (content.textContent || '').replace(/\s+/g, ' ').trim();
+		var created = (text.match(/Creation date:\s*(.*?)(?=Latest modification date:|$)/i) || [])[1] || '—';
+		var modified = (text.match(/Latest modification date:\s*(.*)$/i) || [])[1] || '—';
+		if (!/Created by:|Creation date:|Latest modification date:/i.test(text)) { return; }
+		content.dataset.tsWarehouseLog = '1';
+		content.classList.add('ts-warehouse-log-summary');
+		var card = document.createElement('section');
+		card.className = 'ts-record-context-summary ts-warehouse-log-card';
+		var title = document.createElement('h2');
+		title.className = 'ts-warehouse-log-title';
+		title.innerHTML = '<span class="fas fa-history" aria-hidden="true"></span> Activity log';
+		var grid = document.createElement('div');
+		grid.className = 'ts-warehouse-log-grid';
+		function item(icon, label, value) {
+			var entry = document.createElement('div');
+			entry.className = 'ts-warehouse-log-item';
+			entry.innerHTML = '<span class="ts-warehouse-log-icon fas ' + icon + '" aria-hidden="true"></span><div><span class="ts-warehouse-log-label">' + label + '</span><div class="ts-warehouse-log-value"></div></div>';
+			var target = entry.querySelector('.ts-warehouse-log-value');
+			if (value && value.nodeType) { target.appendChild(value); }
+			else { target.textContent = value; }
+			grid.appendChild(entry);
+		}
+		item('fa-user', 'Created by', user || '—');
+		item('fa-calendar-alt', 'Creation date', created);
+		item('fa-clock', 'Latest modification', modified);
+		card.append(title, grid);
+		content.replaceChildren(card);
+	}
+
 	/* A busy monthly calendar should remain a calendar, not turn into an
 	   unbounded activity feed. Dolibarr emits every event as a sibling inside its
 	   day cell, so disclose overflow in-place without changing event URLs or drag
@@ -4548,6 +4585,7 @@
 		try { polishMemberNotePage(); } catch (e) { /* retain the native member note layout */ }
 		try { polishMemberDocumentsPage(); } catch (e) { /* retain the native member documents layout */ }
 		try { polishMemberAgendaPage(); } catch (e) { /* retain the native member agenda layout */ }
+		try { polishWarehouseLogPage(); } catch (e) { /* retain the native warehouse activity log */ }
 		try { compactMonthAgendaEvents(); } catch (e) { /* retain the native agenda density */ }
 	});
 })();

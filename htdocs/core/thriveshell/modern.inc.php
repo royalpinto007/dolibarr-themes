@@ -5322,6 +5322,7 @@ body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef > div:first-
 	flex: 1 1 auto;
 	min-width: 0;
 }
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef .divphotoref,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .divphotoref,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .divphotoref {
 	display: inline-flex;
@@ -5334,6 +5335,7 @@ body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .div
 	background: #f0edff;
 	color: #5846e8;
 }
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef .refid,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid {
 	display: inline-grid;
@@ -5345,6 +5347,7 @@ body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .ref
 	font-size: 24px;
 	font-weight: 680;
 }
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef .refid > .refidno,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid > .refidno,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid > .refidno {
 	grid-column: 1 / -1;
@@ -5352,12 +5355,14 @@ body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .ref
 	font-weight: 400;
 	line-height: 1.55;
 }
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef .refid > .statusref,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid > .statusref,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid > .statusref {
 	grid-column: 2;
 	grid-row: 1;
 	margin: 0;
 }
+body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef .paginationref,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .paginationref,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .paginationref {
 	position: static !important;
@@ -5447,6 +5452,87 @@ body.ts-command-record-secondary .ts-record-context-summary td {
 	border-bottom: 0 !important;
 }
 body.ts-command-record-secondary .ts-record-context-summary td.titlefield { width: 230px; font-weight: 600; }
+
+/* Warehouse activity tabs emit plain text metadata rather than a fiche table.
+   Give that compact log the same independent summary-card language as other
+   record tabs, while keeping the original user link in place. */
+body.page-stock_info .ts-warehouse-log-summary {
+	max-width: 920px;
+	margin: 16px 0 0 !important;
+}
+body.page-stock_info .ts-warehouse-log-card {
+	padding: 20px 22px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+}
+body.page-stock_info .ts-warehouse-log-title {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0 0 16px;
+	font-size: 1rem;
+	font-weight: 650;
+	color: var(--c-ink);
+}
+body.page-stock_info .ts-warehouse-log-title .fas { color: var(--c-accent); }
+body.page-stock_info .ts-warehouse-log-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+body.page-stock_info .ts-warehouse-log-item {
+	display: grid;
+	grid-template-columns: 36px minmax(0, 1fr);
+	align-items: center;
+	gap: 10px;
+	min-height: 58px;
+	padding: 10px 12px;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r);
+	background: var(--c-surface);
+}
+body.page-stock_info .ts-warehouse-log-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 9px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent);
+}
+body.page-stock_info .ts-warehouse-log-label {
+	display: block;
+	margin-bottom: 3px;
+	font-size: .75rem;
+	font-weight: 600;
+	color: var(--c-muted);
+}
+body.page-stock_info .ts-warehouse-log-value {
+	min-width: 0;
+	font-size: .8125rem;
+	font-weight: 550;
+	line-height: 1.35;
+	color: var(--c-ink-2);
+	word-break: break-word;
+}
+body.page-stock_info .ts-warehouse-log-value .userimg img {
+	width: 26px !important;
+	height: 26px !important;
+	margin-right: 6px;
+	border-radius: 50%;
+	vertical-align: middle;
+}
+@media only screen and (max-width: 900px) {
+	body.page-stock_info .ts-warehouse-log-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media only screen and (max-width: 600px) {
+	body.page-stock_info .ts-warehouse-log-summary { margin-top: 12px !important; }
+	body.page-stock_info .ts-warehouse-log-card { padding: 16px; }
+	body.page-stock_info .ts-warehouse-log-grid { grid-template-columns: 1fr; }
+}
 body.ts-thirdparty-notes-tab .ts-notes-card {
 	display: grid;
 	gap: 0;
