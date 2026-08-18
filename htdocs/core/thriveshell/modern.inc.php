@@ -111,6 +111,12 @@ a.butAction, a.butActionDelete, a.butActionRefused, a.butActionNew {
 	border-color: var(--c-border-strong);
 	color: var(--c-ink);
 }
+.butAction:focus-visible, .butActionNew:focus-visible,
+a.butAction:focus-visible, a.butActionNew:focus-visible {
+	/* The configured action colour also owns the visible keyboard focus ring. */
+	outline: 2px solid color-mix(in srgb, var(--c-btn-action, var(--c-accent)) 62%, transparent);
+	outline-offset: 2px;
+}
 /* The primary action on a record: Dolibarr marks it butActionNew, or it is the
    first butAction in the bar. Only one is filled, so the eye has one target. */
 .butActionNew, a.butActionNew,
