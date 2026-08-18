@@ -1671,11 +1671,30 @@ body.ts-command-stats .ts-stats-empty-icon {
 }
 /* A date range still wants its two fields side by side; the single column above
    is for the promoted controls, not for these. */
-.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrapfordate ~ .nowrapfordate) {
-	grid-template-columns: max-content max-content !important;
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrap ~ .nowrap) {
+	grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 	column-gap: var(--sp-3);
 	justify-content: start;
 	align-items: center;
+}
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrap ~ .nowrap) > .ts-column-filter-label {
+	grid-column: 1 / -1;
+}
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrap ~ .nowrap) > .nowrap {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+	gap: var(--sp-1);
+}
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrap ~ .nowrap) > .nowrap .divfordateinput {
+	display: flex !important;
+	align-items: center;
+	width: 100%;
+	min-width: 0;
+}
+.ts-column-filters-panel > .ts-column-filter-control:has(> .nowrap ~ .nowrap) > .nowrap input.hasDatepicker {
+	width: 100% !important;
+	min-width: 0;
 }
 /* One line per heading. A heading that wrapped pushed its own control down a
    row, so controls on the same line no longer started at the same height and the
