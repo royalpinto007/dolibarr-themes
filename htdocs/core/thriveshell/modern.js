@@ -394,7 +394,7 @@
 	/* Standard module index pages reuse the same two-column dashboard boxes. The
 	   Home and Third Party dashboards have richer adapters and remain excluded. */
 	function polishSharedModuleIndex() {
-		if (!/(^|\/)(index\.php)?$/.test(window.location.pathname)) { return false; }
+		if (!/(^|\/)(index\.php)?$/.test(window.location.pathname) && !/\/user\/home\.php$/.test(window.location.pathname)) { return false; }
 		if (document.body.classList.contains('ts-command-dashboard') || document.body.classList.contains('ts-thirdparty-dashboard')) { return false; }
 		var layout = document.querySelector('.fiche .twocolumns');
 		if (!layout) {
