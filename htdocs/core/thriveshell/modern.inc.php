@@ -7653,10 +7653,25 @@ body.ts-settings-page .ts-settings-action {
 	cursor: pointer;
 }
 body.ts-settings-page .ts-settings-action-primary {
-	border: 1px solid var(--c-btn-action, var(--c-accent)) !important;
-	background: var(--c-btn-action, var(--c-accent)) !important;
-	color: var(--c-btn-action-text, #fff) !important;
+	border: 1px solid var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
 }
+/* A number of native setup forms submit an unnamed input rather than the
+   composed .ts-settings-action-primary class. Keep those real Save actions in
+   the same COMMAND hierarchy instead of exposing Dolibarr's red default. */
+body.ts-settings-page input[type="submit"],
+body.ts-settings-page button[type="submit"] {
+	border: 1px solid var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
+	min-height: 42px;
+	padding-inline: 20px !important;
+	border-radius: var(--r) !important;
+	font-weight: 600;
+}
+body.ts-settings-page input[type="submit"]:hover,
+body.ts-settings-page button[type="submit"]:hover { filter: brightness(1.06); }
 body.ts-settings-page .ts-settings-action-secondary,
 body.ts-settings-page .ts-settings-actions a.butAction {
 	border: 1px solid var(--c-border) !important;
