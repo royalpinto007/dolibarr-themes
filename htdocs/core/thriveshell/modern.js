@@ -577,6 +577,37 @@
 		});
 	}
 
+	function polishMemberDocumentsPage() {
+		if (!document.body.classList.contains('page-card_documents')) { return; }
+		document.body.classList.add('ts-member-documents-page');
+		var fiche = document.querySelector('.fiche');
+		if (!fiche) { return; }
+		var info = fiche.querySelector('table.tableforfield');
+		if (info) { info.classList.add('ts-member-files-details'); }
+		var attachedHead = Array.from(fiche.querySelectorAll('.ts-pagehead')).find(function (n) { return /Attached files and documents/i.test(n.textContent || ''); });
+		if (attachedHead) {
+			attachedHead.classList.add('ts-member-files-attached-head');
+			var attachedIcon = attachedHead.querySelector('.ts-pagehead-icon');
+			if (attachedIcon) { attachedIcon.classList.remove('fa-users'); attachedIcon.classList.add('fa-paperclip'); }
+			var attachedTitle = attachedHead.nextElementSibling;
+			if (attachedTitle) { attachedTitle.classList.add('ts-member-files-attached-title'); }
+			var upload = fiche.querySelector('.divattachnewfile');
+			var docs = attachedTitle && attachedTitle.nextElementSibling;
+			if (upload) { upload.classList.add('ts-member-files-upload'); }
+			if (docs && docs.matches('.div-table-responsive-no-min')) { docs.classList.add('ts-member-files-documents'); }
+		}
+		var linkTitle = fiche.querySelector('table.table-list-of-links');
+		if (linkTitle) {
+			linkTitle.classList.add('ts-member-files-linked-head');
+			var linkForm = linkTitle.nextElementSibling && linkTitle.nextElementSibling.nextElementSibling;
+			if (linkForm && linkForm.matches('form')) { linkForm.classList.add('ts-member-files-linked-form'); }
+		}
+		fiche.querySelectorAll('table.liste').forEach(function (table) {
+			if (table.id === 'tablelines') { table.classList.add('ts-member-files-doc-table'); }
+			else if (table !== linkTitle) { table.classList.add('ts-member-files-link-table'); }
+		});
+	}
+
 	function polishThirdPartyCustomerTab() {
 		if (!/\/comm\/card\.php$/.test(window.location.pathname) || !document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
 		var shell = document.querySelector('.ts-thirdparty-record-shell');
@@ -4114,5 +4145,6 @@
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
 		try { polishThirdPartyCustomerTab(); } catch (e) { /* retain the native customer tab */ }
 		try { polishMemberNotePage(); } catch (e) { /* retain the native member note layout */ }
+		try { polishMemberDocumentsPage(); } catch (e) { /* retain the native member documents layout */ }
 	});
 })();
