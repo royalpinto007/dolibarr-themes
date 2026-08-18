@@ -6274,10 +6274,12 @@ body.ts-thirdparty-overview .ts-header-actions .ts-record-primary {
 body.ts-thirdparty-overview .ts-header-actions .ts-record-secondary {
 	order: 1 !important;
 	min-height: 40px !important;
-	border: 1px solid var(--c-accent) !important;
-	background: var(--c-accent) !important;
-	color: #fff !important;
-	box-shadow: 0 2px 5px rgba(79, 70, 229, .18) !important;
+	/* Send email is the visible primary action on this overview. It must honour
+	   Display > Skin and colors just like every other butAction. */
+	border: 1px solid var(--c-btn-action, var(--c-accent)) !important;
+	background: var(--c-btn-action, var(--c-accent)) !important;
+	color: var(--c-btn-action-text, #fff) !important;
+	box-shadow: 0 2px 5px color-mix(in srgb, var(--c-btn-action, var(--c-accent)) 24%, transparent) !important;
 }
 body.ts-thirdparty-overview .ts-header-actions .ts-record-primary,
 body.ts-thirdparty-overview .ts-header-actions .ts-record-secondary { gap: 9px; }
