@@ -7725,10 +7725,10 @@ body.ts-settings-page .ts-settings-card {
 	overflow: hidden;
 }
 body.ts-settings-page .ts-settings-card-head {
-	display: flex;
+	display: grid;
+	grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
 	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
+	gap: 18px;
 	padding: 15px 20px;
 	border-bottom: 1px solid var(--c-hairline);
 	background: var(--c-sunken);
@@ -7744,6 +7744,10 @@ body.ts-settings-page .ts-settings-card-title {
 }
 body.ts-settings-page .ts-settings-card-title [class*="fa-"] { color: var(--c-accent) !important; }
 body.ts-settings-page .ts-settings-card-aside { flex: 0 0 auto; font-size: 0.8125rem; color: var(--c-ink-subtle); }
+/* Native settings title rows contain actual column headings. Keep a second
+   heading (for example “Late warning after”) above the same value axis as the
+   controls instead of letting flexbox push it to the far edge of the card. */
+body.ts-settings-page .ts-settings-card-head:not(:has(.ts-settings-card-aside)) .ts-settings-card-title { grid-column: 1 / -1; }
 body.ts-settings-page .ts-settings-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 body.ts-settings-page .ts-setting {
 	display: grid;
@@ -8163,6 +8167,8 @@ body.ts-accounting-files form[name="searchfiles"] button[type="submit"] {
 	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 14px; }
 }
 @media only screen and (max-width: 700px) {
+	body.ts-settings-page .ts-settings-card-head { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+	body.ts-settings-page .ts-settings-card-aside { grid-column: 1; }
 	body.ts-settings-page .ts-setting { grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: start; }
 	body.ts-settings-page .ts-setting-control.ts-control-compact,
 	body.ts-settings-page .ts-setting-control.ts-control-medium,
