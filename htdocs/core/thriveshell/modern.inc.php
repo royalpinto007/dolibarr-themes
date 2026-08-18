@@ -2454,6 +2454,42 @@ body { font-size: 0.875rem; }
 .ts-list-card tr.pair td { height: 52px; padding-top: var(--sp-3); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--c-hairline); }
 .ts-results-footer { min-height: 52px; padding: 6px var(--sp-4); background: #fbfcfe; }
 
+/* Shared data-table headers: Dolibarr's native header font is frequently
+   rendered at a tiny, uneven weight, particularly in wide admin grids. Give
+   every standard list/data header the same quiet COMMAND hierarchy without
+   affecting form labels, calendar headers, or the control/filter row. */
+table.liste tr.liste_titre > th,
+table.liste tr.liste_titre > td,
+table.tagtable tr.liste_titre > th,
+table.tagtable tr.liste_titre > td,
+table.noborder tr.liste_titre > th,
+table.noborder tr.liste_titre > td {
+	font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+	font-size: 0.75rem !important;
+	font-weight: 650 !important;
+	letter-spacing: 0.012em;
+	line-height: 1.25 !important;
+	color: var(--c-ink-subtle) !important;
+	text-transform: none !important;
+}
+table.liste tr.liste_titre > th > a,
+table.liste tr.liste_titre > td > a,
+table.tagtable tr.liste_titre > th > a,
+table.tagtable tr.liste_titre > td > a,
+table.noborder tr.liste_titre > th > a,
+table.noborder tr.liste_titre > td > a {
+	font: inherit;
+	color: inherit !important;
+	text-decoration: none;
+}
+table.liste tr.liste_titre [class*="fa-"],
+table.tagtable tr.liste_titre [class*="fa-"],
+table.noborder tr.liste_titre [class*="fa-"] {
+	font-family: "Font Awesome 5 Free", "Font Awesome 6 Free" !important;
+	font-weight: 900 !important;
+	letter-spacing: 0;
+}
+
 /* The record is a canvas containing independent surfaces, not one white sheet. */
 div.tabBar.ts-entity-card {
 	background: transparent;
