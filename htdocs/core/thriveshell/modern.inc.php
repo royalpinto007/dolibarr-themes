@@ -3492,7 +3492,7 @@ body.ts-category-dialog-create-page .ts-category-select2-dropdown .select2-resul
 body.ts-category-dialog-create-page .ts-category-select2-dropdown .select2-results__option--highlighted[aria-selected] { background: var(--c-accent-soft); color: var(--c-accent); }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) { display: flex; justify-content: center; gap: 10px; margin-top: 24px; padding-bottom: 4px; }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) input.button { min-width: 110px; height: 40px; margin: 0; border-radius: 8px; }
-body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="creation"] { border: 1px solid var(--c-btn-action, var(--c-accent)) !important; background: var(--c-btn-action, var(--c-accent)) !important; color: var(--c-btn-action-text, #fff) !important; box-shadow: 0 3px 8px var(--c-accent-ring); }
+body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="creation"] { border: 1px solid var(--c-btn-action) !important; background: var(--c-btn-action) !important; color: var(--c-btn-action-text) !important; box-shadow: 0 3px 8px var(--c-btn-action-ring); }
 body.ts-category-dialog-create-page .center:has(input[type="submit"]) input[name="cancel"] { border: 1px solid #e0e6ef !important; background: #fff !important; color: var(--c-ink-2) !important; }
 body .ts-form-select2-dropdown[data-ts-select-name="country_id"] .select2-results__option img,
 body .ts-form-select2-dropdown[data-ts-select-name="state_id"] .select2-results__option img {
@@ -7983,7 +7983,7 @@ body.page-boxes .ts-boxes-active-table td a.reposition .pictodelete { color: var
 body.page-boxes .ts-boxes-active-table td a.reposition span[class*="fa-caret"] { font-size: .8rem; }
 body.page-boxes .ts-boxes-active-table td a.reposition span.pictodelete { font-size: .9rem; }
 body.page-boxes .ts-settings-action-primary,
-body.page-boxes input[name="save"] { background: var(--c-accent) !important; color: #fff !important; border: 0 !important; }
+body.page-boxes input[name="save"] { background: var(--c-btn-action) !important; color: var(--c-btn-action-text) !important; border: 0 !important; }
 @media only screen and (max-width: 900px) {
 	body.page-boxes .ts-boxes-active-table { table-layout: auto; }
 	body.page-boxes .ts-boxes-active-table td:nth-child(1) { min-width: 220px; white-space: normal; }
