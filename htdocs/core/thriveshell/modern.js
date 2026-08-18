@@ -3941,6 +3941,14 @@
 		};
 		var tables = Array.prototype.slice.call(document.querySelectorAll('form table')).filter(function (table) {
 			if (table.closest('.ts-settings-card')) { return false; }
+			/* A number of admin list pages (Email templates, translations, etc.) use
+			   a form around their result table.  They have the same input/select
+			   markup as setup pages, but their leading search/reset row is a list
+			   filter—not a label/value setting grid.  If we compose that table as
+			   settings, every filter gets moved into one wide cell and overlaps.
+			   Dolibarr's own named search/reset controls are the reliable structural
+			   distinction, independent of a particular admin route. */
+			if (table.querySelector('button[name="button_search_x"], button[name="button_removefilter_x"], input[name="button_search_x"], input[name="button_removefilter_x"]')) { return false; }
 			if (!Array.prototype.slice.call(table.rows).filter(isSettingRow).length) { return false; }
 			/* Several setup screens wrap their settings table in a layout table.
 			   Composing the wrapper would swallow the real one, so take the
