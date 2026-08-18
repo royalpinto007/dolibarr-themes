@@ -2698,6 +2698,24 @@
 							dropdown.style.setProperty('--ts-column-filter-width', width + 'px');
 							dropdown.style.setProperty('width', width + 'px', 'important');
 							dropdown.style.setProperty('min-width', width + 'px');
+							/* Select2 is body-mounted; its legacy absolute coordinates could
+							   place long advanced-filter controls outside the panel/viewport.
+							   Anchor the live popover to the actual trigger just like form
+							   selects, clamping both axes to the viewport. */
+							var popupRoot = dropdown.parentElement;
+							if (popupRoot) {
+								var rect = container.getBoundingClientRect();
+								var popupHeight = dropdown.getBoundingClientRect().height;
+								var left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+								var openAbove = popupHeight > (window.innerHeight - rect.bottom) && rect.top > (window.innerHeight - rect.bottom);
+								var top = openAbove ? rect.top - popupHeight : rect.bottom;
+								popupRoot.classList.add('ts-column-filter-dropdown-root');
+								popupRoot.style.setProperty('position', 'fixed', 'important');
+								popupRoot.style.setProperty('left', left + 'px', 'important');
+								popupRoot.style.setProperty('top', Math.max(12, Math.min(top, window.innerHeight - popupHeight - 12)) + 'px', 'important');
+								popupRoot.style.setProperty('width', width + 'px', 'important');
+								popupRoot.style.setProperty('z-index', '3600', 'important');
+							}
 							dropdown.style.setProperty('max-width', 'calc(100vw - 24px)');
 						});
 					};
