@@ -5996,7 +5996,9 @@ td.ts-command-empty-state {
 td.ts-command-empty-state::before {
 	content: "\f15c";
 	position: absolute;
-	top: 25px;
+	/* Lift the tile slightly so the message has a deliberate 6–8px breathing
+	   gap without changing the icon, text, or empty-state card dimensions. */
+	top: 22px;
 	left: 50%;
 	width: 36px;
 	height: 36px;
