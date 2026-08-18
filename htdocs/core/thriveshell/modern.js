@@ -3750,6 +3750,30 @@
 		return true;
 	}
 
+	/* The widget administration screen keeps active widgets in a legacy table
+	   beside the composed available-widget section. Preserve every Dolibarr
+	   row/action, but remove empty spacer rows and mark the table for stable
+	   shared settings column sizing. */
+	function composeBoxesPage() {
+		if (!/\/admin\/boxes\.php$/.test(window.location.pathname)) { return false; }
+		var active = Array.prototype.slice.call(document.querySelectorAll('table.tagtable.liste'))
+			.filter(function (table) { return table.querySelector('a[href*="action=switch"], a[href*="action=delete"]'); })[0];
+		if (!active) { return false; }
+		active.classList.add('ts-boxes-active-table');
+		var availableTitle = document.querySelector('.ts-settings-card-title');
+		if (availableTitle && /^Box$/i.test((availableTitle.textContent || '').trim())) { availableTitle.textContent = 'Available widgets'; }
+		if (!document.querySelector('.ts-boxes-section-title')) {
+			var sectionTitle = document.createElement('h2');
+			sectionTitle.className = 'ts-boxes-section-title';
+			sectionTitle.textContent = 'Active widgets';
+			active.parentNode.insertBefore(sectionTitle, active);
+		}
+		Array.prototype.slice.call(active.rows).forEach(function (row) {
+			if (!row.querySelector('a, input, select, button') && !(row.innerText || '').trim()) { row.remove(); }
+		});
+		return true;
+	}
+
 	/* The accounting source-export screen is a standalone search form rather
 	   than an admin settings table. Give it the same COMMAND surface/control
 	   language without moving or recreating any of its real fields. */
@@ -4061,6 +4085,7 @@
 			}, 400);
 		});
 		try { composeAdminSettings(); } catch (e) { /* retain the native admin settings tables */ }
+		try { composeBoxesPage(); } catch (e) { /* retain the native widget table */ }
 		try { polishAccountingExport(); } catch (e) { /* retain the native export form */ }
 		try { tameColorPickers(); } catch (e) { /* leave jPicker's own popup behaviour */ }
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }

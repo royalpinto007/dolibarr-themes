@@ -7523,6 +7523,81 @@ body.ts-settings-page .ts-setting-control.ts-control-compact { max-width: 120px;
 body.ts-settings-page .ts-setting-control.ts-control-medium { max-width: 320px; }
 body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 420px; }
 body.ts-settings-page .ts-setting-control.ts-control-full { max-width: 100%; }
+
+/* Widgets administration: the active-widget table is still emitted by
+   Dolibarr as a seven-cell table. Keep its native links and ordering controls,
+   but give the name/target/order/action columns deliberate space so names do
+   not collapse into vertical strips. */
+body.page-boxes .ts-boxes-active-table {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: separate;
+	border-spacing: 0;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	overflow: hidden;
+	background: var(--c-surface);
+}
+body.page-boxes .ts-boxes-section-title {
+	margin: 28px 0 12px;
+	font-size: 1.125rem;
+	font-weight: 650;
+	color: var(--c-ink);
+}
+body.page-boxes .ts-boxes-active-table tr {
+	height: 48px !important;
+	background: var(--c-surface) !important;
+}
+body.page-boxes .ts-boxes-active-table tr:hover { background: var(--c-accent-soft) !important; }
+body.page-boxes .ts-boxes-active-table td {
+	padding: 10px 14px !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	vertical-align: middle !important;
+	font-size: .8125rem;
+	line-height: 1.35;
+}
+body.page-boxes .ts-boxes-active-table tr:last-child td { border-bottom: 0 !important; }
+body.page-boxes .ts-boxes-active-table td:nth-child(1) { width: 34%; min-width: 260px; text-align: left !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.page-boxes .ts-boxes-active-table td:nth-child(2) { width: 28%; text-align: left !important; color: var(--c-ink-subtle); }
+body.page-boxes .ts-boxes-active-table td:nth-child(3) { width: 5%; text-align: center; }
+body.page-boxes .ts-boxes-active-table td:nth-child(4) { width: 13%; text-align: center; }
+body.page-boxes .ts-boxes-active-table td:nth-child(5) { width: 10%; text-align: center; }
+body.page-boxes .ts-boxes-active-table td:nth-child(6) { width: 6%; text-align: center; }
+body.page-boxes .ts-boxes-active-table td:nth-child(7) { width: 6%; text-align: center; }
+body.page-boxes .ts-boxes-active-table td:first-child > span[class*="fa-"],
+body.page-boxes .ts-boxes-active-table td:first-child > img { margin-right: 8px; color: var(--c-accent); }
+body.page-boxes .ts-boxes-active-table td a.reposition {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	margin: 0 2px;
+	border-radius: 7px;
+	color: var(--c-accent);
+	text-decoration: none;
+}
+body.page-boxes .ts-boxes-active-table td a.reposition:hover { background: var(--c-accent-soft); }
+body.page-boxes .ts-boxes-active-table td a.reposition .pictodelete { color: var(--c-danger); }
+body.page-boxes .ts-boxes-active-table td a.reposition span[class*="fa-caret"] { font-size: .8rem; }
+body.page-boxes .ts-boxes-active-table td a.reposition span.pictodelete { font-size: .9rem; }
+body.page-boxes .ts-settings-action-primary,
+body.page-boxes input[name="save"] { background: var(--c-accent) !important; color: #fff !important; border: 0 !important; }
+@media only screen and (max-width: 900px) {
+	body.page-boxes .ts-boxes-active-table { table-layout: auto; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(1) { min-width: 220px; white-space: normal; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(2) { min-width: 120px; }
+}
+@media only screen and (max-width: 600px) {
+	body.page-boxes .ts-boxes-active-table td { padding: 9px 10px !important; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(2),
+	body.page-boxes .ts-boxes-active-table td:nth-child(3) { display: none; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(1) { min-width: 0; width: 55%; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(4) { width: 20%; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(5) { width: 12%; }
+	body.page-boxes .ts-boxes-active-table td:nth-child(6),
+	body.page-boxes .ts-boxes-active-table td:nth-child(7) { width: 7%; }
+}
 body.ts-settings-page .ts-setting-control input[type="text"],
 body.ts-settings-page .ts-setting-control input[type="number"],
 body.ts-settings-page .ts-setting-control input[type="email"],
