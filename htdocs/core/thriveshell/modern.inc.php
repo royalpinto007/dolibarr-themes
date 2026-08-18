@@ -5965,9 +5965,9 @@ body.ts-command-form-page .ts-command-form-actions button {
 	font-weight: 650 !important;
 }
 body.ts-command-form-page .ts-command-submit-primary {
-	border-color: var(--c-btn-action, #5546e8) !important;
-	background: var(--c-btn-action, #5546e8) !important;
-	color: var(--c-btn-action-text, #fff) !important;
+	border-color: var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
 }
 body.ts-command-form-page .ts-command-submit-secondary {
 	border-color: #dfe4ec !important;
