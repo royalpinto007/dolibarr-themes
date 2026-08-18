@@ -330,6 +330,31 @@
 		});
 	}
 
+	/* Select2 measures its hidden source element before the browser completes a
+	   legacy table's column allocation. In narrow utility cells that leaves the
+	   visible renderer wider than its own <td>, so it overlaps the next control
+	   and cannot be clicked. Reserve the renderer plus any leading icon as the
+	   cell's real minimum. The table may then use its normal contained horizontal
+	   scroll on small screens, but controls never visually stack on one another. */
+	function reserveTableSelectCells(root) {
+		Array.prototype.forEach.call((root || document).querySelectorAll('td.nowraponall > .select2-container'), function (renderer) {
+			if (renderer.getAttribute('data-ts-table-select') === '1') { return; }
+			var cell = renderer.parentElement;
+			var table = cell && cell.closest('table');
+			if (!cell || !table || renderer.getBoundingClientRect().width < 24) { return; }
+			var lead = Array.prototype.reduce.call(cell.children, function (total, child) {
+				if (child === renderer || child.matches('script, select, .select2-container')) { return total; }
+				return total + Math.ceil(child.getBoundingClientRect().width || 0);
+			}, 0);
+			var needed = Math.ceil(renderer.getBoundingClientRect().width + lead + 10);
+			if (cell.getBoundingClientRect().width + 2 < needed) {
+				cell.style.setProperty('min-width', needed + 'px', 'important');
+				cell.classList.add('ts-table-select-cell');
+			}
+			renderer.setAttribute('data-ts-table-select', '1');
+		});
+	}
+
 	/* Widget columns sized from what they actually hold. The header is usually a
 	   single title cell spanning every column, so fixed layout has nothing to size
 	   from and splits them evenly -- a customer name ends up as wide as a status
@@ -4326,6 +4351,7 @@
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+		try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
 		try { freeColumnPickerOverflow(); } catch (e) { /* leave the picker clipped */ }
 		if (/\/stats\//.test(window.location.pathname)) {
 			document.body.classList.add('ts-command-stats');
@@ -4362,11 +4388,13 @@
 		   the page has settled. */
 		window.addEventListener('load', function () {
 			try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+			try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
 			try {
 				document.querySelectorAll('.ts-module-index-data-card').forEach(sizeModuleIndexColumns);
 			} catch (e) { /* leave the even split */ }
 			window.setTimeout(function () {
 				try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
+				try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
 			}, 400);
 		});
 		try { composeAdminSettings(); } catch (e) { /* retain the native admin settings tables */ }
