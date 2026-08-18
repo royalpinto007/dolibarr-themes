@@ -4120,6 +4120,27 @@
 		return true;
 	}
 
+	/* Dictionary setup emits empty `oddeven` rows between module groups. They
+	   contain no heading, action, or accessible content, but inherit ordinary
+	   table-row height and create unexplained white bands. Remove only those
+	   truly empty scaffold rows; all dictionary links, pencil actions and info
+	   affordances remain native. */
+	function compactDictionarySetup() {
+		if (!/\/admin\/dict\.php$/.test(window.location.pathname)) { return false; }
+		var table = document.querySelector('table.noborder.centpercent');
+		if (!table || table.getAttribute('data-ts-dictionary-compact')) { return false; }
+		var removed = false;
+		Array.prototype.slice.call(table.rows).forEach(function (row) {
+			if (row.classList.contains('liste_titre')) { return; }
+			var meaningful = (row.innerText || '').replace(/\s+/g, ' ').trim();
+			if (meaningful || row.querySelector('a, button, input, select, textarea, img, svg, [class*="fa-"]')) { return; }
+			row.remove();
+			removed = true;
+		});
+		table.setAttribute('data-ts-dictionary-compact', '1');
+		return removed;
+	}
+
 	/* The accounting source-export screen is a standalone search form rather
 	   than an admin settings table. Give it the same COMMAND surface/control
 	   language without moving or recreating any of its real fields. */
@@ -4389,6 +4410,7 @@
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
+		try { compactDictionarySetup(); } catch (e) { /* retain native dictionary spacers */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
 		try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
