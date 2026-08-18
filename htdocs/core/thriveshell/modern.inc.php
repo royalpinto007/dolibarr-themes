@@ -8779,6 +8779,18 @@ body.page-card_note div.tabBar.ts-entity-card > form > .arearef {
 	border-color: transparent !important;
 	box-shadow: none !important;
 }
+body.page-card_note div.tabBar.ts-entity-card > form {
+	margin: 0 !important;
+	padding: 0 !important;
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+body.page-card_note div.tabBar.ts-entity-card > form > .fichecenter {
+	margin: 0 !important;
+	padding: 0 !important;
+	background: transparent !important;
+}
 @media (max-width: 700px) {
 	body.page-card_note .ts-member-note-details tr { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
 	body.page-card_note .ts-member-note-details td { padding: 5px 0 !important; }
