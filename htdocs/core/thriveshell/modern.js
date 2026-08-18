@@ -2532,6 +2532,12 @@
 	   is moved rather than copied. Only the footer pager is a navigation-only copy
 	   of hrefs already rendered by Dolibarr. */
 	function composeListSurface() {
+		/* The constants page is a parameter editor, not a result list. It happens
+		   to use Dolibarr's responsive table classes, which made this list composer
+		   wrap the settings grid in a second list card and collapse its independent
+		   Name / Value / Comment / date columns. Leave it for the shared admin
+		   settings composer below. */
+		if (/\/admin\/const\.php$/.test(window.location.pathname)) { return false; }
 		if (document.querySelector('.ts-list-composition')) { return false; }
 		var title = document.querySelector('.ts-pagehead div.titre');
 		if (!title || title.closest('div.fichecenter')) { return false; }
@@ -4018,6 +4024,40 @@
 				control.classList.add(classifyControl(control));
 				field.appendChild(label);
 				field.appendChild(control);
+				/* Constants uses a real multi-column editor rather than the common
+				   label/control setting row. Preserve the native fields but expose the
+				   value, explanatory comment, timestamp and delete control as distinct
+				   grid cells so long developer comments do not crush into a narrow
+				   sliver beside the input. */
+				if (/\/admin\/const\.php$/.test(window.location.pathname)) {
+					card.classList.add('ts-admin-constants-card');
+					field.classList.add('ts-admin-const-row');
+					var visibleInputs = Array.prototype.slice.call(control.querySelectorAll('input:not([type="hidden"])'));
+					var valueInput = visibleInputs.find(function (input) { return input.type !== 'checkbox' && input.type !== 'submit'; });
+					var commentInput = visibleInputs.filter(function (input) { return input.type !== 'checkbox' && input.type !== 'submit'; })[1];
+					if (valueInput) { valueInput.classList.add('ts-admin-const-value'); }
+					if (commentInput) { commentInput.classList.add('ts-admin-const-comment'); }
+					var submitInput = visibleInputs.find(function (input) { return input.type === 'submit'; });
+					if (submitInput) {
+						submitInput.classList.add('ts-admin-const-add');
+						/* A late generic `.button { width: 100% }` rule is valid for
+						   normal mobile action rows but not for this inline add cell. Pin
+						   the native submit to the compact grid slot at runtime so source
+						   order cannot turn it into a full date-column button. */
+						submitInput.style.setProperty('width', '88px', 'important');
+						submitInput.style.setProperty('min-width', '88px', 'important');
+						submitInput.style.setProperty('max-width', '88px', 'important');
+					}
+					var removeInput = visibleInputs.find(function (input) { return input.type === 'checkbox'; });
+					if (removeInput) { removeInput.classList.add('ts-admin-const-remove'); }
+					Array.prototype.slice.call(control.childNodes).forEach(function (node) {
+						if (node.nodeType !== Node.TEXT_NODE || !(node.nodeValue || '').trim()) { return; }
+						var date = document.createElement('span');
+						date.className = 'ts-admin-const-date';
+						date.textContent = node.nodeValue.replace(/\s+/g, ' ').trim();
+						node.parentNode.replaceChild(date, node);
+					});
+				}
 				grid.appendChild(field);
 			});
 

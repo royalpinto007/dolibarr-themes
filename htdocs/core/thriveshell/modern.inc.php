@@ -7729,6 +7729,90 @@ body.ts-settings-page .ts-setting-control.ts-control-medium { max-width: 320px; 
 body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 420px; }
 body.ts-settings-page .ts-setting-control.ts-control-full { max-width: 100%; }
 
+/* Constants is the one admin editor whose native table has four meaningful
+   editable columns. Treat those columns as a real compact data grid instead
+   of squeezing every field into the generic label/control setting row. */
+body.ts-settings-page .ts-admin-constants-card .ts-settings-card-head,
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row {
+	display: grid;
+	grid-template-columns: minmax(240px, 1.35fr) minmax(150px, .62fr) minmax(260px, 1fr) minmax(118px, .5fr) 32px;
+	column-gap: 12px;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-settings-card-head {
+	align-items: center;
+	justify-content: unset;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-settings-card-title,
+body.ts-settings-page .ts-admin-constants-card .ts-settings-card-aside {
+	min-width: 0;
+	margin: 0;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-settings-card-aside {
+	font-weight: 600;
+	white-space: nowrap;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row {
+	align-items: center;
+	gap: 12px;
+	padding: 12px 20px;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row .ts-setting-label {
+	grid-column: 1;
+	min-width: 0;
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row .ts-setting-control {
+	display: contents;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row input:not([type="hidden"]) {
+	min-width: 0;
+	width: 100% !important;
+	max-width: none !important;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-value { grid-column: 2; }
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-comment { grid-column: 3; }
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-date {
+	grid-column: 4;
+	font-size: .8125rem;
+	line-height: 1.35;
+	color: var(--c-ink-subtle);
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-remove {
+	grid-column: 5;
+	justify-self: center;
+	width: 16px !important;
+	height: 16px;
+}
+body.ts-settings-page .ts-admin-constants-card .ts-admin-const-add {
+	grid-column: 4;
+	justify-self: start;
+	width: 88px !important;
+	min-width: 88px !important;
+	max-width: 88px !important;
+}
+@media only screen and (max-width: 900px) {
+	body.ts-settings-page .ts-admin-constants-card .ts-settings-card-head { display: none; }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row {
+		grid-template-columns: minmax(150px, .8fr) minmax(0, 1fr);
+	}
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row .ts-setting-label { grid-column: 1; }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-value { grid-column: 2; }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-comment { grid-column: 2; }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-date { grid-column: 2; }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-remove { grid-column: 2; justify-self: start; }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-add { grid-column: 2; }
+}
+@media only screen and (max-width: 600px) {
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row { grid-template-columns: minmax(0, 1fr); }
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-row .ts-setting-label,
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-value,
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-comment,
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-date,
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-remove,
+	body.ts-settings-page .ts-admin-constants-card .ts-admin-const-add { grid-column: 1; }
+}
+
 /* Widgets administration: the active-widget table is still emitted by
    Dolibarr as a seven-cell table. Keep its native links and ordering controls,
    but give the name/target/order/action columns deliberate space so names do
