@@ -8792,6 +8792,14 @@ body.ts-member-documents-page .ts-member-files-linked-head .col-right .btnTitle 
 body.mod-member table.ts-member-recent-events { margin-top:16px !important; }
 body.mod-member .ts-member-recent-events-section { margin-top:16px !important; }
 body.mod-member .ts-record-section-events { margin-top:16px !important; }
+/* Keep the event Type heading/value readable in the compact member card. The
+   native auto table algorithm was assigning that column ~30px, producing
+   a clipped “T...”; reserve a real label slot and let Title absorb the rest. */
+body.mod-member .ts-record-section-events table.listactions th:nth-child(4),
+body.mod-member .ts-record-section-events table.listactions td:nth-child(4) {
+	min-width:64px !important;
+	white-space:nowrap;
+}
 /* Member detail values (notably the linked Type label) must not collapse into
    a clipped one-letter fragment when the legacy half-column table is placed in
    the COMMAND card. Keep the value/link as one readable inline unit. */
