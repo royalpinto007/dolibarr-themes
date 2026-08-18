@@ -768,6 +768,37 @@
 		content.replaceChildren(card);
 	}
 
+	/* The supplier-price tab emits a small native field table followed by a list.
+	   Keep those original nodes and controls, but compose them into the shared
+	   record-tab summary/list surfaces. */
+	function polishProductPricePage() {
+		if (!/\/product\/price_suppliers\.php$/.test(window.location.pathname)) { return; }
+		var fiche = document.querySelector('.fiche');
+		var center = fiche && fiche.querySelector('#dragDropAreaTabBar .fichecenter');
+		if (!fiche || !center || fiche.dataset.tsProductPricePage === '1') { return; }
+		var details = center.querySelector(':scope > table.tableforfield');
+		var pageHead = Array.from(fiche.querySelectorAll(':scope > .ts-pagehead')).find(function (node) {
+			return /prices/i.test(node.textContent || '');
+		});
+		var listForm = pageHead && pageHead.nextElementSibling && pageHead.nextElementSibling.nextElementSibling;
+		if (!details || !pageHead || !listForm || listForm.tagName !== 'FORM') { return; }
+		fiche.dataset.tsProductPricePage = '1';
+		center.classList.add('ts-product-price-summary');
+		details.classList.add('ts-product-price-details');
+		var listCard = document.createElement('section');
+		listCard.className = 'ts-product-price-list-card';
+		pageHead.parentNode.insertBefore(listCard, pageHead);
+		listCard.appendChild(pageHead);
+		/* Dolibarr emits a blank title table between the heading and the form.
+		   Keep it only when it contains real controls, otherwise remove its visual
+		   footprint rather than leaving a second header seam. */
+		var titleTable = listCard.nextElementSibling;
+		if (titleTable && titleTable.matches('table.ts-empty-title') && !(titleTable.textContent || '').trim()) {
+			titleTable.remove();
+		}
+		listCard.appendChild(listForm);
+	}
+
 	/* A busy monthly calendar should remain a calendar, not turn into an
 	   unbounded activity feed. Dolibarr emits every event as a sibling inside its
 	   day cell, so disclose overflow in-place without changing event URLs or drag
@@ -4586,6 +4617,7 @@
 		try { polishMemberDocumentsPage(); } catch (e) { /* retain the native member documents layout */ }
 		try { polishMemberAgendaPage(); } catch (e) { /* retain the native member agenda layout */ }
 		try { polishWarehouseLogPage(); } catch (e) { /* retain the native warehouse activity log */ }
+		try { polishProductPricePage(); } catch (e) { /* retain native product price tab layout */ }
 		try { compactMonthAgendaEvents(); } catch (e) { /* retain the native agenda density */ }
 	});
 })();

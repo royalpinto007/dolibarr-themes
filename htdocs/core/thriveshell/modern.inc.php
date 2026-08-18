@@ -5525,6 +5525,72 @@ body.page-stock_info .ts-warehouse-log-value .userimg img {
 	border-radius: 50%;
 	vertical-align: middle;
 }
+
+/* Product price tabs are detail summary + a native price list.  The native
+   page uses bare sibling tables, so retain their forms/links and provide the
+   shared record-tab surfaces at the container level. */
+body.page-price_suppliers .ts-entity-card .divphotoref + .divphotoref:empty { display: none !important; }
+body.page-price_suppliers .ts-product-price-summary {
+	max-width: none;
+	margin: 16px 0 20px !important;
+}
+body.page-price_suppliers .ts-product-price-details {
+	width: 100%;
+	margin: 0 !important;
+	border: 1px solid var(--c-hairline) !important;
+	border-radius: var(--r-lg);
+	border-collapse: separate;
+	border-spacing: 0;
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+body.page-price_suppliers .ts-product-price-details > tbody > tr > td {
+	padding: 13px 18px !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	background: transparent !important;
+	font-size: .8125rem;
+	vertical-align: middle;
+}
+body.page-price_suppliers .ts-product-price-details > tbody > tr:last-child > td { border-bottom: 0 !important; }
+body.page-price_suppliers .ts-product-price-details > tbody > tr > td:first-child {
+	width: 42%;
+	font-weight: 600;
+	color: var(--c-ink-2);
+}
+body.page-price_suppliers .ts-product-price-details table { background: transparent !important; }
+body.page-price_suppliers .ts-product-price-details table td { padding: 0 !important; border: 0 !important; }
+body.page-price_suppliers .ts-product-price-list-card {
+	margin: 0;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+body.page-price_suppliers .ts-product-price-list-card > .ts-pagehead {
+	min-height: 64px;
+	margin: 0 !important;
+	padding: 0 20px;
+	border-bottom: 1px solid var(--c-hairline);
+	background: transparent;
+}
+body.page-price_suppliers .ts-product-price-list-card > .ts-pagehead .titre {
+	font-size: 1.125rem !important;
+	font-weight: 650;
+}
+body.page-price_suppliers .ts-product-price-list-card > form { margin: 0 !important; }
+body.page-price_suppliers .ts-product-price-list-card table.liste {
+	margin: 0 !important;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+@media only screen and (max-width: 700px) {
+	body.page-price_suppliers .ts-product-price-summary { margin: 12px 0 16px !important; }
+	body.page-price_suppliers .ts-product-price-details > tbody > tr > td { padding: 11px 12px !important; }
+	body.page-price_suppliers .ts-product-price-list-card > .ts-pagehead { padding: 0 14px; }
+}
 @media only screen and (max-width: 900px) {
 	body.page-stock_info .ts-warehouse-log-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
