@@ -561,6 +561,22 @@
 		return Boolean(summary || document.body.matches('.ts-thirdparty-notes-tab,.ts-thirdparty-margins-tab,.ts-thirdparty-documents-tab'));
 	}
 
+	function polishMemberNotePage() {
+		if (!document.body.classList.contains('page-card_note')) { return; }
+		var info = document.querySelector('table.tableforfield');
+		if (info) { info.classList.add('ts-member-note-details'); }
+		document.querySelectorAll('table.nobordernopadding').forEach(function (table) {
+			var label = (table.textContent || '').trim().toLowerCase();
+			if (label.indexOf('note (public)') === -1 && label.indexOf('note (private)') === -1) { return; }
+			table.classList.add('ts-member-note-card');
+			table.dataset.noteKind = label.indexOf('public') !== -1 ? 'public' : 'private';
+			var empty = document.createElement('div');
+			empty.className = 'ts-member-note-empty';
+			empty.textContent = table.dataset.noteKind === 'public' ? 'No public note yet' : 'No private note yet';
+			table.appendChild(empty);
+		});
+	}
+
 	function polishThirdPartyCustomerTab() {
 		if (!/\/comm\/card\.php$/.test(window.location.pathname) || !document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
 		var shell = document.querySelector('.ts-thirdparty-record-shell');
@@ -4097,5 +4113,6 @@
 		try { polishThirdPartyTabContent(); } catch (e) { /* retain the module's native tab content */ }
 		try { polishThirdPartyAuxiliaryTabs(); } catch (e) { /* retain the native auxiliary tab content */ }
 		try { polishThirdPartyCustomerTab(); } catch (e) { /* retain the native customer tab */ }
+		try { polishMemberNotePage(); } catch (e) { /* retain the native member note layout */ }
 	});
 })();

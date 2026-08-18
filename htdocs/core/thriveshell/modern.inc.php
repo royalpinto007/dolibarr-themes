@@ -8578,3 +8578,94 @@ table.liste.ts-list-no-select-col > tbody > tr > *:first-child {
 	padding-right: 0 !important;
 	overflow: hidden;
 }
+
+/* Member note tab: turn the native detail and note tables into the same calm
+   cards used by the other member/record tabs.  The original tables and edit
+   links remain in place so permissions and note actions are untouched. */
+body.page-card_note .ts-member-note-details {
+	display: block;
+	width: 100% !important;
+	margin: 0 0 16px !important;
+	padding: 16px 20px !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 12px !important;
+	background: #fff !important;
+	box-shadow: 0 4px 16px rgba(15,23,42,.045) !important;
+	border-collapse: separate !important;
+}
+body.page-card_note .ts-member-note-details tr {
+	display: grid;
+	grid-template-columns: minmax(180px, 32%) minmax(0, 1fr);
+	min-height: 44px;
+	align-items: center;
+	border-bottom: 1px solid #f0f2f5;
+}
+body.page-card_note .ts-member-note-details tr:last-child { border-bottom: 0; }
+body.page-card_note .ts-member-note-details td {
+	padding: 11px 0 !important;
+	border: 0 !important;
+	font-size: 13px !important;
+}
+body.page-card_note .ts-member-note-details td:first-child {
+	color: #526581;
+	font-weight: 650;
+}
+body.page-card_note .ts-member-note-details td.valeur {
+	color: #24324a;
+	font-weight: 500;
+}
+body.page-card_note .ts-member-note-card {
+	display: block;
+	width: 100% !important;
+	margin: 0 0 16px !important;
+	padding: 0 !important;
+	border: 1px solid #e7e9ee !important;
+	border-radius: 12px !important;
+	background: #fff !important;
+	box-shadow: 0 4px 16px rgba(15,23,42,.045) !important;
+	border-collapse: separate !important;
+	overflow: hidden;
+}
+body.page-card_note .ts-member-note-card tr {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 54px;
+	padding: 0 18px;
+	border-bottom: 1px solid #edf0f4;
+}
+body.page-card_note .ts-member-note-card tr > td {
+	padding: 0 !important;
+	border: 0 !important;
+	font-size: 15px !important;
+	font-weight: 650;
+	color: #24324a;
+}
+body.page-card_note .ts-member-note-card tr > td.right { flex: 0 0 auto; }
+body.page-card_note .ts-member-note-card .editfielda {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 7px;
+	color: var(--c-accent) !important;
+}
+body.page-card_note .ts-member-note-card .editfielda:hover,
+body.page-card_note .ts-member-note-card .editfielda:focus-visible { background: var(--c-accent-soft); }
+body.page-card_note .ts-member-note-card .editfielda .fa-pencil-alt {
+	float: none !important;
+	color: currentColor !important;
+}
+body.page-card_note .ts-member-note-empty {
+	display: flex;
+	align-items: center;
+	min-height: 104px;
+	padding: 18px;
+	color: #7b8ba3;
+	font-size: 13px;
+}
+@media (max-width: 700px) {
+	body.page-card_note .ts-member-note-details tr { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
+	body.page-card_note .ts-member-note-details td { padding: 5px 0 !important; }
+}
