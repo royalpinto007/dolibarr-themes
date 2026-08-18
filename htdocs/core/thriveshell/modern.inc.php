@@ -8336,6 +8336,21 @@ table.cal_month .ts-agenda-month-more {
 }
 table.cal_month .ts-agenda-month-more:hover,
 table.cal_month .ts-agenda-month-more:focus-visible { background: color-mix(in srgb, var(--c-accent) 16%, #fff); outline: 0; }
+@media (max-width: 700px) {
+	/* Seven translated weekday names cannot all retain desktop typography on a
+	   phone. Give every header a fixed share of the calendar and clip within its
+	   own cell instead of allowing neighbouring labels to run together. */
+	table.cal_month { table-layout: fixed !important; }
+	table.cal_month th {
+		min-width: 0 !important;
+		padding-inline: 1px !important;
+		font-size: 9px !important;
+		letter-spacing: -.15px;
+		white-space: nowrap !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+	}
+}
 
 /* Status dots.
 
