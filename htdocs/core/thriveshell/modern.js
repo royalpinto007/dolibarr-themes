@@ -3766,7 +3766,13 @@
 			var sectionTitle = document.createElement('h2');
 			sectionTitle.className = 'ts-boxes-section-title';
 			sectionTitle.textContent = 'Active widgets';
-			active.parentNode.insertBefore(sectionTitle, active);
+			var availableCard = active.closest('.ts-settings-card');
+			if (availableCard) {
+				availableCard.insertAdjacentElement('afterend', sectionTitle);
+				sectionTitle.insertAdjacentElement('afterend', active);
+			} else {
+				active.parentNode.insertBefore(sectionTitle, active);
+			}
 		}
 		Array.prototype.slice.call(active.rows).forEach(function (row) {
 			if (!row.querySelector('a, input, select, button') && !(row.innerText || '').trim()) { row.remove(); }
