@@ -76,6 +76,22 @@
 		return true;
 	}
 
+	/* Member secondary tabs (Note, Linked files, Events/Agenda, and module
+	   tabs) reuse the same Dolibarr banner but do not always emit an action bar.
+	   Mark the existing banner from the canonical Member tab so the shared
+	   identity/status grid is applied consistently on every tab. */
+	function normalizeMemberRecordHeader() {
+		var memberTab = Array.from(document.querySelectorAll('div.tabBar.ts-entity-card a.tab')).find(function (link) {
+			return (link.textContent || '').trim().replace(/\s+/g, ' ') === 'Member';
+		});
+		var banner = document.querySelector('div.tabBar.ts-entity-card .arearef');
+		var memberSecondary = document.body.classList.contains('page-card_documents')
+			|| document.body.classList.contains('page-card_agenda');
+		if ((!memberTab && !memberSecondary) || !banner) { return false; }
+		banner.classList.add('ts-has-actions');
+		return true;
+	}
+
 	function moveActionsIntoHeader() {
 		var bar = document.querySelector('div.tabsAction');
 		var banner = findBanner();
@@ -604,6 +620,8 @@
 
 	function polishMemberDocumentsPage() {
 		if (!document.body.classList.contains('page-card_documents')) { return; }
+		var memberBanner = document.querySelector('div.tabBar.ts-entity-card .arearef');
+		if (memberBanner) { memberBanner.classList.add('ts-has-actions'); }
 		document.body.classList.add('ts-member-documents-page');
 		var fiche = document.querySelector('.fiche');
 		if (!fiche) { return; }
@@ -631,6 +649,12 @@
 			if (table.id === 'tablelines') { table.classList.add('ts-member-files-doc-table'); }
 			else if (table !== linkTitle) { table.classList.add('ts-member-files-link-table'); }
 		});
+	}
+
+	function polishMemberAgendaPage() {
+		if (!document.body.classList.contains('page-card_agenda')) { return; }
+		var memberBanner = document.querySelector('div.tabBar.ts-entity-card .arearef');
+		if (memberBanner) { memberBanner.classList.add('ts-has-actions'); }
 	}
 
 	function polishThirdPartyCustomerTab() {
@@ -4083,6 +4107,7 @@
 		try { watchAjaxTooltips(); } catch (e) { /* keep native AJAX tooltip content */ }
 		try { polishDashboard(); } catch (e) { /* retain Dolibarr's native dashboard */ }
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
+		try { normalizeMemberRecordHeader(); } catch (e) { /* retain the native member header */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { applyPageHeadIcon(); } catch (e) { /* leave the header without an icon */ }
 		try { polishThirdPartyDashboard(); } catch (e) { /* retain the native Third Parties module landing */ }
@@ -4171,5 +4196,6 @@
 		try { polishThirdPartyCustomerTab(); } catch (e) { /* retain the native customer tab */ }
 		try { polishMemberNotePage(); } catch (e) { /* retain the native member note layout */ }
 		try { polishMemberDocumentsPage(); } catch (e) { /* retain the native member documents layout */ }
+		try { polishMemberAgendaPage(); } catch (e) { /* retain the native member agenda layout */ }
 	});
 })();
