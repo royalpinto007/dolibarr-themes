@@ -8281,6 +8281,29 @@ body.ts-category-index table.ts-category-index-table > tbody > tr.pair { backgro
 	font-weight: 600;
 }
 
+/* Busy month cells retain their real event links but disclose surplus entries
+   instead of stretching one week into a page-length column. */
+table.cal_month .agendacell > .event.ts-agenda-month-overflow { display: none; }
+table.cal_month .agendacell.ts-agenda-month-expanded > .event.ts-agenda-month-overflow { display: block; }
+table.cal_month .ts-agenda-month-more {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 28px;
+	margin: 6px 0 2px;
+	padding: 0 8px;
+	border: 0;
+	border-radius: 6px;
+	background: var(--c-accent-soft);
+	color: var(--c-accent-ink);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+table.cal_month .ts-agenda-month-more:hover,
+table.cal_month .ts-agenda-month-more:focus-visible { background: color-mix(in srgb, var(--c-accent) 16%, #fff); outline: 0; }
+
 /* Status dots.
 
    Dolibarr's .badge-dot carries the pill padding of a full status badge, so it

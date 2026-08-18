@@ -706,6 +706,33 @@
 		if (memberBanner) { memberBanner.classList.add('ts-has-actions'); }
 	}
 
+	/* A busy monthly calendar should remain a calendar, not turn into an
+	   unbounded activity feed. Dolibarr emits every event as a sibling inside its
+	   day cell, so disclose overflow in-place without changing event URLs or drag
+	   behaviour. */
+	function compactMonthAgendaEvents() {
+		if (!/\/comm\/action\/index\.php$/.test(window.location.pathname)) { return; }
+		document.querySelectorAll('table.cal_month .agendacell').forEach(function (cell) {
+			if (cell.dataset.tsAgendaCompact === '1') { return; }
+			var events = Array.from(cell.querySelectorAll(':scope > .event'));
+			if (events.length <= 4) { return; }
+			cell.dataset.tsAgendaCompact = '1';
+			var hidden = events.slice(4);
+			hidden.forEach(function (event) { event.classList.add('ts-agenda-month-overflow'); });
+			var disclosure = document.createElement('button');
+			disclosure.type = 'button';
+			disclosure.className = 'ts-agenda-month-more';
+			disclosure.textContent = '+' + hidden.length + ' more';
+			disclosure.setAttribute('aria-expanded', 'false');
+			disclosure.addEventListener('click', function () {
+				var expanded = cell.classList.toggle('ts-agenda-month-expanded');
+				disclosure.textContent = expanded ? 'Show less' : '+' + hidden.length + ' more';
+				disclosure.setAttribute('aria-expanded', String(expanded));
+			});
+			cell.appendChild(disclosure);
+		});
+	}
+
 	function polishThirdPartyCustomerTab() {
 		if (!/\/comm\/card\.php$/.test(window.location.pathname) || !document.body.classList.contains('ts-thirdparty-record-context')) { return false; }
 		var shell = document.querySelector('.ts-thirdparty-record-shell');
@@ -4352,5 +4379,6 @@
 		try { polishMemberNotePage(); } catch (e) { /* retain the native member note layout */ }
 		try { polishMemberDocumentsPage(); } catch (e) { /* retain the native member documents layout */ }
 		try { polishMemberAgendaPage(); } catch (e) { /* retain the native member agenda layout */ }
+		try { compactMonthAgendaEvents(); } catch (e) { /* retain the native agenda density */ }
 	});
 })();
