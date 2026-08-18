@@ -565,6 +565,7 @@
 		if (!document.body.classList.contains('page-card_note')) { return; }
 		var info = document.querySelector('table.tableforfield');
 		if (info) { info.classList.add('ts-member-note-details'); }
+		var notes = [];
 		document.querySelectorAll('table.nobordernopadding').forEach(function (table) {
 			var label = (table.textContent || '').trim().toLowerCase();
 			if (label.indexOf('note (public)') === -1 && label.indexOf('note (private)') === -1) { return; }
@@ -574,7 +575,18 @@
 			empty.className = 'ts-member-note-empty';
 			empty.textContent = table.dataset.noteKind === 'public' ? 'No public note yet' : 'No private note yet';
 			table.appendChild(empty);
+			notes.push(table);
 		});
+		if (info && notes.length) {
+			var layout = document.createElement('div');
+			layout.className = 'ts-member-note-layout';
+			info.parentNode.insertBefore(layout, info);
+			layout.appendChild(info);
+			var notesGrid = document.createElement('div');
+			notesGrid.className = 'ts-member-note-grid';
+			layout.appendChild(notesGrid);
+			notes.forEach(function (table) { notesGrid.appendChild(table); });
+		}
 	}
 
 	function polishMemberDocumentsPage() {
