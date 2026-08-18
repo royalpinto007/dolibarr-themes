@@ -8791,6 +8791,12 @@ body.ts-member-documents-page .ts-member-files-details tbody { display:block; wi
 body.ts-member-documents-page .ts-member-files-details tr { display:grid; width:100%; grid-template-columns:minmax(220px,34%) minmax(0,1fr); align-items:center; min-height:42px; border-bottom:1px solid #f0f2f5; }
 body.ts-member-documents-page .ts-member-files-details tr:last-child { border-bottom:0; }
 body.ts-member-documents-page .ts-member-files-details td { padding:10px 0 !important; border:0 !important; font-size:13px !important; }
+body.ts-member-documents-page table.ts-member-files-details > tbody > tr > td {
+	border: 0 !important;
+	border-width: 0 !important;
+	border-style: none !important;
+	box-shadow: none !important;
+}
 body.ts-member-documents-page .ts-member-files-details td:first-child { color:#526581; font-weight:650; }
 body.ts-member-documents-page .ts-member-files-details td.valeur, body.ts-member-documents-page .ts-member-files-details td[colspan] { color:#24324a; }
 body.ts-member-documents-page .ts-member-files-attached-head { display:flex !important; align-items:center; justify-content:space-between; margin:0 0 10px !important; padding:0 !important; min-height:48px; }
