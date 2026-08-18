@@ -8669,6 +8669,37 @@ body.page-card_note .ts-member-note-empty {
 	color: #7b8ba3;
 	font-size: 13px;
 }
+/* Secondary record tabs (members, documents, notes, events, etc.) share the
+   same entity/header and tab surfaces as the primary record view. */
+body.ts-command-record-secondary div.tabBar.ts-entity-card > div.arearef,
+body.ts-command-record-secondary div.tabBar.ts-entity-card > div.arearefnobottom,
+body.ts-command-record-secondary div.tabBar.ts-entity-card > div.arearefnoborder {
+	margin: 0 0 var(--sp-4) !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r-lg) !important;
+	background: var(--c-surface) !important;
+	box-shadow: var(--sh-sm) !important;
+}
+body.ts-command-record-secondary div.tabBar.ts-entity-card > :first-child:not(.tabs) {
+	background: var(--c-surface) !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r-lg) !important;
+	box-shadow: var(--sh-sm) !important;
+}
+body.ts-command-record-secondary div.tabBar.ts-entity-card > div.tabs {
+	margin: 0 0 var(--sp-4) !important;
+	padding: 0 var(--sp-3);
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+}
+body.ts-command-record-secondary div.tabBar.ts-entity-card .tabs {
+	background: var(--c-surface);
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-sm);
+}
 body.page-card_note .ts-member-note-layout { width: 100%; }
 body.page-card_note .ts-member-note-layout > .ts-member-note-details { width: min(100%, 720px) !important; margin: 0 0 16px !important; }
 body.page-card_note .ts-member-note-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; }
