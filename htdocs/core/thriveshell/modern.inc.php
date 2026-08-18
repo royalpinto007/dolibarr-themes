@@ -7765,6 +7765,57 @@ body.ts-settings-page .ts-setting-control.ts-control-medium { max-width: 320px; 
 body.ts-settings-page .ts-setting-control.ts-control-wide { max-width: 420px; }
 body.ts-settings-page .ts-setting-control.ts-control-full { max-width: 100%; }
 
+/* Limits/Precision configuration prints live examples as loose inline nodes.
+   composeLimitsExamples() retains those nodes and gives them the same calm,
+   compact settings surface used throughout COMMAND. */
+body.ts-limits-examples-page .ts-limits-examples-card {
+	margin: 20px 0 0;
+	border: 1px solid var(--c-hairline);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	overflow: hidden;
+}
+body.ts-limits-examples-page .ts-limits-examples-head {
+	display: flex;
+	align-items: center;
+	min-height: 62px;
+	padding: 0 24px;
+	border-bottom: 1px solid var(--c-hairline);
+}
+body.ts-limits-examples-page .ts-limits-examples-title {
+	margin: 0;
+	font-size: 1.125rem;
+	font-weight: 650;
+	line-height: 1.25;
+	color: var(--c-ink);
+}
+body.ts-limits-examples-page .ts-limits-examples-body {
+	display: grid;
+	gap: 8px;
+	padding: 18px 24px 20px;
+}
+body.ts-limits-examples-page .ts-limits-example-line {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 0 5px;
+	min-width: 0;
+	font-size: .8125rem;
+	line-height: 1.55;
+	color: var(--c-ink-subtle);
+}
+body.ts-limits-examples-page .ts-limits-example-line > * { min-width: 0; }
+body.ts-limits-examples-page .ts-limits-example-line b,
+body.ts-limits-examples-page .ts-limits-example-line strong {
+	font-weight: 650;
+	color: var(--c-ink-2);
+}
+@media only screen and (max-width: 600px) {
+	body.ts-limits-examples-page .ts-limits-examples-head { min-height: 56px; padding: 0 16px; }
+	body.ts-limits-examples-page .ts-limits-examples-body { padding: 16px; gap: 10px; }
+}
+
 /* Constants is the one admin editor whose native table has four meaningful
    editable columns. Treat those columns as a real compact data grid instead
    of squeezing every field into the generic label/control setting row. */

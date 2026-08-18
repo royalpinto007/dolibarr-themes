@@ -4090,6 +4090,63 @@
 		return true;
 	}
 
+	/* ==========================================================================
+	   Limits/Precision setup examples
+
+	   limits.php prints its "Examples with current configuration" heading in a
+	   title-only table, then emits every calculated example as loose inline spans
+	   separated by <br> nodes.  The result is a heading surface followed by naked
+	   text on the page canvas.  Group the original nodes into one COMMAND card;
+	   values remain Dolibarr's live calculated nodes rather than being recreated.
+	   ========================================================================== */
+	function composeLimitsExamples() {
+		if (!/\/admin\/limits\.php$/.test(window.location.pathname)) { return false; }
+		if (document.body.classList.contains('ts-limits-examples-page')) { return false; }
+		var fiche = document.querySelector('.fiche');
+		if (!fiche) { return false; }
+		var titleTable = Array.prototype.slice.call(fiche.querySelectorAll('table.table-fiche-title')).find(function (table) {
+			return /Examples with current configuration/i.test(table.textContent || '');
+		});
+		if (!titleTable) { return false; }
+
+		document.body.classList.add('ts-limits-examples-page');
+		var card = document.createElement('section');
+		card.className = 'ts-limits-examples-card';
+		var head = document.createElement('div');
+		head.className = 'ts-limits-examples-head';
+		var heading = document.createElement('h2');
+		heading.className = 'ts-limits-examples-title';
+		var title = titleTable.querySelector('.titre');
+		if (title) {
+			Array.prototype.slice.call(title.childNodes).forEach(function (node) { heading.appendChild(node); });
+		} else {
+			heading.textContent = (titleTable.textContent || '').trim();
+		}
+		head.appendChild(heading);
+		var body = document.createElement('div');
+		body.className = 'ts-limits-examples-body';
+		var line = document.createElement('div');
+		line.className = 'ts-limits-example-line';
+		var appendLine = function () {
+			if (!(line.textContent || '').replace(/\s+/g, ' ').trim()) { return; }
+			body.appendChild(line);
+			line = document.createElement('div');
+			line.className = 'ts-limits-example-line';
+		};
+		var nodes = [];
+		var cursor = titleTable.nextSibling;
+		while (cursor) { nodes.push(cursor); cursor = cursor.nextSibling; }
+		nodes.forEach(function (node) {
+			if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') { appendLine(); return; }
+			line.appendChild(node);
+		});
+		appendLine();
+		card.append(head, body);
+		titleTable.parentNode.insertBefore(card, titleTable);
+		titleTable.remove();
+		return true;
+	}
+
 	/* The widget administration screen keeps active widgets in a legacy table
 	   beside the composed available-widget section. Preserve every Dolibarr
 	   row/action, but remove empty spacer rows and mark the table for stable
@@ -4410,6 +4467,7 @@
 		try { polishThirdPartyOverview(); } catch (e) { /* retain the shared record shell */ }
 		try { polishThirdPartyEvents(); } catch (e) { /* retain the native Events tab */ }
 		try { composeDisplaySettings(); } catch (e) { /* retain Dolibarr native Display settings */ }
+		try { composeLimitsExamples(); } catch (e) { /* retain native Limits examples */ }
 		try { compactDictionarySetup(); } catch (e) { /* retain native dictionary spacers */ }
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
