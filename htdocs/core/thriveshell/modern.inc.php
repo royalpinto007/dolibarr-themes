@@ -5974,6 +5974,22 @@ body.ts-command-form-page .ts-command-submit-secondary {
 	background: #fff !important;
 	color: #334155 !important;
 }
+/* Native Dolibarr card forms (including Third Party create/edit) may not carry
+   the composed form-page marker, but their real submit still uses
+   .button-save. Keep that action in the shared COMMAND indigo hierarchy. */
+body.page-card input.button-save,
+body.page-card button.button-save {
+	border-color: var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
+}
+/* Some native card forms expose only the shared action-row marker. */
+.ts-modern-form-actions input.button-save,
+.ts-modern-form-actions button.button-save {
+	border-color: var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
+}
 @media (max-width: 760px) {
 	body.ts-command-form-page .fiche { padding: 16px 12px 30px !important; }
 	body.ts-command-form-page .ts-command-form { padding: 16px !important; }
@@ -6127,9 +6143,9 @@ body.ts-thirdparty-overview .ts-header-actions .ts-record-primary {
 body.ts-thirdparty-overview .ts-header-actions .ts-record-secondary {
 	order: 1 !important;
 	min-height: 40px !important;
-	border: 1px solid var(--c-btn-action, #5546e8) !important;
-	background: var(--c-btn-action, #5546e8) !important;
-	color: var(--c-btn-action-text, #fff) !important;
+	border: 1px solid var(--c-accent) !important;
+	background: var(--c-accent) !important;
+	color: #fff !important;
 	box-shadow: 0 2px 5px rgba(79, 70, 229, .18) !important;
 }
 body.ts-thirdparty-overview .ts-header-actions .ts-record-primary,
