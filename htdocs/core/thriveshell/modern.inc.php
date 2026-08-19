@@ -4625,6 +4625,13 @@ body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	/* The heading text lives in this div and is styled here rather than inherited,
+	   so the casing and weight have to be stated on it too. */
+	color: #6b7088 !important;
+	font-size: 12px !important;
+	font-weight: 700 !important;
+	letter-spacing: 0.48px !important;
+	text-transform: uppercase !important;
 }
 /* The picture Dolibarr shows beside a "nothing here" line is decoration, and at
    full size it made an empty card twice the height of the message in it. */
@@ -4786,30 +4793,42 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 	border-collapse: collapse !important;
 	background: #fff !important;
 }
+/* The widget heading sits on a band of its own rather than on the card's white,
+   which is what separates one widget from the next when several are stacked in a
+   column. Small, upper case and muted, so the record rows beneath it stay the
+   thing being read. */
 .ts-dashboard-widget tr.box_titre,
 .ts-dashboard-widget tr.box_titre > th {
-	height: 48px;
+	height: 44px;
 	padding: 0 14px !important;
 	border: 0 !important;
-	border-bottom: 1px solid #edf0f4 !important;
-	background: #fff !important;
-	color: #1e293b !important;
-	font-size: 13px !important;
-	font-weight: 650 !important;
-	text-transform: none !important;
+	border-bottom: 1px solid #e3e8f0 !important;
+	background: #eef1f7 !important;
+	color: #6b7088 !important;
+	font-size: 12px !important;
+	font-weight: 700 !important;
+	letter-spacing: 0.48px !important;
+	text-transform: uppercase !important;
 }
 .ts-dashboard-widget tr.oddeven > td,
 .ts-dashboard-widget table.boxtable > tbody > tr:not(.box_titre) > td {
-	height: 46px;
+	height: 44px;
 	padding: 10px 14px !important;
 	border: 0 !important;
-	border-bottom: 1px solid #f0f2f5 !important;
+	border-bottom: 1px solid rgba(107, 112, 136, .14) !important;
 	background: #fff !important;
+	color: #4b4f66 !important;
 	font-size: 13px !important;
+}
+.ts-dashboard-widget table.boxtable > tbody > tr:last-child > td {
+	border-bottom: 0 !important;
 }
 .ts-dashboard-widget tr.oddeven:hover > td {
 	background: #fafbff !important;
 }
+/* Shown only while arranging the dashboard, and drawn as buttons when they are:
+   a plain one for the handle, and a red-tinted one for removal, so the
+   destructive control does not look like the harmless one. */
 .ts-dashboard-widget .boxhandle,
 .ts-dashboard-widget .boxclose {
 	display: inline-flex;
@@ -4818,8 +4837,20 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 	width: 30px;
 	height: 30px;
 	margin-left: 4px !important;
-	border-radius: 7px;
+	border-radius: 9px;
+	border: 1px solid #dbe4ee;
+	background: #f1f5f9;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+	opacity: 1 !important;
+	font-size: 12px;
 }
+.ts-dashboard-widget .boxclose {
+	border-color: #fecdd3;
+	background: #fff1f2;
+	color: #e11d48;
+}
+.ts-dashboard-widget .boxhandle:hover { border-color: #b9c7d8; background: #e8eef6; }
+.ts-dashboard-widget .boxclose:hover { border-color: #fda4af; background: #ffe4e6; }
 body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-widget .boxhandle,
 body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-widget .boxclose {
 	display: none !important;

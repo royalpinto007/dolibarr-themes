@@ -395,6 +395,12 @@
 	   of the table: a share cannot overflow the table, and a floor keeps any
 	   column from collapsing. */
 	function sizeModuleIndexColumns(table) {
+		/* Three-column transaction widgets are deliberately sized from their content
+		   by the stylesheet, which sets auto layout for them. Column widths given as
+		   shares only hold under fixed layout; stated against auto layout they are
+		   advisory, and the table grew past the column it sits in. Leave those to
+		   the rule that claims them. */
+		if (table.classList.contains('ts-module-index-cols-3')) { return; }
 		var columnCount = Array.prototype.reduce.call(table.rows || [], function (count, row) {
 			return row.classList.contains('liste_titre') ? count : Math.max(count, row.cells.length);
 		}, 0);
