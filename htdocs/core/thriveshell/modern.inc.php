@@ -4479,12 +4479,229 @@ body.ts-command-dashboard .ts-dashboard-summary-card .badge {
 	border-radius: 999px;
 }
 
+/* The widget primitives below are written against the widget markup rather than
+   against the home dashboard, so any page that renders Dolibarr boxes -- a module
+   dashboard, or one a custom module adds -- is described by the same vocabulary
+   without being named here. Only the section grouping and the two-column sorting
+   surface stay tied to the home dashboard, which is the page that has them. */
+/* Widgets are grouped into sections, and each section packs its own widgets into
+   balanced columns.
+
+   Two independent stacks ended at wildly different points -- 4130px against
+   3005px on the home dashboard -- and a row grid is no better, because every row
+   is as tall as the tallest card in it, so a 429px chart beside an 83px widget
+   leaves a hole the height of the difference. Columns pack by height and even
+   themselves out, which is what a set of mixed-height cards wants; sections give
+   the reader somewhere to look rather than one long undifferentiated stream.
+
+   The native two columns are emptied only while the dashboard is being read.
+   Customize puts every widget back into them, because Dolibarr sorts within
+   those two elements and dragging must keep working. */
 body.ts-command-dashboard .ts-dashboard-lower-grid {
+	display: block;
+	clear: both;
+}
+body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-lower-grid > #boxhalfleft,
+body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-lower-grid > #boxhalfright {
+	display: contents;
+}
+body.ts-command-dashboard .ts-dash-section {
+	margin: 0 0 22px;
+}
+body.ts-command-dashboard .ts-dash-section-title {
+	margin: 0 0 10px;
+	color: var(--c-muted);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+/* Columns are chosen from the narrowest card that still reads well, rather than
+   fixed per breakpoint: the browser fits as many as the width allows and drops
+   one when it cannot, which is the same rule at every size. */
+body.ts-command-dashboard .ts-dash-section-body {
+	column-width: 330px;
+	column-gap: 16px;
+}
+.ts-dashboard-widget {
+	break-inside: avoid;
+	page-break-inside: avoid;
+}
+/* A section holding one or two widgets should not spread them thinly across
+   three columns, and a lone card should not run the width of the page. */
+body.ts-command-dashboard .ts-dash-section-body[data-ts-count="1"] {
+	column-count: 1;
+	max-width: 540px;
+}
+body.ts-command-dashboard .ts-dash-section-body[data-ts-count="2"] {
+	column-count: 2;
+}
+/* Charts carry two plots side by side and need the width to stay readable. */
+body.ts-command-dashboard .ts-dash-section[data-ts-section="analytics"] .ts-dash-section-body {
+	column-count: 2;
+}
+@media (max-width: 900px) {
+	body.ts-command-dashboard .ts-dash-section-body,
+	body.ts-command-dashboard .ts-dash-section-body[data-ts-count="2"],
+	body.ts-command-dashboard .ts-dash-section[data-ts-section="analytics"] .ts-dash-section-body {
+		column-count: 1;
+		column-width: auto;
+	}
+	body.ts-command-dashboard .ts-dash-section-body[data-ts-count="1"] { max-width: none; }
+}
+/* While sorting, Dolibarr's own two columns are back and carry the widgets. */
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 16px;
 	align-items: start;
-	clear: both;
+}
+
+/* Widget titles are sized for a full-width card and overran a column card, so
+   the heading ran past its own border. Keep them to the card. */
+.ts-dashboard-widget .box_titre th > div:first-child {
+	max-width: 100% !important;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+/* The picture Dolibarr shows beside a "nothing here" line is decoration, and at
+   full size it made an empty card twice the height of the message in it. */
+.ts-widget--empty tr:not(.box_titre) img,
+.ts-widget--empty tr:not(.box_titre) .fas,
+.ts-widget--empty tr:not(.box_titre) .far {
+	width: 15px !important;
+	height: 15px !important;
+	max-width: 15px !important;
+	max-height: 15px !important;
+	font-size: 13px !important;
+	line-height: 1 !important;
+	vertical-align: middle;
+	opacity: 0.55;
+}
+.ts-widget--empty tr:not(.box_titre) .ts-empty-illustration,
+.ts-widget--empty tr:not(.box_titre) [class*="ts-module-index-empty"] {
+	display: none !important;
+}
+
+/* A widget with nothing to report states that in one line instead of holding a
+   card of blank surface. */
+.ts-widget--empty tr:not(.box_titre) > td {
+	height: auto !important;
+	padding: 12px 14px !important;
+	border-bottom: 0 !important;
+	color: var(--c-muted);
+	font-size: 12.5px !important;
+	text-align: center;
+}
+.ts-widget--empty tr.box_titre,
+.ts-widget--empty tr.box_titre > th {
+	height: 40px !important;
+}
+.ts-widget--empty .opacitymedium {
+	opacity: 1;
+}
+/* The stray info icon Dolibarr trails after an empty message adds a line of its
+   own; it says nothing the message has not. */
+.ts-widget--empty tr:not(.box_titre) .fa-info-circle,
+.ts-widget--empty tr:not(.box_titre) img[src*="info"] {
+	display: none;
+}
+
+/* Charts: less air around the canvas, so the card is sized by the plot. */
+.ts-widget--chart .dolgraph {
+	margin: 0 auto !important;
+}
+.ts-widget--chart tr:not(.box_titre) > td {
+	padding: 8px 10px !important;
+}
+
+/* Figure tiles. Each figure is its own link that wrapped three to a row inside a
+   narrow card, which made a readout of thirty-one figures 767px tall. Laid out as
+   a grid that fills the width available, the same readout is a few rows deep. */
+.ts-widget--tiles tr:not(.box_titre) > td {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+	gap: 8px;
+	height: auto !important;
+	padding: 12px !important;
+}
+.ts-widget--tiles .boxstatsindicator.thumbstat {
+	display: block;
+	/* The class carries a width of its own, which left each tile 35px wide inside a
+	   130px track and clipped every label to its first letter. */
+	width: auto !important;
+	min-width: 0 !important;
+	max-width: none !important;
+	height: auto !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+}
+.ts-widget--tiles .boxstats {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-height: 0;
+	padding: 9px 10px;
+	border: 1px solid var(--c-border);
+	border-radius: 9px;
+	background: #fff;
+	text-align: left;
+}
+.ts-widget--tiles .boxstats:hover {
+	border-color: var(--c-primary);
+}
+.ts-widget--tiles .boxstatstext {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	color: var(--c-muted);
+	font-size: 10.5px;
+	font-weight: 600;
+	line-height: 1.25;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+.ts-widget--tiles .boxstats br { display: none; }
+.ts-widget--tiles .boxstats > .boxstatsindicator {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--c-text);
+	font-size: 15px;
+	font-weight: 650;
+}
+/* A readout of figures earns the full width of its section rather than sitting in
+   a single narrow column. */
+body.ts-command-dashboard .ts-dash-section-body[data-ts-count="1"]:has(.ts-widget--tiles) {
+	max-width: none;
+}
+/* Charts stay at two columns however wide the screen. Each of these cards holds
+   two plots of about 256px side by side, so a card narrower than roughly 540px
+   clips the second one -- at three columns on a 1680px screen the cards came out
+   at 449px and the months ran off the axis. */
+/* Charts sit in the same columns as everything else. Demanding a card wide
+   enough for both plots side by side (560px) meant a single column at 1280,
+   where six charts stacked into a longer page than we started with; letting the
+   pair wrap inside the card instead keeps the plots at their natural size and
+   the section in step with the rest of the dashboard. */
+.ts-widget--chart tr:not(.box_titre) > td {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+	height: auto !important;
+}
+.ts-widget--chart .dolgraph {
+	flex: 0 1 auto;
+	min-width: 0;
+}
+.ts-widget--chart .dolgraph,
+.ts-widget--chart canvas {
+	max-width: 100%;
 }
 body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfleft,
 body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
@@ -4494,7 +4711,7 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 	margin: 0 !important;
 	padding: 0 !important;
 }
-body.ts-command-dashboard .ts-dashboard-widget {
+.ts-dashboard-widget {
 	margin: 0 0 16px !important;
 	border: 1px solid #e7e9ee !important;
 	border-radius: 11px !important;
@@ -4502,14 +4719,14 @@ body.ts-command-dashboard .ts-dashboard-widget {
 	box-shadow: 0 3px 12px rgba(15, 23, 42, .035) !important;
 	overflow: hidden;
 }
-body.ts-command-dashboard .ts-dashboard-widget > table.boxtable {
+.ts-dashboard-widget > table.boxtable {
 	margin: 0 !important;
 	border: 0 !important;
 	border-collapse: collapse !important;
 	background: #fff !important;
 }
-body.ts-command-dashboard .ts-dashboard-widget tr.box_titre,
-body.ts-command-dashboard .ts-dashboard-widget tr.box_titre > th {
+.ts-dashboard-widget tr.box_titre,
+.ts-dashboard-widget tr.box_titre > th {
 	height: 48px;
 	padding: 0 14px !important;
 	border: 0 !important;
@@ -4520,8 +4737,8 @@ body.ts-command-dashboard .ts-dashboard-widget tr.box_titre > th {
 	font-weight: 650 !important;
 	text-transform: none !important;
 }
-body.ts-command-dashboard .ts-dashboard-widget tr.oddeven > td,
-body.ts-command-dashboard .ts-dashboard-widget table.boxtable > tbody > tr:not(.box_titre) > td {
+.ts-dashboard-widget tr.oddeven > td,
+.ts-dashboard-widget table.boxtable > tbody > tr:not(.box_titre) > td {
 	height: 46px;
 	padding: 10px 14px !important;
 	border: 0 !important;
@@ -4529,11 +4746,11 @@ body.ts-command-dashboard .ts-dashboard-widget table.boxtable > tbody > tr:not(.
 	background: #fff !important;
 	font-size: 13px !important;
 }
-body.ts-command-dashboard .ts-dashboard-widget tr.oddeven:hover > td {
+.ts-dashboard-widget tr.oddeven:hover > td {
 	background: #fafbff !important;
 }
-body.ts-command-dashboard .ts-dashboard-widget .boxhandle,
-body.ts-command-dashboard .ts-dashboard-widget .boxclose {
+.ts-dashboard-widget .boxhandle,
+.ts-dashboard-widget .boxclose {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;

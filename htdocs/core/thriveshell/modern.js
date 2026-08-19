@@ -3339,6 +3339,9 @@
 			customize.addEventListener('click', function () {
 				var active = document.body.classList.toggle('ts-dashboard-customizing');
 				customize.setAttribute('aria-pressed', active ? 'true' : 'false');
+				/* Dolibarr sorts widgets within its own two columns, so put them back
+				   there to be dragged, and regroup once the reader is done. */
+				try { active ? ungroupDashboardWidgets() : groupDashboardWidgets(); } catch (e) { /* leave as is */ }
 				var combo = document.getElementById('boxcombo');
 				if (combo) {
 					combo.style.display = active ? '' : 'none';
@@ -3364,10 +3367,188 @@
 					var label = heading ? (heading.textContent || '').trim() : '';
 					if (/customer invoices/i.test(label)) { widget.classList.add('ts-dashboard-invoices'); }
 					if (/prospects/i.test(label)) { widget.classList.add('ts-dashboard-prospects'); }
+					classifyDashboardWidget(widget);
 				});
 			});
+			try { groupDashboardWidgets(); } catch (e) { /* leave the flat stream */ }
 		}
 		return true;
+	}
+
+	/* Widget kinds, read from the shape of the widget rather than from its identity,
+	   so a dashboard elsewhere -- or a widget added later -- is described by the same
+	   vocabulary without anything being listed here by name.
+
+	   A widget that reports it has nothing to show is the one worth naming: sixteen
+	   of the thirty-seven on the home dashboard are in that state, and each was
+	   holding a full card of blank surface. */
+	/* Dolibarr renders these widgets as `.box` wherever a dashboard appears, not
+	   only on Home, so the reading of what each one is happens for any page that
+	   has them. The grouping into sections stays with the home dashboard, which is
+	   the only page that lays widgets out in two sortable columns. */
+	function classifyWidgetsOnPage(root) {
+		var boxes = (root || document).querySelectorAll('.box');
+		if (!boxes.length) { return 0; }
+		var seen = 0;
+		Array.prototype.forEach.call(boxes, function (box) {
+			if (!box.querySelector('table.boxtable')) { return; }
+			box.classList.add('ts-dashboard-widget');
+			classifyDashboardWidget(box);
+			seen += 1;
+		});
+		return seen;
+	}
+
+	/* Dashboard sections.
+
+	   Widgets are placed by what they are and what they are about, not by a list of
+	   widget identifiers: a chart belongs with the other charts whatever it plots,
+	   a grid of figures is a system readout, and everything else is matched on the
+	   subject in its own title, falling back to the module its links point at. A
+	   widget added to any dashboard later is placed by the same reading, and one
+	   that matches nothing lands in Activity rather than being dropped.
+
+	   The subject words are English, which is what this deployment runs; a widget
+	   whose title is translated falls through to its links, and failing that to the
+	   last section. */
+	var DASH_SECTIONS = [
+		['sales', 'Sales & Purchases'],
+		['customers', 'Customers & Vendors'],
+		['operations', 'Operations'],
+		['analytics', 'Analytics'],
+		['system', 'System'],
+		['account', 'Login & Upcoming'],
+		['activity', 'Activity']
+	];
+	var DASH_SUBJECT = [
+		[/vendor|supplier|purchase/i, 'sales'],
+		[/customer|prospect|client|third part|contact/i, 'customers'],
+		[/project|task|intervention|contract|shipment|account|bank|opportunit/i, 'operations'],
+		[/statistic|database/i, 'system'],
+		[/login|password|user/i, 'account'],
+		[/ticket|event|agenda|action|birthday|member|proposal|order|invoice/i, 'activity']
+	];
+	var DASH_MODULE = {
+		fourn: 'sales', commande: 'sales', propal: 'sales', expedition: 'operations',
+		societe: 'customers', contact: 'customers', facture: 'customers',
+		projet: 'operations', fichinter: 'operations', contrat: 'operations',
+		bank: 'operations', compta: 'operations',
+		ticket: 'activity', action: 'activity', adherents: 'activity',
+		user: 'account'
+	};
+
+	function dashboardSectionFor(widget) {
+		var kind = widget.getAttribute('data-ts-widget');
+		if (kind === 'chart') { return 'analytics'; }
+		if (kind === 'tiles') { return 'system'; }
+		var heading = widget.querySelector('.box_titre th');
+		var title = (heading && (heading.getAttribute('title') || heading.textContent)) || '';
+		for (var i = 0; i < DASH_SUBJECT.length; i++) {
+			if (DASH_SUBJECT[i][0].test(title)) { return DASH_SUBJECT[i][1]; }
+		}
+		var link = widget.querySelector('a[href]');
+		if (link) {
+			var m = (link.getAttribute('href') || '').match(/([a-z]+)\/[a-z_]+\.php/i);
+			if (m && DASH_MODULE[m[1].toLowerCase()]) { return DASH_MODULE[m[1].toLowerCase()]; }
+		}
+		return 'activity';
+	}
+
+	function groupDashboardWidgets() {
+		var grid = document.querySelector('.ts-dashboard-lower-grid');
+		if (!grid || grid.querySelector(':scope > .ts-dash-section')) { return; }
+		var widgets = Array.prototype.slice.call(grid.querySelectorAll('.ts-dashboard-widget'));
+		if (!widgets.length) { return; }
+		/* remember where Dolibarr had each widget, so Customize can have them back */
+		widgets.forEach(function (w) {
+			if (w.getAttribute('data-ts-home')) { return; }
+			var col = w.parentElement;
+			w.setAttribute('data-ts-home', (col && col.id) || '');
+			w.setAttribute('data-ts-home-index', String(Array.prototype.indexOf.call(col.children, w)));
+		});
+		var made = {};
+		DASH_SECTIONS.forEach(function (spec) {
+			var members = widgets.filter(function (w) { return dashboardSectionFor(w) === spec[0]; });
+			if (!members.length) { return; }
+			var section = document.createElement('section');
+			section.className = 'ts-dash-section';
+			section.setAttribute('data-ts-section', spec[0]);
+			var head = document.createElement('h2');
+			head.className = 'ts-dash-section-title';
+			head.textContent = spec[1];
+			var body = document.createElement('div');
+			body.className = 'ts-dash-section-body';
+			body.setAttribute('data-ts-count', String(members.length));
+			members.forEach(function (w) { body.appendChild(w); });
+			section.appendChild(head);
+			section.appendChild(body);
+			grid.appendChild(section);
+			made[spec[0]] = true;
+		});
+	}
+
+	function ungroupDashboardWidgets() {
+		var grid = document.querySelector('.ts-dashboard-lower-grid');
+		if (!grid) { return; }
+		var sections = Array.prototype.slice.call(grid.querySelectorAll(':scope > .ts-dash-section'));
+		if (!sections.length) { return; }
+		var widgets = Array.prototype.slice.call(grid.querySelectorAll('.ts-dashboard-widget'));
+		widgets.sort(function (a, b) {
+			return (parseInt(a.getAttribute('data-ts-home-index'), 10) || 0)
+				- (parseInt(b.getAttribute('data-ts-home-index'), 10) || 0);
+		});
+		widgets.forEach(function (w) {
+			var home = document.getElementById(w.getAttribute('data-ts-home') || '');
+			if (home) { home.appendChild(w); }
+		});
+		sections.forEach(function (sec) { sec.remove(); });
+	}
+
+	/* Dolibarr states "nothing to show" as a muted span in a single centred cell.
+	   Some of those cards also carry a trailing help or see-all link, so the
+	   presence of a link cannot be part of the test -- keying on that missed nine
+	   of the sixteen empty widgets on the home dashboard and left them holding a
+	   full card each. What holds across all of them is the shape: one or two rows,
+	   no row carrying a record (which would need several cells), and a short
+	   muted line. */
+	function isEmptyWidgetBody(widget, rows, text) {
+		if (rows.length > 2) { return false; }
+		var record = rows.some(function (row) {
+			return row.querySelectorAll('td').length >= 3;
+		});
+		if (record) { return false; }
+		var muted = widget.querySelector('table.boxtable > tbody > tr:not(.box_titre) .opacitymedium');
+		return !!muted || text.length < 60;
+	}
+
+	function classifyDashboardWidget(widget) {
+		if (widget.getAttribute('data-ts-widget')) { return widget.getAttribute('data-ts-widget'); }
+		var rows = Array.prototype.filter.call(
+			widget.querySelectorAll('table.boxtable > tbody > tr'),
+			function (row) { return !row.classList.contains('box_titre'); });
+		var text = rows.map(function (r) { return r.textContent || ''; }).join(' ').replace(/\s+/g, ' ').trim();
+		var links = widget.querySelectorAll('table.boxtable > tbody > tr:not(.box_titre) a[href]').length;
+		var cells = widget.querySelectorAll('table.boxtable > tbody > tr:not(.box_titre) td').length;
+		var kind;
+		if (widget.querySelector('canvas, .dolgraph')) {
+			kind = 'chart';
+		} else if (widget.querySelectorAll('.boxstats, .boxstatsindicator').length >= 6) {
+			/* Dolibarr marks each figure in a readout with its own indicator class, so
+			   a widget carrying a row of them is a set of tiles wherever it appears --
+			   no need to know which readout it is. */
+			kind = 'tiles';
+		} else if (!rows.length) {
+			kind = 'bare';
+		} else if (isEmptyWidgetBody(widget, rows, text)) {
+			kind = 'empty';
+		} else if (cells >= 2) {
+			kind = 'table';
+		} else {
+			kind = 'info';
+		}
+		widget.setAttribute('data-ts-widget', kind);
+		widget.classList.add('ts-widget', 'ts-widget--' + kind);
+		return kind;
 	}
 
 	/* Third Parties module landing dashboard. The route guard is intentionally
@@ -4648,6 +4829,7 @@
 		try { composeCustomerSummary(); } catch (e) { /* retain the native Customer tab column */ }
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
 		try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
+		try { classifyWidgetsOnPage(document); } catch (e) { /* leave the widgets plain */ }
 		try { freeColumnPickerOverflow(); } catch (e) { /* leave the picker clipped */ }
 		if (/\/stats\//.test(window.location.pathname)) {
 			document.body.classList.add('ts-command-stats');
