@@ -3405,6 +3405,36 @@
 		return seen;
 	}
 
+	/* A select whose first entry has no label renders as a blank line above the
+	   real choices, which reads as a rendering fault rather than as a choice. The
+	   entry itself is meaningful -- Dolibarr uses it for "not set", carrying a
+	   value of -1 or an empty string -- so it is labelled rather than removed;
+	   dropping it would take away the only way to clear a selection.
+
+	   Only an entry that is genuinely blank and genuinely a "none" value is
+	   touched, and only its label: the value, the selection and the form's
+	   submission are left exactly as they were. */
+	function labelBlankFirstOption(root) {
+		var NONE = { '': 1, '-1': 1 };
+		var touched = 0;
+		Array.prototype.forEach.call((root || document).querySelectorAll('select'), function (select) {
+			var first = select.options && select.options[0];
+			if (!first || first.getAttribute('data-ts-blank') === '1') { return; }
+			if (!NONE[String(first.value)]) { return; }
+			var label = (first.textContent || '').replace(/[\s\u00a0]/g, '');
+			if (label.length) { return; }
+			first.textContent = '\u2014';
+			first.setAttribute('data-ts-blank', '1');
+			touched += 1;
+			try {
+				if (window.jQuery && window.jQuery(select).data('select2')) {
+					window.jQuery(select).trigger('change.select2');
+				}
+			} catch (e) { /* the native select is already correct */ }
+		});
+		return touched;
+	}
+
 	/* Dashboard sections.
 
 	   Widgets are placed by what they are and what they are about, not by a list of
@@ -4836,6 +4866,24 @@
 		try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
 		try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
 		try { classifyWidgetsOnPage(document); } catch (e) { /* leave the widgets plain */ }
+		try { labelBlankFirstOption(document); } catch (e) { /* leave the blank entry */ }
+		/* select2 builds its own list and keeps a normalised copy of every option in
+		   a store of its own, which a later change to the option does not reach, so
+		   the list it draws is corrected as it opens. This is the only place the
+		   blank line can still appear once the options themselves are labelled. */
+		try {
+			if (window.jQuery) {
+				window.jQuery(document).on('select2:open', function () {
+					window.setTimeout(function () {
+						document.querySelectorAll('.select2-results__option').forEach(function (option) {
+							if (!(option.textContent || '').replace(/[\s\u00a0]/g, '').length) {
+								option.textContent = '\u2014';
+							}
+						});
+					}, 0);
+				});
+			}
+		} catch (e) { /* the list keeps its own wording */ }
 		try { freeColumnPickerOverflow(); } catch (e) { /* leave the picker clipped */ }
 		if (/\/stats\//.test(window.location.pathname)) {
 			document.body.classList.add('ts-command-stats');
