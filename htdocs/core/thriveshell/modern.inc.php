@@ -4383,18 +4383,59 @@ body.ts-command-dashboard .ts-dashboard-summary-item > .box-flex-item-with-margi
 	margin: 0 !important;
 }
 body.ts-command-dashboard .ts-dashboard-summary-card {
+	--kpi-tint: #eef2f7;
+	--kpi-ink: #475569;
+	--kpi-deep: #1e293b;
+	position: relative;
 	display: grid !important;
-	grid-template-columns: 44px minmax(0, 1fr);
+	grid-template-columns: 50px minmax(0, 1fr);
 	align-items: start !important;
 	column-gap: 14px;
-	min-height: 112px !important;
+	min-height: 118px !important;
 	height: 100% !important;
 	padding: 16px !important;
 	border: 1px solid #e7e9ee !important;
 	border-radius: 11px !important;
 	background: #fff !important;
-	box-shadow: 0 3px 12px rgba(15, 23, 42, .035) !important;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, .03), 0 10px 26px rgba(15, 23, 42, .05) !important;
 	overflow: hidden;
+}
+/* A wash of the card's own colour in the corner, and a fine dot field over it.
+   Both are drawn rather than placed, so there is no image to load and the colour
+   follows the accent. They are positioned out of the grid so the two columns are
+   unaffected. */
+body.ts-command-dashboard .ts-dashboard-summary-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 96px;
+	height: 96px;
+	background: radial-gradient(circle at 100% 0, var(--kpi-tint) 0, var(--kpi-tint) 58px, transparent 59px);
+	pointer-events: none;
+}
+body.ts-command-dashboard .ts-dashboard-summary-card::after {
+	content: "";
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	width: 34px;
+	height: 26px;
+	background-image: radial-gradient(var(--kpi-ink) 1px, transparent 1px);
+	background-size: 7px 7px;
+	opacity: 0.28;
+	pointer-events: none;
+}
+/* The title carries a short rule in the card's colour, which is what gives the
+   set its rhythm when several sit side by side. */
+body.ts-command-dashboard .ts-dashboard-summary-card .info-box-title::after {
+	content: "";
+	display: block;
+	width: 34px;
+	height: 4px;
+	margin: 7px 0 2px;
+	border-radius: 999px;
+	background: linear-gradient(90deg, var(--kpi-ink), var(--kpi-deep));
 }
 body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon {
 	display: flex !important;
@@ -4402,16 +4443,33 @@ body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon {
 	justify-content: center !important;
 	grid-column: 1;
 	grid-row: 1;
-	width: 44px !important;
-	height: 44px !important;
-	min-width: 44px !important;
+	width: 46px !important;
+	height: 46px !important;
+	min-width: 46px !important;
+	border-radius: 50% !important;
+	background: linear-gradient(145deg, var(--kpi-ink), var(--kpi-deep)) !important;
+	color: #fff !important;
+	box-shadow: 0 0 0 4px var(--kpi-tint) !important;
 	margin: 0 !important;
 	padding: 0 !important;
 	border: 0 !important;
-	border-radius: 10px !important;
-	box-shadow: none !important;
 	font-size: 20px !important;
 }
+/* The weather card is styled separately upstream, by a rule that names the
+   container and matches the weather class, and that rule is more specific than
+   the one describing every other card here -- so this one card kept a short
+   square icon while the rest became round tokens. Match its weight so the set
+   reads as one. */
+body.ts-command-dashboard div.box-flex-container .ts-dashboard-summary-card[class*="weather"] .info-box-icon {
+	width: 46px !important;
+	height: 46px !important;
+	min-width: 46px !important;
+	border-radius: 50% !important;
+	background: linear-gradient(145deg, var(--kpi-ink), var(--kpi-deep)) !important;
+	color: #fff !important;
+	box-shadow: 0 0 0 4px var(--kpi-tint) !important;
+}
+
 body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon i,
 body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon span {
 	font-size: 20px !important;
@@ -4423,12 +4481,15 @@ body.ts-command-dashboard .ts-dashboard-summary-card.info-box-weather .info-box-
 body.ts-command-dashboard .ts-dashboard-summary-card .info-box-icon i.fa-weather-level1 {
 	font-size: 25px !important;
 }
-body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-violet .info-box-icon { background: #f1edff !important; color: #7047eb !important; }
-body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-blue .info-box-icon { background: #eaf1ff !important; color: #3474e8 !important; }
-body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-green .info-box-icon { background: #eaf8ee !important; color: #24a65a !important; }
-body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-cyan .info-box-icon { background: #e8f7fb !important; color: #1597b8 !important; }
-body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-orange .info-box-icon { background: #fff1e6 !important; color: #e66a13 !important; }
-body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-rose .info-box-icon { background: #fdebf5 !important; color: #d94b91 !important; }
+/* Each accent carries a tint, an ink and a deeper shade of the same hue. The
+   card, its icon and its rule all read from these, so a colour is described once
+   instead of being repeated in every rule that uses it. */
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-violet { --kpi-tint: #f1edff; --kpi-ink: #7047eb; --kpi-deep: #4a2fb0; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-blue   { --kpi-tint: #eaf1ff; --kpi-ink: #3474e8; --kpi-deep: #1d4ea8; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-green  { --kpi-tint: #eaf8ee; --kpi-ink: #24a65a; --kpi-deep: #14713c; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-cyan   { --kpi-tint: #e8f7fb; --kpi-ink: #1597b8; --kpi-deep: #0c6a83; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-orange { --kpi-tint: #fff1e6; --kpi-ink: #e66a13; --kpi-deep: #a8480a; }
+body.ts-command-dashboard .ts-dashboard-summary-card.ts-dashboard-accent-rose { --kpi-tint: #fdebf5; --kpi-ink: #d94b91; --kpi-deep: #9c2f63; }
 body.ts-command-dashboard .ts-dashboard-summary-card .info-box-content {
 	display: flex !important;
 	flex-direction: column;
