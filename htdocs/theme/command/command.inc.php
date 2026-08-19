@@ -608,11 +608,101 @@ body.bodylogin #login-submit-wrapper input.button {
 }
 body.bodylogin #login_line2 > .center { margin-top: 18px !important; }
 body.bodylogin a.alogin { color: var(--c-accent-ink); font-size: .8125rem; }
+
+/* Password recovery uses the same login form but adds a CAPTCHA image and
+   refresh link after its security-code input. Keep those existing controls in
+   one bounded row instead of letting Dolibarr's inline fragments escape the
+   authentication card. */
+body.bodylogin .tdinputlogin:has(#securitycode) {
+	display: grid !important;
+	grid-template-columns: minmax(0, 1fr) 80px 32px;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+}
+body.bodylogin .tdinputlogin:has(#securitycode) > .span-icon-security {
+	display: block !important;
+	min-width: 0;
+}
+body.bodylogin .tdinputlogin:has(#securitycode) > .fa-unlock {
+	grid-column: 1;
+	left: 14px;
+}
+body.bodylogin #securitycode {
+	width: 100% !important;
+	min-width: 0;
+	height: 44px;
+	margin: 0 !important;
+	padding: 0 14px 0 44px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-surface) !important;
+	box-sizing: border-box;
+}
+body.bodylogin #securitycode:focus {
+	border-color: var(--c-btn-action) !important;
+	box-shadow: 0 0 0 3px var(--c-btn-action-ring) !important;
+	outline: none;
+}
+body.bodylogin .tdinputlogin:has(#securitycode) > .nowrap {
+	display: contents !important;
+}
+body.bodylogin #img_securitycode {
+	grid-column: 2;
+	display: block;
+	width: 80px !important;
+	height: 32px !important;
+	margin: 0 !important;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-sm);
+	background: var(--c-sunken);
+	object-fit: contain;
+}
+body.bodylogin a[data-role="button"]:has(#captcha_refresh_img) {
+	grid-column: 3;
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	margin: 0 !important;
+	border-radius: var(--r-sm);
+	color: var(--c-accent-ink);
+	line-height: 1;
+}
+body.bodylogin a[data-role="button"]:has(#captcha_refresh_img):hover {
+	background: var(--c-sunken);
+}
+body.bodylogin #login_line2 > br { display: none; }
+body.bodylogin #login_line2 input[name="button_password"] {
+	min-height: 40px;
+	margin: 0;
+	padding: 0 18px;
+	border: 1px solid var(--c-btn-action) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
+	font: 650 .875rem/1 var(--c-font);
+	box-shadow: 0 1px 2px var(--c-btn-action-ring);
+	cursor: pointer;
+}
+body.bodylogin .login_main_home.divpasswordmessagedesc {
+	box-sizing: border-box;
+	width: min(400px, calc(100vw - 32px)) !important;
+	max-width: none !important;
+	margin: 16px auto 0;
+	padding: 0 8px;
+	color: var(--c-muted);
+	font-size: .75rem;
+	line-height: 1.5;
+}
 @media only screen and (max-width: 480px) {
 	body.bodylogin .login_center { align-items: flex-start; padding-top: 8vh; }
 	body.bodylogin .login_center .login_vertical_align { width: calc(100vw - 24px) !important; }
 	body.bodylogin form#login { padding: 24px 20px; }
 	body.bodylogin #img_logo { max-height: 76px; margin-bottom: 18px; }
+	body.bodylogin .tdinputlogin:has(#securitycode) { grid-template-columns: minmax(0, 1fr) 70px 32px; gap: 6px; }
+	body.bodylogin #img_securitycode { width: 70px !important; }
 }
 
 #id-right {
