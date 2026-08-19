@@ -1935,6 +1935,42 @@ a.btnTitle + a.btnTitle {
 	margin-left: 6px;
 }
 
+/* A field table that sits straight in a section, with no half-column around it.
+
+   On a record card these tables are inside .fichehalfleft or .fichehalfright,
+   which carry the section surface, so they read as cards. The selling price tab
+   puts its table directly in the section instead, and it was left standing on
+   the page background: rows of tax rate, price and label with no surface under
+   them, beside a price-history table that does have one. Give it the same
+   surface the halves have. */
+body.ts-command-record-page .fichecenter > table.tableforfield {
+	width: 100%;
+	margin: 0 0 var(--sp-4);
+	border: 1px solid var(--c-hairline) !important;
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	border-collapse: separate !important;
+	border-spacing: 0;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+body.ts-command-record-page .fichecenter > table.tableforfield > tbody > tr > td {
+	padding: 11px var(--sp-4) !important;
+	border: 0 !important;
+	background: transparent !important;
+	font-size: 0.8125rem;
+	line-height: 1.35;
+}
+body.ts-command-record-page .fichecenter > table.tableforfield > tbody > tr + tr > td {
+	border-top: 1px solid var(--c-hairline) !important;
+}
+body.ts-command-record-page .fichecenter > table.tableforfield > tbody > tr > td:first-child {
+	width: 260px;
+	color: var(--c-ink-2, var(--c-muted));
+	font-weight: 600;
+}
+
 .ts-column-filters { position: relative; flex: 0 0 auto; }
 .ts-filter-surface { position: relative; }
 .ts-column-filters > summary {
