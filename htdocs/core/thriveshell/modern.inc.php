@@ -4829,17 +4829,34 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 /* Shown only while arranging the dashboard. Quiet at rest -- a muted glyph with
    no box of its own, since a pair of bordered buttons on every heading turns the
    band into a row of chrome -- and each takes its meaning on hover: neutral for
-   the handle, red for removal. */
-.ts-dashboard-widget .boxhandle,
-.ts-dashboard-widget .boxclose {
-	display: inline-flex;
+   the handle, red for removal.
+
+   Only the icons are sized. The element wrapping them carries the same boxclose
+   class as the remove icon inside it, so a rule written for the class alone
+   squeezed the wrapper to one icon's width and pushed both icons out of it --
+   the remove icon ended a pixel past the heading's own edge and overlapped the
+   title. */
+.ts-dashboard-widget .box_titre th > div.boxclose {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 2px;
+	width: auto !important;
+	min-width: 0 !important;
+	height: auto !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+}
+.ts-dashboard-widget span.boxhandle,
+.ts-dashboard-widget span.boxclose {
+	display: inline-flex !important;
 	align-items: center;
 	justify-content: center;
 	flex: 0 0 26px;
 	width: 26px !important;
 	min-width: 26px !important;
 	height: 26px !important;
-	margin-left: 2px !important;
+	margin: 0 !important;
 	padding: 0 !important;
 	border: 0 !important;
 	border-radius: 8px;
@@ -4848,13 +4865,15 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 	color: #99a0b5 !important;
 	font-size: 12px !important;
 	opacity: 1 !important;
+	cursor: pointer;
 	transition: background-color .12s ease, color .12s ease;
 }
-.ts-dashboard-widget .boxhandle:hover {
+.ts-dashboard-widget span.boxhandle { cursor: move; }
+.ts-dashboard-widget span.boxhandle:hover {
 	background: #e2e8f1 !important;
 	color: #475569 !important;
 }
-.ts-dashboard-widget .boxclose:hover {
+.ts-dashboard-widget span.boxclose:hover {
 	background: #ffe4e6 !important;
 	color: #e11d48 !important;
 }
