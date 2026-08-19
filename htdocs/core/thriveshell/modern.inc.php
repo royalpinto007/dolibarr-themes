@@ -2485,10 +2485,13 @@ table.tagtable tr.liste_titre > th,
 table.tagtable tr.liste_titre > td,
 table.noborder tr.liste_titre > th,
 table.noborder tr.liste_titre > td {
-	font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-	font-size: 0.75rem !important;
-	font-weight: 650 !important;
-	letter-spacing: 0.012em;
+	/* Keep table headers on the configured COMMAND typeface.  A separate
+	   system-ui stack here made admin grids visibly different whenever the
+	   theme font was changed in Display > Skin and colors. */
+	font-family: var(--c-font) !important;
+	font-size: 0.8125rem !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.005em;
 	line-height: 1.25 !important;
 	color: var(--c-ink-subtle) !important;
 	text-transform: none !important;
@@ -9393,10 +9396,15 @@ body.mod-member .fichecenter .fichehalfright td.valeur a {
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) {
 	table-layout: fixed;
 }
-body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(1) { width: 15% !important; }
-body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(2) { width: 45% !important; text-align: left !important; }
-body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(3) { width: 32% !important; text-align: left !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(1) { width: 19% !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(2) { width: 39% !important; text-align: left !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(3) { width: 34% !important; text-align: left !important; }
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr > :nth-child(4) { width: 8% !important; text-align: center !important; }
+body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr.liste_titre > td {
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis;
+}
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr:first-child > :nth-child(2),
 body.page-translation table.noborder.centpercent:has(th:nth-child(2)) tr:first-child > :nth-child(3) {
 	padding-left: var(--sp-3) !important;
@@ -9432,6 +9440,68 @@ body.page-card_note div.tabBar.ts-entity-card > form > .fichecenter {
 	margin: 0 !important;
 	padding: 0 !important;
 	background: transparent !important;
+}
+
+/* COMMAND action colour contract.
+
+   Native setup pages do not all receive the settings-page composer (Display
+   deliberately has its own layout), but their Save control still carries the
+   same semantic Dolibarr classes.  Resolve every real Save action through the
+   configured action-button tokens instead of letting an inherited native
+   button rule choose a separate colour.  Cancel remains a neutral escape
+   route. */
+body:not(.bodylogin) input.button-save,
+body:not(.bodylogin) button.button-save,
+body:not(.bodylogin) input.buttonforacesave,
+body:not(.bodylogin) button.buttonforacesave,
+body:not(.bodylogin) input[type="submit"][name="submit"]:not(.button-cancel),
+body:not(.bodylogin) button[type="submit"][name="submit"]:not(.button-cancel) {
+	border-color: var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
+	box-shadow: 0 1px 2px var(--c-btn-action-ring) !important;
+}
+body:not(.bodylogin) input.button-save:hover,
+body:not(.bodylogin) button.button-save:hover,
+body:not(.bodylogin) input.buttonforacesave:hover,
+body:not(.bodylogin) button.buttonforacesave:hover,
+body:not(.bodylogin) input[type="submit"][name="submit"]:not(.button-cancel):hover,
+body:not(.bodylogin) button[type="submit"][name="submit"]:not(.button-cancel):hover {
+	filter: brightness(.94);
+}
+body:not(.bodylogin) input.button-cancel,
+body:not(.bodylogin) button.button-cancel,
+body:not(.bodylogin) input[name="cancel"],
+body:not(.bodylogin) button[name="cancel"] {
+	border-color: var(--c-border) !important;
+	background: var(--c-surface) !important;
+	color: var(--c-ink-2) !important;
+	box-shadow: none !important;
+}
+
+/* A Select2 container owns the trigger width.  Native widthNN classes are
+   duplicated onto the inner selection by Dolibarr; if that inner width wins,
+   the visible border ends before its arrow (as on Menu handler).  Make the
+   selection fill its real container so text, border and chevron remain one
+   control everywhere. */
+body .select2-container > .selection,
+body .select2-container > .selection > .select2-selection {
+	display: block;
+	width: 100% !important;
+	box-sizing: border-box;
+}
+body .select2-container--default .select2-selection--single .select2-selection__arrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0 !important;
+	right: 0 !important;
+	height: 100% !important;
+	line-height: 1;
+}
+body .select2-container--default .select2-selection--single .select2-selection__arrow b {
+	position: static !important;
+	margin: 0 !important;
 }
 @media (max-width: 700px) {
 	body.page-card_note .ts-member-note-details tr { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
