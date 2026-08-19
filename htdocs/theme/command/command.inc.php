@@ -472,6 +472,149 @@ body {
 }
 body.bodylogin { padding: 0; }		/* the login page has no chrome */
 
+/* ==========================================================================
+   Authentication surface
+
+   Keep Dolibarr's original form, field ids and password-toggle script intact,
+   but detach its old table-like icon/input geometry. This is intentionally
+   scoped to bodylogin so setup pages and normal forms are unaffected.
+   ========================================================================== */
+html body.bodylogin {
+	min-height: 100svh;
+	margin: 0;
+	background: var(--c-canvas);
+	font-family: var(--c-font);
+}
+body.bodylogin .login_center .login_vertical_align {
+	box-sizing: border-box;
+	width: min(440px, calc(100vw - 32px)) !important;
+	min-width: 0;
+}
+html body.bodylogin form#login {
+	box-sizing: border-box;
+	width: 100% !important;
+	margin: 0 auto;
+	padding: 32px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-xl);
+	background: var(--c-surface);
+	box-shadow: var(--sh-md);
+}
+body.bodylogin .login_table_title {
+	margin: 0;
+	padding: 0 0 12px;
+	color: var(--c-muted);
+	font-size: .6875rem;
+	line-height: 1.35;
+}
+body.bodylogin .login_table_title a { color: inherit; }
+body.bodylogin .login_table,
+body.bodylogin #login_line1,
+body.bodylogin #login_left,
+body.bodylogin #login_right,
+body.bodylogin #login_right .tagtable,
+body.bodylogin .trinputlogin,
+body.bodylogin .tdinputlogin {
+	display: block !important;
+	box-sizing: border-box;
+	width: 100% !important;
+	min-width: 0;
+	float: none !important;
+}
+body.bodylogin #login_left { text-align: center; }
+body.bodylogin #login_left br { display: none; }
+body.bodylogin #img_logo {
+	display: block;
+	width: min(100%, 300px);
+	height: auto;
+	max-height: 92px;
+	margin: 0 auto 20px;
+	object-fit: contain;
+}
+body.bodylogin .tdinputlogin {
+	position: relative;
+	min-height: 44px;
+	padding: 0 !important;
+}
+body.bodylogin .tdinputlogin > .fa:first-child {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	z-index: 1;
+	width: 16px;
+	margin: 0;
+	transform: translateY(-50%);
+	color: var(--c-muted);
+	line-height: 1;
+	pointer-events: none;
+}
+body.bodylogin .tdinputlogin input[type="text"],
+body.bodylogin .tdinputlogin input[type="password"] {
+	box-sizing: border-box;
+	width: 100% !important;
+	height: 44px;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 0 44px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-surface) !important;
+	color: var(--c-ink);
+	font: 500 .875rem/1 var(--c-font);
+	outline: none;
+	box-shadow: none !important;
+}
+body.bodylogin .tdinputlogin input:focus {
+	border-color: var(--c-btn-action) !important;
+	box-shadow: 0 0 0 3px var(--c-btn-action-ring) !important;
+}
+body.bodylogin .tdinputlogin input:-webkit-autofill,
+body.bodylogin .tdinputlogin input:-webkit-autofill:hover,
+body.bodylogin .tdinputlogin input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--c-ink);
+	-webkit-box-shadow: 0 0 0 1000px var(--c-surface) inset !important;
+	caret-color: var(--c-ink);
+}
+body.bodylogin #togglepassword {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	transform: translateY(-50%);
+	border-radius: var(--r-sm);
+	color: var(--c-muted);
+	line-height: 1;
+	cursor: pointer;
+}
+body.bodylogin #togglepassword:hover { background: var(--c-sunken); color: var(--c-ink); }
+body.bodylogin #login_line2 { clear: both; margin-top: 20px; }
+body.bodylogin #login-submit-wrapper { display: flex; justify-content: center; margin: 0; }
+body.bodylogin #login-submit-wrapper input.button {
+	min-height: 40px;
+	margin: 0;
+	padding: 0 22px;
+	border: 1px solid var(--c-btn-action) !important;
+	border-radius: var(--r) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
+	font: 650 .875rem/1 var(--c-font);
+	box-shadow: 0 1px 2px var(--c-btn-action-ring);
+	cursor: pointer;
+}
+body.bodylogin #login_line2 > .center { margin-top: 18px !important; }
+body.bodylogin a.alogin { color: var(--c-accent-ink); font-size: .8125rem; }
+@media only screen and (max-width: 480px) {
+	body.bodylogin .login_center { align-items: flex-start; padding-top: 8vh; }
+	body.bodylogin .login_center .login_vertical_align { width: calc(100vw - 24px) !important; }
+	body.bodylogin form#login { padding: 24px 20px; }
+	body.bodylogin #img_logo { max-height: 76px; margin-bottom: 18px; }
+}
+
 #id-right {
 	margin-<?php echo $left; ?>: 0 !important;
 	min-width: 0;
