@@ -9605,6 +9605,57 @@ body.page-system_about td {
 	white-space: normal;
 	overflow-wrap: anywhere;
 }
+
+/* Native Update/Purge tools place prose, controls, and forms as sibling text
+   nodes.  The enhancer groups those nodes, letting the existing settings card
+   language give operational instructions a deliberate, readable surface. */
+body.page-tools_update .ts-admin-tools-content,
+body.page-tools_purge .ts-admin-tools-content {
+	max-width: 980px;
+	margin: 18px 0 28px;
+	padding: 22px 24px;
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: var(--sh-sm);
+	line-height: 1.6;
+	color: var(--c-ink-2);
+}
+body.page-tools_update .ts-admin-tools-content hr {
+	margin: 14px 0;
+	border: 0;
+	border-top: 1px solid var(--c-border);
+}
+body.page-tools_update .ts-admin-tools-content > a.button,
+body.page-tools_purge .ts-admin-tools-content input.button {
+	min-height: 38px;
+	padding-inline: 16px;
+	vertical-align: middle;
+}
+body.page-tools_purge .ts-admin-tools-content .divsection {
+	margin: 16px 0 18px !important;
+	padding: 16px 18px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r-md) !important;
+	background: color-mix(in srgb, var(--c-canvas) 62%, var(--c-surface)) !important;
+}
+body.page-tools_purge .ts-admin-tools-content label {
+	line-height: 1.55;
+}
+
+/* Dashboard widget identities pair a Font Awesome star and a user name.  Keep
+   the glyph in the same inline-flex baseline slot as every other compact icon. */
+body.ts-command-module-index .ts-module-index-card .fa-star,
+body.ts-command-module-index .ts-module-index-card .fa-star-o {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1em;
+	height: 1em;
+	margin: 0 .28em 0 0;
+	vertical-align: -0.08em;
+	line-height: 1;
+}
 @media (max-width: 700px) {
 	body.page-card_note .ts-member-note-details tr { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
 	body.page-card_note .ts-member-note-details td { padding: 5px 0 !important; }

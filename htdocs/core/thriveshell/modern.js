@@ -558,6 +558,14 @@
 			cells[0].colSpan = cells.reduce(function (sum, cell) { return sum + (cell.colSpan || 1); }, 0);
 			cells.slice(1).forEach(function (cell) { cell.remove(); });
 			var message = cells[0].textContent.trim();
+			/* A blank native dashboard row has no state to communicate.  Decorating it
+			   with the generic inbox glyph produced a stranded icon underneath the
+			   Users & Groups search controls.  Keep meaningful empty states, but remove
+			   an entirely empty structural row instead of inventing one. */
+			if (!message) {
+				row.style.display = 'none';
+				return;
+			}
 			cells[0].textContent = '';
 			var emptyIcon = document.createElement('span');
 			emptyIcon.className = 'ts-module-index-empty-icon fas fa-inbox';
@@ -3199,6 +3207,51 @@
 		return true;
 	}
 
+	/* Dolibarr's Select2 formatter occasionally renders a sentinel “all” option
+	   as a non-breaking space even though the source <option> has a real label.
+	   Normalise that one semantic case for every compact select, including list
+	   modes that are not rebuilt through the standard filter toolbar. */
+	function normalizeCompactSelect2Dropdowns() {
+		if (!window.jQuery) { return false; }
+		window.jQuery(document)
+			.off('select2:open.tsCommandCompact', 'select[data-ts-compact-select2="1"]')
+			.on('select2:open.tsCommandCompact', 'select[data-ts-compact-select2="1"]', function (event) {
+				var source = event.target;
+				window.requestAnimationFrame(function () {
+					var dropdown = document.querySelector('.select2-container--open .select2-dropdown');
+					if (!dropdown) { return; }
+					dropdown.classList.add('ts-compact-select2-dropdown');
+					var label = source.getAttribute('data-ts-empty-label');
+					if (!label) { return; }
+					dropdown.querySelectorAll('.select2-results__option').forEach(function (option) {
+						if (!(option.textContent || '').replace(/\u00a0/g, ' ').trim()) { option.textContent = label; }
+					});
+				});
+			});
+		return true;
+	}
+
+	/* The Update and Purge tools are mostly bare text nodes in .fiche.  Group the
+	   native nodes into a single semantic settings surface without replacing links,
+	   radio inputs, or submit behavior. */
+	function composeAdminToolPage() {
+		if (!/\/admin\/tools\/(update|purge)\.php$/.test(window.location.pathname)) { return false; }
+		var fiche = document.querySelector('.fiche');
+		var title = fiche && fiche.querySelector(':scope > table.table-fiche-title');
+		if (!fiche || !title || fiche.querySelector(':scope > .ts-admin-tools-content')) { return false; }
+		var content = document.createElement('section');
+		content.className = 'ts-admin-tools-content';
+		var move = [];
+		var seenTitle = false;
+		Array.from(fiche.childNodes).forEach(function (node) {
+			if (node === title) { seenTitle = true; return; }
+			if (seenTitle) { move.push(node); }
+		});
+		move.forEach(function (node) { content.appendChild(node); });
+		fiche.appendChild(content);
+		return true;
+	}
+
 	/* Home dashboard composition. This is deliberately route and structure gated:
 	   dashboard widgets reuse generic .box/.info-box classes throughout Dolibarr,
 	   so no other module should inherit the dashboard grid or compact card layout. */
@@ -4538,6 +4591,7 @@
 		   select containers, which discarded the classification when it ran first. */
 		try { markMeasurementFields(); } catch (e) { /* leave measurement fields native */ }
 		try { classifySelects(); } catch (e) { /* leave selects as they are */ }
+		try { normalizeCompactSelect2Dropdowns(); } catch (e) { /* retain native Select2 rendering */ }
 		try { markEmptyTitleTables(); } catch (e) { /* keep placeholder title tables */ }
 		try { normalizePageTitleIcons(); } catch (e) { /* retain Dolibarr's title layout */ }
 		try { polishCategoryDialogPage(); } catch (e) { /* retain the native category dialog page */ }
@@ -4548,6 +4602,7 @@
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
 		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
+		try { composeAdminToolPage(); } catch (e) { /* retain native admin tool content */ }
 		try { polishShipmentStatistics(); } catch (e) { /* retain the native shipment statistics */ }
 		try { polishSharedEmptyStates(); } catch (e) { /* retain native empty messages */ }
 		try { applyThirdPartyFieldSchema(); } catch (e) { /* retain the native field layout */ }
