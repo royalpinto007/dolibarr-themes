@@ -4834,8 +4834,12 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 30px;
-	height: 30px;
+	/* stated firmly: the handle carries icon-width classes of its own that
+	   otherwise squeeze the button to the glyph */
+	flex: 0 0 30px;
+	width: 30px !important;
+	min-width: 30px !important;
+	height: 30px !important;
 	margin-left: 4px !important;
 	border-radius: 9px;
 	border: 1px solid #dbe4ee;
