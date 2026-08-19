@@ -1870,46 +1870,6 @@ table tr.liste_titre img.userphoto {
 	vertical-align: middle;
 }
 
-/* Record page section rows.
-
-   The two halves of a section are floated inside a block, so the row is only as
-   tall as the floats make it and the next row cannot start until the taller
-   column clears. On a product card that left the second row touching the card
-   above it on the left, while on the right a card sat under 314px of nothing --
-   the space its shorter neighbour did not fill.
-
-   Laid out as a row of two instead: the columns are the same height, the rows
-   are separated, and a card fills the column it is given. */
-body.ts-command-record-page .fichecenter:has(> .fichehalfleft),
-body.ts-command-record-page .fichecenter:has(> .fichehalfright) {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 16px;
-	align-items: stretch;
-}
-body.ts-command-record-page .fichecenter > .fichehalfleft,
-body.ts-command-record-page .fichecenter > .fichehalfright {
-	float: none !important;
-	width: auto !important;
-	min-width: 0;
-	margin: 0 !important;
-}
-body.ts-command-record-page .fichecenter > .fichehalfleft > *,
-body.ts-command-record-page .fichecenter > .fichehalfright > * {
-	height: 100%;
-}
-/* and one row is not the next */
-body.ts-command-record-page .fichecenter + .fichecenter,
-body.ts-command-record-page .fichecenter + .clearboth + .fichecenter {
-	margin-top: 16px;
-}
-@media (max-width: 900px) {
-	body.ts-command-record-page .fichecenter:has(> .fichehalfleft),
-	body.ts-command-record-page .fichecenter:has(> .fichehalfright) {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
 /* Title-bar buttons.
 
    The icon inside carries margins of its own, which pushed it off centre in a
@@ -1969,6 +1929,41 @@ body.ts-command-record-page .fichecenter > table.tableforfield > tbody > tr > td
 	width: 260px;
 	color: var(--c-ink-2, var(--c-muted));
 	font-weight: 600;
+}
+
+/* Record page section rows.
+
+   The two halves are floated inside a block, so the next row cannot begin until
+   the taller column clears: on a product card the second row touched the card
+   above it, and the shorter right column left a gap of its own beneath it.
+
+   Laying the halves out as a row of two gives the columns a common height and
+   the rows a gutter. Only the halves are touched -- an earlier attempt also gave
+   their children a full height, which made the field tables inside claim the
+   whole column and spill their content over the row below. */
+body.ts-command-record-page .fichecenter:has(> .fichehalfleft),
+body.ts-command-record-page .fichecenter:has(> .fichehalfright) {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+	align-items: stretch;
+}
+body.ts-command-record-page .fichecenter > .fichehalfleft,
+body.ts-command-record-page .fichecenter > .fichehalfright {
+	float: none !important;
+	width: auto !important;
+	min-width: 0;
+	margin: 0 !important;
+}
+body.ts-command-record-page .fichecenter + .fichecenter,
+body.ts-command-record-page .fichecenter + .clearboth + .fichecenter {
+	margin-top: 16px;
+}
+@media (max-width: 900px) {
+	body.ts-command-record-page .fichecenter:has(> .fichehalfleft),
+	body.ts-command-record-page .fichecenter:has(> .fichehalfright) {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 .ts-column-filters { position: relative; flex: 0 0 auto; }
