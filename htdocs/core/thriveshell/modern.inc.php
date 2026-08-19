@@ -9503,6 +9503,101 @@ body .select2-container--default .select2-selection--single .select2-selection__
 	position: static !important;
 	margin: 0 !important;
 }
+
+/* Dolibarr's AJAX on/off controls render both action halves and rely on this
+   semantic class to keep the inactive half out of the flow.  A legacy display
+   override was leaking it back into COMMAND pages, leaving two toggle icons
+   fused together.  Honour the framework contract globally. */
+body .hideobject { display: none !important; }
+
+/* Shared search/reset icon actions.  Their glyph inherits different native
+   line-heights across admin tables; normalize the inner glyph rather than
+   letting Search and Clear sit high or low in otherwise identical controls. */
+body button.button_search,
+body button.button_removefilter,
+body input.button_search,
+body input.button_removefilter {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	line-height: 1 !important;
+}
+body button.button_search > [class*="fa-"],
+body button.button_removefilter > [class*="fa-"],
+body input.button_search > [class*="fa-"],
+body input.button_removefilter > [class*="fa-"] {
+	margin: 0 !important;
+	line-height: 1 !important;
+}
+
+/* Empty mandatory cells are layout placeholders in a number of native forms,
+   not validation messages.  Rendering them after a file picker produces bare
+   vertical asterisks.  Remove only rows with no actual form control/content. */
+body form tr:has(> td.fieldrequired:empty):not(:has(input, select, textarea, button, a, img, .select2-container)) {
+	display: none !important;
+}
+
+/* Email test compose uses the same settings form primitive as the rest of
+   admin, but its attach/send/cancel actions are compact inline utilities.
+   Keep their hierarchy while avoiding oversized controls in that row. */
+body.page-mails form#mailform input.button.smallpaddingimp,
+body.page-mails form#mailform .ts-settings-actions .ts-settings-action {
+	min-height: 38px !important;
+	height: 38px !important;
+	min-width: auto;
+	padding-inline: 15px !important;
+	font-size: 0.8125rem !important;
+}
+body.page-mails form#mailform input.button.smallpaddingimp {
+	border-color: var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
+}
+
+/* System tools submit real operations, so they follow the configured action
+   colour instead of the incidental native .button palette. */
+body.page-system_filecheck input[name="check"],
+body.page-tools_dolibarr_export input#buttonGo,
+body.page-system_dolibarr a.butAction.smallpaddingimp {
+	border-color: var(--c-btn-action) !important;
+	background: var(--c-btn-action) !important;
+	color: var(--c-btn-action-text) !important;
+	box-shadow: 0 1px 2px var(--c-btn-action-ring) !important;
+}
+
+/* Performance reports are made from repeated heading + divsection pairs.
+   Present those native sections as a readable COMMAND report without changing
+   any diagnostic content or links. */
+body.page-system_perf .fiche > br { display: none; }
+body.page-system_perf .fiche > strong {
+	display: inline-flex;
+	align-items: center;
+	margin: 22px 0 8px;
+	font-size: 0.875rem;
+	font-weight: 650;
+	color: var(--c-ink);
+}
+body.page-system_perf .fiche > span.fas.fa-folder {
+	margin: 22px 5px 8px 0;
+	color: var(--c-accent);
+}
+body.page-system_perf .fiche > a + span.fas.fa-folder { margin-left: 12px; }
+body.page-system_perf .fiche > span.fas.fa-folder + strong { margin-left: 5px; }
+body.page-system_perf .fiche > .divsection {
+	margin: 0 0 18px !important;
+	padding: 16px 20px !important;
+	border: 1px solid var(--c-border) !important;
+	border-radius: var(--r-lg) !important;
+	background: var(--c-surface) !important;
+	box-shadow: var(--sh-sm);
+	line-height: 1.55;
+	color: var(--c-ink-2);
+}
+body.page-system_about .divsection,
+body.page-system_about td {
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
 @media (max-width: 700px) {
 	body.page-card_note .ts-member-note-details tr { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
 	body.page-card_note .ts-member-note-details td { padding: 5px 0 !important; }
