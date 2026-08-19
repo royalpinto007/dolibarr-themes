@@ -4826,35 +4826,38 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 .ts-dashboard-widget tr.oddeven:hover > td {
 	background: #fafbff !important;
 }
-/* Shown only while arranging the dashboard, and drawn as buttons when they are:
-   a plain one for the handle, and a red-tinted one for removal, so the
-   destructive control does not look like the harmless one. */
+/* Shown only while arranging the dashboard. Quiet at rest -- a muted glyph with
+   no box of its own, since a pair of bordered buttons on every heading turns the
+   band into a row of chrome -- and each takes its meaning on hover: neutral for
+   the handle, red for removal. */
 .ts-dashboard-widget .boxhandle,
 .ts-dashboard-widget .boxclose {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	/* stated firmly: the handle carries icon-width classes of its own that
-	   otherwise squeeze the button to the glyph */
-	flex: 0 0 30px;
-	width: 30px !important;
-	min-width: 30px !important;
-	height: 30px !important;
-	margin-left: 4px !important;
-	border-radius: 9px;
-	border: 1px solid #dbe4ee;
-	background: #f1f5f9;
-	box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+	flex: 0 0 26px;
+	width: 26px !important;
+	min-width: 26px !important;
+	height: 26px !important;
+	margin-left: 2px !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 8px;
+	background: transparent !important;
+	box-shadow: none !important;
+	color: #99a0b5 !important;
+	font-size: 12px !important;
 	opacity: 1 !important;
-	font-size: 12px;
+	transition: background-color .12s ease, color .12s ease;
 }
-.ts-dashboard-widget .boxclose {
-	border-color: #fecdd3;
-	background: #fff1f2;
-	color: #e11d48;
+.ts-dashboard-widget .boxhandle:hover {
+	background: #e2e8f1 !important;
+	color: #475569 !important;
 }
-.ts-dashboard-widget .boxhandle:hover { border-color: #b9c7d8; background: #e8eef6; }
-.ts-dashboard-widget .boxclose:hover { border-color: #fda4af; background: #ffe4e6; }
+.ts-dashboard-widget .boxclose:hover {
+	background: #ffe4e6 !important;
+	color: #e11d48 !important;
+}
 body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-widget .boxhandle,
 body.ts-command-dashboard:not(.ts-dashboard-customizing) .ts-dashboard-widget .boxclose {
 	display: none !important;
