@@ -9442,6 +9442,47 @@ body.page-card_note div.tabBar.ts-entity-card > form > .fichecenter {
 	background: transparent !important;
 }
 
+/* Shared User-record tab rhythm. User detail tabs expose the same Dolibarr
+   heading and field-table structures as other records, so normalize the
+   structure once instead of relying on each individual URL. */
+body.mod-user .ts-user-record-content { display: flow-root; }
+body.mod-user .ts-user-detail-card { display:block; width:100% !important; margin:0 0 16px !important; padding:0 !important; border:1px solid var(--c-border) !important; border-radius:var(--r-lg) !important; background:var(--c-surface) !important; box-shadow:var(--sh-sm) !important; overflow:hidden; border-collapse:separate !important; }
+body.mod-user .ts-user-detail-card tbody { display:block; width:100%; }
+body.mod-user .ts-user-detail-card tr { display:grid; grid-template-columns:minmax(210px,34%) minmax(0,1fr); align-items:center; min-height:46px; border-bottom:1px solid var(--c-border-subtle); }
+body.mod-user .ts-user-detail-card tr:last-child { border-bottom:0; }
+body.mod-user .ts-user-detail-card td { width:auto !important; min-width:0 !important; max-width:none !important; padding:11px 18px !important; border:0 !important; line-height:1.35; overflow:visible !important; white-space:normal !important; }
+body.mod-user .ts-user-detail-card td:first-child { font-weight:650; color:var(--c-ink); }
+body.mod-user .ts-user-detail-card td.valeur { color:var(--c-text); }
+body.mod-user .ts-user-section-heading { display:flex !important; align-items:center; gap:10px; min-height:48px; margin:24px 0 12px !important; padding:0 !important; }
+body.mod-user .ts-user-section-heading .ts-pagehead-actions { margin-left:auto; }
+body.mod-user .ts-user-section-surface, body.mod-user .ts-user-section-heading + form, body.mod-user .ts-user-section-heading + .div-table-responsive, body.mod-user .ts-user-section-heading + .div-table-responsive-no-min { margin:0 0 20px !important; }
+/* A page heading begins a new section. It must not fuse with the preceding
+   detail-card, and side-by-side record cards must retain intrinsic height. */
+body.mod-user .fichecenter:has(> .ts-pagehead) { margin-top:24px !important; }
+body.mod-user .fichehalfleft, body.mod-user .fichehalfright { align-self:start !important; }
+body.mod-user .ts-record-section-events { margin-top:20px !important; }
+/* Event header utilities are true icon actions, not loose adjacent glyphs. */
+body.mod-user .ts-record-section-events .btnTitle, body.mod-user .ts-record-section-events a[class*="butAction"]:has(> [class*="fa-"]) { display:inline-flex !important; align-items:center !important; justify-content:center !important; width:34px !important; height:34px !important; min-width:34px !important; padding:0 !important; margin-left:8px !important; line-height:1 !important; border-radius:8px !important; }
+body.mod-user .ts-record-section-events .btnTitle > [class*="fa-"], body.mod-user .ts-record-section-events a[class*="butAction"]:has(> [class*="fa-"]) > [class*="fa-"] { margin:0 !important; line-height:1 !important; }
+/* Agenda tables need space for owner/type/label, rather than letting Ref/Date
+   absorb the row. The filter row is a stable COMMAND toolbar. */
+body.mod-user .ts-user-agenda-filter { display:flex !important; flex-wrap:wrap; align-items:end; gap:10px !important; margin:0 0 14px !important; padding:14px 16px !important; border:1px solid var(--c-border) !important; border-radius:var(--r-lg) !important; background:var(--c-surface) !important; box-shadow:var(--sh-sm) !important; }
+body.mod-user .ts-user-agenda-filter > * { margin:0 !important; }
+body.mod-user .ts-user-agenda-table { table-layout:fixed; }
+body.mod-user .ts-user-agenda-table th:nth-child(1), body.mod-user .ts-user-agenda-table td:nth-child(1) { width:8% !important; }
+body.mod-user .ts-user-agenda-table th:nth-child(2), body.mod-user .ts-user-agenda-table td:nth-child(2) { width:13% !important; }
+body.mod-user .ts-user-agenda-table th:nth-child(3), body.mod-user .ts-user-agenda-table td:nth-child(3) { width:17% !important; }
+body.mod-user .ts-user-agenda-table th:nth-child(4), body.mod-user .ts-user-agenda-table td:nth-child(4) { width:13% !important; }
+body.mod-user .ts-user-agenda-table th:nth-child(5), body.mod-user .ts-user-agenda-table td:nth-child(5) { width:auto !important; }
+body.mod-user .ts-user-agenda-table th > img, body.mod-user .ts-user-agenda-table td > img, body.page-card_perms .div-table-responsive-no-min img.pictofixedwidth { max-width:20px !important; max-height:20px !important; width:auto !important; height:auto !important; object-fit:contain; vertical-align:middle; }
+/* Inline note editors occur in Member, Contact and User tabs. Constrain the
+   real form to a calm card without changing its submit/token behaviour. */
+body.page-card_note form:has(textarea[name*="note"]), body.page-contact-card_note form:has(textarea[name*="note"]), body.page-user-note form:has(textarea[name*="note"]) { max-width:900px; margin:16px 0 !important; padding:20px !important; border:1px solid var(--c-border) !important; border-radius:var(--r-lg) !important; background:var(--c-surface) !important; box-shadow:var(--sh-sm) !important; }
+body.page-card_note form textarea[name*="note"], body.page-contact-card_note form textarea[name*="note"], body.page-user-note form textarea[name*="note"] { width:100% !important; min-height:150px !important; box-sizing:border-box; }
+body.mod-user textarea#note_public, body.mod-user textarea#note_private { width:100% !important; height:150px !important; min-height:150px !important; max-height:220px; box-sizing:border-box !important; resize:vertical; }
+@media (max-width:900px) { body.mod-user .ts-user-detail-card tr { grid-template-columns:minmax(160px,36%) minmax(0,1fr); } }
+@media (max-width:700px) { body.mod-user .ts-user-detail-card tr { grid-template-columns:1fr; padding:5px 0; } body.mod-user .ts-user-detail-card td { padding:6px 14px !important; } body.mod-user .ts-user-agenda-filter { align-items:stretch; } body.mod-user .ts-user-agenda-filter > * { width:100%; } }
+
 /* COMMAND action colour contract.
 
    Native setup pages do not all receive the settings-page composer (Display

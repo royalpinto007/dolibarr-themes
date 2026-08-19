@@ -101,6 +101,37 @@
 		return true;
 	}
 
+	/* User record tabs share the same native banner/tabs but historically only
+	   the main card page received the record-section treatment.  Mark the common
+	   structure once so every User tab inherits the same header, detail-card and
+	   section spacing without changing its native links, permissions or forms. */
+	function normalizeUserRecordContext() {
+		if (!document.body.classList.contains('mod-user')) { return false; }
+		var banner = document.querySelector('div.tabBar.ts-entity-card .arearef');
+		if (banner) { banner.classList.add('ts-has-actions', 'ts-user-entity-banner'); }
+		var fiche = document.querySelector('.fiche');
+		if (!fiche) { return Boolean(banner); }
+		fiche.classList.add('ts-user-record-content');
+		Array.prototype.forEach.call(fiche.querySelectorAll('table.tableforfield'), function (table) {
+			table.classList.add('ts-user-detail-card');
+		});
+		Array.prototype.forEach.call(fiche.querySelectorAll('.ts-pagehead'), function (heading) {
+			heading.classList.add('ts-user-section-heading');
+			var next = heading.nextElementSibling;
+			if (next && next.matches('form, .div-table-responsive, .div-table-responsive-no-min, table.liste, table.border')) {
+				next.classList.add('ts-user-section-surface');
+			}
+		});
+		if (document.body.classList.contains('page-card_agenda')) {
+			var filter = fiche.querySelector('form.listactionsfilter');
+			if (filter) { filter.classList.add('ts-user-agenda-filter'); }
+			Array.prototype.forEach.call(fiche.querySelectorAll('table.liste'), function (table) {
+				table.classList.add('ts-user-agenda-table');
+			});
+		}
+		return true;
+	}
+
 	function normalizeMemberContentSpacing() {
 		if (!document.body.classList.contains('mod-member')) { return false; }
 		var changed = false;
@@ -4573,6 +4604,7 @@
 		try { normalizeThirdPartyRecordContext(); } catch (e) { /* retain the module's native record context */ }
 		try { normalizeMemberRecordHeader(); } catch (e) { /* retain the native member header */ }
 		try { normalizeContactRecordHeader(); } catch (e) { /* retain the native contact header */ }
+		try { normalizeUserRecordContext(); } catch (e) { /* retain native user record content */ }
 		try { normalizeMemberContentSpacing(); } catch (e) { /* retain native member spacing */ }
 		try { buildPageHeader(); } catch (e) { /* keep Dolibarr's header */ }
 		try { scopeCommercialCreateActions(); } catch (e) { /* retain native action layout */ }
