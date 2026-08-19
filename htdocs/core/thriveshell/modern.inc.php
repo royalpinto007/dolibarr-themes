@@ -9581,7 +9581,14 @@ body.page-system_perf .fiche > span.fas.fa-folder {
 	margin: 22px 5px 8px 0;
 	color: var(--c-accent);
 }
-body.page-system_perf .fiche > a + span.fas.fa-folder { margin-left: 12px; }
+/* The first native heading follows the Reload link directly.  Make that link
+   its own line so the Version section begins as a proper section heading,
+   consistent with XDebug and the following diagnostic sections. */
+body.page-system_perf .fiche > a[href*="/perf.php"] {
+	display: block;
+	width: fit-content;
+	margin: 14px 0 0;
+}
 body.page-system_perf .fiche > span.fas.fa-folder + strong { margin-left: 5px; }
 body.page-system_perf .fiche > .divsection {
 	margin: 0 0 18px !important;
