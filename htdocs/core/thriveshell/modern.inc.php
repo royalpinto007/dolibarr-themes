@@ -9019,6 +9019,26 @@ body.ts-category-index table.ts-category-index-table > tbody > tr.pair { backgro
    did not match; the picker trigger was a bare 26px image; and the calendar
    itself inherited jQuery UI's default metrics, which read as cramped next to
    the rest of the toolbar. Size all three together. */
+/* A date range is one control, so its two halves belong on one line -- the way
+   the filter panel already lays them out. A list search row instead sizes the
+   column to its heading, which left no room for the second half and dropped it
+   onto a line of its own. Laying the pair out as a row makes the column ask for
+   the width it actually needs. */
+tr.liste_titre th:has(> .nowrapfordate + .nowrapfordate),
+tr.liste_titre td:has(> .nowrapfordate + .nowrapfordate) {
+	white-space: nowrap;
+}
+tr.liste_titre th:has(> .nowrapfordate + .nowrapfordate) > .nowrapfordate,
+tr.liste_titre td:has(> .nowrapfordate + .nowrapfordate) > .nowrapfordate {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
+}
+tr.liste_titre th:has(> .nowrapfordate + .nowrapfordate) > .nowrapfordate + .nowrapfordate,
+tr.liste_titre td:has(> .nowrapfordate + .nowrapfordate) > .nowrapfordate + .nowrapfordate {
+	margin-left: var(--sp-2);
+}
+
 .ts-filter-surface input.hasDatepicker,
 .ts-filter-surface .divfordateinput input[type="text"],
 .ts-setting-control input.hasDatepicker {
@@ -9711,6 +9731,56 @@ body.page-card_note .ts-member-note-card .editfielda .fa-pencil-alt {
 	float: none !important;
 	color: currentColor !important;
 }
+/* The tagtable row only ever carried the note's two halves side by side; now
+   that the card holds both, the row and its cells step out of the way. */
+body.page-card_note .ts-member-note-wrapper {
+	display: block;
+	border: 0 !important;
+	background: none !important;
+}
+body.page-card_note .ts-member-note-row { display: contents; }
+body.page-card_note .ts-member-note-head {
+	display: block !important;
+	width: auto !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: none !important;
+}
+body.page-card_note .ts-member-note-card .ts-member-note-body {
+	display: block;
+	width: auto !important;
+	min-height: 74px;
+	padding: 18px !important;
+	border: 0 !important;
+	background: none !important;
+	color: #24324a;
+	font-size: 14px;
+	line-height: 1.6;
+	overflow-wrap: anywhere;
+}
+/* Editing a note opens inside the card, so the editor is sized to the card
+   rather than to the twelve rows the markup asks for. */
+body.page-card_note .ts-member-note-card .ts-member-note-body form {
+	width: 100% !important;
+	max-width: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+body.page-card_note .ts-member-note-card .ts-member-note-body textarea {
+	box-sizing: border-box;
+	width: 100% !important;
+	min-height: 132px;
+	height: 132px;
+	resize: vertical;
+}
+body.page-card_note .ts-member-note-card .ts-member-note-body .clearboth { height: var(--sp-3); }
+body.page-card_note .ts-member-note-card .ts-member-note-body input[type="submit"] + input[type="submit"] {
+	margin-left: var(--sp-2);
+}
 body.page-card_note .ts-member-note-empty {
 	display: flex;
 	align-items: center;
@@ -9961,7 +10031,9 @@ body:not(.bodylogin) button.button-save,
 body:not(.bodylogin) input.buttonforacesave,
 body:not(.bodylogin) button.buttonforacesave,
 body:not(.bodylogin) input[type="submit"][name="submit"]:not(.button-cancel),
-body:not(.bodylogin) button[type="submit"][name="submit"]:not(.button-cancel) {
+body:not(.bodylogin) button[type="submit"][name="submit"]:not(.button-cancel),
+body:not(.bodylogin) input[type="submit"][name="modify"]:not(.button-cancel),
+body:not(.bodylogin) button[type="submit"][name="modify"]:not(.button-cancel) {
 	border-color: var(--c-btn-action) !important;
 	background: var(--c-btn-action) !important;
 	color: var(--c-btn-action-text) !important;
@@ -9972,7 +10044,9 @@ body:not(.bodylogin) button.button-save:hover,
 body:not(.bodylogin) input.buttonforacesave:hover,
 body:not(.bodylogin) button.buttonforacesave:hover,
 body:not(.bodylogin) input[type="submit"][name="submit"]:not(.button-cancel):hover,
-body:not(.bodylogin) button[type="submit"][name="submit"]:not(.button-cancel):hover {
+body:not(.bodylogin) button[type="submit"][name="submit"]:not(.button-cancel):hover,
+body:not(.bodylogin) input[type="submit"][name="modify"]:not(.button-cancel):hover,
+body:not(.bodylogin) button[type="submit"][name="modify"]:not(.button-cancel):hover {
 	filter: brightness(.94);
 }
 body:not(.bodylogin) input.button-cancel,

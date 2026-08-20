@@ -711,10 +711,35 @@
 			if (label.indexOf('note (public)') === -1 && label.indexOf('note (private)') === -1) { return; }
 			table.classList.add('ts-member-note-card');
 			table.dataset.noteKind = label.indexOf('public') !== -1 ? 'public' : 'private';
-			var empty = document.createElement('div');
-			empty.className = 'ts-member-note-empty';
-			empty.textContent = table.dataset.noteKind === 'public' ? 'No public note yet' : 'No private note yet';
-			table.appendChild(empty);
+			/* Records lay a note out as one row of a div-based tagtable: the title
+			   and its edit link sit in the key cell, the note itself in the value
+			   cell beside it. Only the title was ever made into a card, so the note
+			   -- and, in edit mode, the whole editor -- rendered outside it while
+			   the card claimed there was no note at all. Bring the value cell in so
+			   the card holds the note it names. */
+			var head = table.parentElement;
+			var row = table.closest('.tagtr');
+			var body = null;
+			if (row && head) {
+				body = Array.prototype.filter.call(row.children, function (cell) {
+					return cell !== head && cell.classList.contains('tagtd');
+				})[0] || null;
+			}
+			if (body) {
+				row.classList.add('ts-member-note-row');
+				head.classList.add('ts-member-note-head');
+				var wrapper = table.closest('.tagtable');
+				if (wrapper) { wrapper.classList.add('ts-member-note-wrapper'); }
+				body.classList.add('ts-member-note-body');
+				table.appendChild(body);
+			}
+			if (!body || !(body.textContent || '').trim()) {
+				if (body) { body.remove(); }
+				var empty = document.createElement('div');
+				empty.className = 'ts-member-note-empty';
+				empty.textContent = table.dataset.noteKind === 'public' ? 'No public note yet' : 'No private note yet';
+				table.appendChild(empty);
+			}
 			notes.push(table);
 		});
 		if (info && notes.length) {
