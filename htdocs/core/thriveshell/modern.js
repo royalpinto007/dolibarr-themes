@@ -754,7 +754,12 @@
 				body.classList.add('ts-member-note-body');
 				table.appendChild(body);
 			}
-			if (!body || !(body.textContent || '').trim()) {
+			/* A cell holding the editor has no text of its own -- an empty textarea
+			   contributes none -- so judging emptiness by text alone discarded the
+			   editor the moment a blank note was opened for editing. A cell with a
+			   control in it always has something to show. */
+			var filled = body && ((body.textContent || '').trim() || body.querySelector('form, textarea, input, select, .cke, .ck-editor'));
+			if (!filled) {
 				if (body) { body.remove(); }
 				var empty = document.createElement('div');
 				empty.className = 'ts-member-note-empty';

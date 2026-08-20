@@ -9821,7 +9821,11 @@ body.page-card_note .ts-member-note-card .ts-member-note-body input[type="submit
    laid out in two columns so the two stay on one line. */
 body.page-card_note .ts-member-note-card {
 	display: grid !important;
-	grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+	/* A note card is full width on a record tab but shares the page with the
+	   details panel on a member, so the label column is capped in both absolute
+	   and relative terms -- it never grows past its text, and never squeezes the
+	   note beside it on the narrower card. */
+	grid-template-columns: minmax(140px, min(220px, 30%)) minmax(0, 1fr);
 	align-items: stretch;
 }
 body.page-card_note .ts-member-note-card > tbody {
@@ -9842,10 +9846,14 @@ body.page-card_note .ts-member-note-card > .ts-member-note-empty {
 /* While the note is being edited the editor is the tall one, so it and the
    label it belongs to both start at the top of the card rather than floating
    in the middle of it. */
-body.page-card_note .ts-member-note-card > .ts-member-note-body:has(form) {
+/* Keyed on the editor itself: some records wrap the whole page in a single
+   form, so the note cell holds the textarea and its buttons directly. */
+body.page-card_note .ts-member-note-card > .ts-member-note-body:has(form),
+body.page-card_note .ts-member-note-card > .ts-member-note-body:has(textarea) {
 	display: block;
 }
-body.page-card_note .ts-member-note-card:has(> .ts-member-note-body form) > tbody > tr {
+body.page-card_note .ts-member-note-card:has(> .ts-member-note-body form) > tbody > tr,
+body.page-card_note .ts-member-note-card:has(> .ts-member-note-body textarea) > tbody > tr {
 	align-items: flex-start;
 	padding-top: 17px;
 }
