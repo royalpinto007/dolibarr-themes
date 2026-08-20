@@ -717,7 +717,7 @@ body.bodylogin .login_main_home.divpasswordmessagedesc {
    The palette is fast but invisible; this is what makes the app browsable.
    ========================================================================== */
 
-:root { --nav-w: 260px; --nav-w-collapsed: 68px; }
+:root { --nav-w: 260px; --nav-w-collapsed: 68px; --nav-w-expanded: 260px; }
 
 aside.cmd-nav {
 	position: fixed;
@@ -1049,6 +1049,40 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 	.cmd-nav-label, .cmd-nav-sub, .cmd-nav-toggle-label { display: none; }
 	.cmd-nav-scroll { padding: var(--sp-2) var(--sp-1); }
 	.cmd-nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
+
+	/* An icon rail has room for the modules but not for their sub-entries, and
+	   those sub-entries are how most of the app is reached: with them dropped,
+	   List, New and every other child page had no way in at all. Here the nav
+	   opens over the page as a drawer, so the whole tree stays reachable and
+	   nothing reflows behind it. */
+	body.cmd-nav-open aside.cmd-nav {
+		width: var(--nav-w-expanded);
+		box-shadow: 0 24px 60px rgba(15, 23, 42, .3);
+		z-index: 3400;
+	}
+	body.cmd-nav-open .cmd-nav-scroll { padding: var(--sp-3) var(--sp-2); }
+	body.cmd-nav-open .cmd-nav-label,
+	body.cmd-nav-open .cmd-nav-sub,
+	body.cmd-nav-open .cmd-nav-toggle-label { display: revert; }
+	body.cmd-nav-open .cmd-nav-link {
+		justify-content: flex-start;
+		padding-<?php echo $left; ?>: var(--sp-3);
+		padding-<?php echo $right; ?>: var(--sp-3);
+	}
+	body.cmd-nav-open .cmd-nav-toggle { justify-content: flex-start; }
+	body.cmd-nav-open .cmd-nav-toggle-icon {
+		transform: rotate(45deg);
+		margin-<?php echo $left; ?>: 4px;
+	}
+	/* Below the bar, so the account menu and search stay reachable with the
+	   drawer open. */
+	body.cmd-nav-open::before {
+		content: "";
+		position: fixed;
+		inset: var(--bar-h) 0 0 0;
+		z-index: 3390;
+		background: rgba(15, 23, 42, .38);
+	}
 	.cmd-brand-text, .cmd-crumbs { display: none; }
 	header.cmd-bar { gap: 12px; padding: 0 16px; }
 	header.cmd-bar .cmd-bar-spacer { display: none; }

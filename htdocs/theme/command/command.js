@@ -99,12 +99,39 @@
 		if (!toggle) {
 			return;
 		}
+		var narrow = window.matchMedia('(max-width: 992px)');
+		function closeDrawer() {
+			document.body.classList.remove('cmd-nav-open');
+		}
 		toggle.addEventListener('click', function () {
+			/* A narrow viewport already renders the nav as an icon rail with its
+			   labels and sub-entries dropped, so collapsing it further has
+			   nothing left to act on. There this control opens the nav over the
+			   page instead, which is the only way back to the sub-entries. */
+			if (narrow.matches) {
+				document.body.classList.toggle('cmd-nav-open');
+				return;
+			}
 			var on = document.body.classList.toggle('cmd-nav-collapsed');
 			try {
 				window.localStorage.setItem('cmdNavCollapsed', on ? '1' : '0');
 			} catch (e) { /* private mode: fall back to per-page state */ }
 		});
+		/* The drawer covers the page, so it closes on anything that means the
+		   reader is done with it: the backdrop, Escape, following a link, or the
+		   viewport growing wide enough to show the nav in place again. */
+		document.addEventListener('click', function (ev) {
+			if (!document.body.classList.contains('cmd-nav-open')) { return; }
+			if (!ev.target.closest) { return; }
+			if (!ev.target.closest('aside.cmd-nav')) { closeDrawer(); return; }
+			if (ev.target.closest('a[href]')) { closeDrawer(); }
+		});
+		document.addEventListener('keydown', function (ev) {
+			if (ev.key === 'Escape' || ev.keyCode === 27) { closeDrawer(); }
+		});
+		if (narrow.addEventListener) {
+			narrow.addEventListener('change', closeDrawer);
+		}
 	}
 
 	/* Dolibarr prints its own tools/account block late in the document; move it
