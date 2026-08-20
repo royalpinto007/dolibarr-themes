@@ -331,6 +331,17 @@ div.arearef.ts-has-actions {
 @media only screen and (max-width: 900px) {
 	div.arearef.ts-has-actions { flex-direction: column; }
 	.ts-header-actions { margin-<?php echo $left; ?>: 0; width: 100%; }
+	/* The identity and the actions carry a flex-basis sized for the row they
+	   sit in side by side. Once the banner stacks, that basis is read as a
+	   height instead: the identity was held open at 320px and its name floated
+	   in the middle of an empty band, on every record with an action bar. */
+	div.arearef.ts-has-actions > .refid,
+	div.arearef.ts-has-actions > .ts-entity-identity,
+	div.arearef.ts-has-actions > .ts-header-actions {
+		flex: 0 0 auto !important;
+		width: 100%;
+		min-width: 0;
+	}
 }
 
 /* Dolibarr pins its record pager ("Back to list", prev/next) to the top-right of
@@ -7474,6 +7485,71 @@ body.ts-thirdparty-overview .ts-overview-redundant-event-action { display: none 
 		margin-inline: 16px !important;
 	}
 	body.ts-thirdparty-overview .ts-tabs-more-menu { right: auto; left: 0; }
+}
+/* On a phone the banner has no room to seat the identity beside the actions.
+   Laid out as a row, its tallest item -- the stack of buttons -- set the height
+   and the identity stretched to match, which left the name floating in the
+   middle of an empty band. The name also shared its line with the status and
+   the info control, and what remained of a 390px screen truncated a company
+   name to a word. Stacked, each part takes the width it needs and the name has
+   the line to itself. */
+@media (max-width: 600px) {
+	body.ts-thirdparty-overview .ts-thirdparty-record-shell > .ts-entity-banner {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--sp-4);
+		min-height: 0;
+	}
+	body.ts-thirdparty-overview .ts-entity-identity {
+		align-items: start !important;
+		gap: var(--sp-3) !important;
+	}
+	body.ts-thirdparty-overview .ts-entity-identity > .refid {
+		/* A second, content-width column so the status and the control that
+		   explains it keep each other company on one line. */
+		grid-template-columns: auto minmax(0, 1fr) !important;
+		row-gap: var(--sp-1) !important;
+		column-gap: var(--sp-2) !important;
+		font-size: 19px !important;
+	}
+	body.ts-thirdparty-overview .ts-entity-identity > .refid > .ts-overview-name {
+		grid-column: 1 / -1 !important;
+		grid-row: 1 !important;
+		white-space: normal;
+		overflow: visible;
+		text-overflow: clip;
+		line-height: 1.25;
+	}
+	body.ts-thirdparty-overview .ts-entity-identity > .refid > .statusref {
+		grid-column: 1 !important;
+		grid-row: 2 !important;
+		justify-content: flex-start;
+	}
+	body.ts-thirdparty-overview .ts-entity-identity > .refid > .ts-overview-info {
+		grid-column: 2 !important;
+		grid-row: 2 !important;
+		justify-self: start;
+		align-self: center;
+	}
+	body.ts-thirdparty-overview .ts-entity-identity > .refid > .ts-overview-location,
+	body.ts-thirdparty-overview .ts-entity-identity > .refid > .ts-overview-email {
+		grid-column: 1 / -1 !important;
+		grid-row: auto !important;
+		overflow-wrap: anywhere;
+	}
+	/* One column of actions, each the width of the card: a row of buttons that
+	   wrapped left them at whatever width their label happened to need. */
+	body.ts-thirdparty-overview .ts-header-actions div.tabsAction {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	body.ts-thirdparty-overview .ts-header-actions div.tabsAction > * {
+		width: 100%;
+		justify-content: center;
+	}
+	body.ts-thirdparty-overview .ts-entity-banner .pagination.paginationref {
+		align-self: flex-end;
+	}
 }
 
 /* Third Party Events/Agenda tab -----------------------------------------

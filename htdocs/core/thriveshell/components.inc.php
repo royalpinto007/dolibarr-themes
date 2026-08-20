@@ -3351,6 +3351,15 @@ ul.timeline img[src*="nophoto"] {
 	vertical-align: middle;
 	object-fit: cover;
 }
+/* An avatar in a list sits directly against the name beside it: Dolibarr wraps
+   it in a span carrying both "paddingrightonly" and "nopadding", and the second
+   wins, so the padding meant to separate them is removed. A margin is not
+   something "nopadding" takes away. */
+table td a > span.userimg,
+table td a > span.nopadding,
+table td > span.userimg {
+	margin-<?php echo $right; ?>: var(--sp-2);
+}
 ul.timeline .userimg, ul.timeline span.nopadding { display: inline-flex; align-items: center; }
 /* The author name was truncating to "Super..." beside an 80px portrait. */
 ul.timeline a.classfortooltip, ul.timeline .timeline-header a { max-width: none; }
