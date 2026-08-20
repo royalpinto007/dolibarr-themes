@@ -482,8 +482,43 @@ body.bodylogin { padding: 0; }		/* the login page has no chrome */
 html body.bodylogin {
 	min-height: 100svh;
 	margin: 0;
-	background: var(--c-canvas);
+	/* Longhand: Dolibarr writes a configured login background onto this same
+	   element as an inline style, and the shorthand would drop the image. */
+	background-color: var(--c-canvas);
 	font-family: var(--c-font);
+}
+<?php if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) { ?>
+/* Setup > Display can put an image behind the login page, which Dolibarr sets
+   on the body. The wrapper over it lays down its own backdrop, and the lower
+   layer of that backdrop is an opaque sheet of the canvas colour -- so the
+   photo was fetched on every load and then painted over. When an image is
+   configured it becomes the wrapper's backdrop instead, which is the one
+   surface in front of everything. The declarations it replaces are themselves
+   !important, hence the same here. */
+body.bodylogin .login_center {
+	background-image: url("<?php echo DOL_URL_ROOT; ?>/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/<?php echo urlencode(getDolGlobalString('MAIN_LOGIN_BACKGROUND')); ?>") !important;
+	background-position: center center !important;
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
+}
+<?php } ?>
+
+/* The message under the card is given a max-width by Dolibarr but no side
+   margins, so it sat against the left edge of the column rather than under the
+   middle of the card. */
+body.bodylogin .login_main_home {
+	margin-left: auto;
+	margin-right: auto;
+}
+/* Dolibarr marks the message for a plate whenever there is an image behind it,
+   which the theme never drew -- so the message was reading straight off the
+   photo. */
+body.bodylogin .login_main_home.backgroundsemitransparent {
+	width: fit-content;
+	padding: 7px 14px;
+	border-radius: var(--r);
+	background: color-mix(in srgb, var(--c-surface) 86%, transparent);
+	color: var(--c-ink-2);
 }
 body.bodylogin .login_center .login_vertical_align {
 	box-sizing: border-box;
