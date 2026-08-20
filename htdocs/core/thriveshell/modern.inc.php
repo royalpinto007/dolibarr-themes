@@ -690,13 +690,56 @@ div.fichecenter div.fichehalfright .div-table-responsive { box-shadow: none; bor
 }
 .ts-record-section-card .ts-section-icon { color: var(--c-accent); }
 .ts-record-section-files .ts-native-empty-source { display: none; }
-/* The toolbar that generates a document sits in the header of the documents
-   table, so it only became visible once that table stopped being hidden whole.
-   Its template select is sized for a wider column than the section gives it,
-   and truncated the model name to a couple of characters. */
+/* The toolbar that generates a document is emitted as the heading row of the
+   documents table, so it arrived dressed as a column header: centred, bold,
+   and on a tinted band -- a form control wearing a table's clothes. It is a
+   toolbar, so it reads as one: label, control and action on a line, aligned
+   with the card rather than floating in the middle of it. */
+.ts-record-section-files table.formdoc tr.liste_titre,
+.ts-record-section-files table.formdoc tr.liste_titre > th,
+.ts-record-section-files table.formdoc tr.liste_titre > td {
+	padding: 12px 16px !important;
+	background: transparent !important;
+	border-bottom: 1px solid var(--c-hairline) !important;
+	text-align: <?php echo $left; ?> !important;
+	font-weight: 400 !important;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+.ts-record-section-files table.formdoc tr.liste_titre span.hideonsmartphone {
+	margin-<?php echo $right; ?>: var(--sp-2);
+	color: var(--c-muted);
+	font-size: <?php echo $fontsizesmaller; ?>;
+	font-weight: 500;
+	vertical-align: middle;
+}
 .ts-record-section-files table.formdoc select,
 .ts-record-section-files table.formdoc .select2-container {
-	min-width: 160px !important;
+	min-width: 170px !important;
+	/* The container reports its own height rather than the control's, which
+	   left it half a control short of the button beside it. */
+	height: 34px !important;
+	margin-<?php echo $right; ?>: var(--sp-2);
+	vertical-align: middle;
+}
+/* The value inside the control inherited the heading's weight and centring. */
+.ts-record-section-files table.formdoc .select2-selection--single {
+	height: 34px !important;
+}
+.ts-record-section-files table.formdoc .select2-selection--single .select2-selection__rendered {
+	padding-<?php echo $left; ?>: 10px;
+	font-weight: 400 !important;
+	line-height: 32px !important;
+	text-align: <?php echo $left; ?> !important;
+}
+.ts-record-section-files table.formdoc .select2-selection--single .select2-selection__arrow {
+	height: 32px !important;
+}
+.ts-record-section-files table.formdoc input.buttongen {
+	height: 34px !important;
+	padding: 0 14px !important;
+	font-weight: 550;
+	vertical-align: middle;
 }
 .ts-record-section-card .ts-emptybox {
 	min-height: 150px;
