@@ -877,6 +877,7 @@ header.cmd-bar {
 	box-shadow: none;
 }
 
+
 header.cmd-bar .cmd-brand {
 	gap: 10px;
 	font-size: 0.90625rem;
@@ -1114,6 +1115,66 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/select2.inc.php'; ?>
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/modern.inc.php'; ?>
 
+<?php if (!empty($topmenucolorchosen)) {
+	$tsbarrgb = array_map('intval', array_pad(explode(',', (string) $colorbackhmenu1), 3, 0));
+	/* Relative luminance decides what has to be legible on top of the chosen
+	   colour: the bar carries text, icons, a search field and the account
+	   block, and a dark navy needs the opposite treatment to a pale grey. */
+	$tsbarlum = (0.2126 * $tsbarrgb[0] + 0.7152 * $tsbarrgb[1] + 0.0722 * $tsbarrgb[2]) / 255;
+	$tsbardark = ($tsbarlum < 0.55);
+?>
+/* Setup > Display offers a background colour for the top menu, and the bar is
+   this theme's top menu. Everything inside it draws from the same few tokens,
+   so the colour is applied by redefining those tokens on the bar itself --
+   the search field, the tool icons and the account block follow from that
+   rather than each needing its own override. */
+header.cmd-bar {
+	--c-surface: rgb(<?php echo $colorbackhmenu1; ?>);
+	--c-canvas: rgb(<?php echo $colorbackhmenu1; ?>);
+<?php if ($tsbardark) { ?>
+	--c-ink: #ffffff;
+	--c-ink-2: rgba(255, 255, 255, 0.9);
+	--c-muted: rgba(255, 255, 255, 0.76);
+	--c-faint: rgba(255, 255, 255, 0.62);
+	--c-sunken: rgba(255, 255, 255, 0.14);
+	--c-border: rgba(255, 255, 255, 0.28);
+	--c-border-strong: rgba(255, 255, 255, 0.44);
+	--c-hairline: rgba(0, 0, 0, 0.28);
+	--c-accent: #ffffff;
+	--c-accent-soft: rgba(255, 255, 255, 0.18);
+<?php } else { ?>
+	--c-sunken: rgba(0, 0, 0, 0.06);
+	--c-hairline: rgba(0, 0, 0, 0.14);
+<?php } ?>
+	background: rgb(<?php echo $colorbackhmenu1; ?>);
+	border-bottom-color: var(--c-hairline);
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	color: var(--c-ink);
+}
+/* The search field and its shortcut chip name their greys directly rather than
+   drawing them from tokens, so they are restated here against the chosen
+   colour -- otherwise the field stayed a pale box with pale text on it. */
+header.cmd-bar .cmd-trigger {
+	background: var(--c-sunken);
+	border-color: var(--c-border);
+	color: var(--c-muted);
+}
+header.cmd-bar .cmd-trigger:hover {
+	background: var(--c-accent-soft);
+	border-color: var(--c-border-strong);
+}
+header.cmd-bar .cmd-trigger-icon { color: var(--c-muted); }
+header.cmd-bar .cmd-kbd {
+	background: var(--c-sunken);
+	border-color: var(--c-border);
+	color: var(--c-muted);
+}
+header.cmd-bar .cmd-brand-mark {
+	background: var(--c-accent-soft);
+	color: var(--c-ink);
+}
+<?php } ?>
 
 <?php
 /* Icon and flag maps carried from eldy: menu-key -> glyph and country flag

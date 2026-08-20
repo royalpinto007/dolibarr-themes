@@ -239,6 +239,15 @@ $useboldtitle = getDolGlobalInt('THEME_ELDY_USEBOLDTITLE');
 $userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 $borderwidth = 1;
 
+/* Whether a top menu colour was actually chosen, as opposed to defaulted. The
+   block below fills the constant in with the theme's own value when it is
+   unset, after which the two are indistinguishable -- so the answer is taken
+   first. COMMAND puts its own surface behind the bar and only departs from it
+   when someone has asked for a colour. */
+$topmenucolorchosen = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)
+	? (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') !== '')
+	: !empty($user->conf->THEME_ELDY_TOPMENU_BACK1);
+
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
 	$conf->global->THEME_ELDY_BACKBODY = $colorbackbody;
