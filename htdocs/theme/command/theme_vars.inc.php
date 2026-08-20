@@ -69,8 +69,11 @@ $colorbacklinepairchecked = '238,240,254'; // line checked -- --c-accent-soft
 $colorbacklinebreak = '241,244,248'; // line break -- --c-sunken
 $colortexttitlenotab = '11,18,32'; // --c-ink #0B1220
 $colortexttitlenotab2 = '67,56,202'; // --c-accent-ink #4338CA
-$colortexttitle = '11,18,32'; // --c-ink
-$colortexttitlelink = '67,56,202'; // --c-accent-ink
+/* A list header names --c-ink-subtle, which the palette never defines, so the
+   declaration is dropped and the text inherits --c-ink. These state the colour
+   that is actually rendered rather than the one the rule asks for. */
+$colortexttitle = '11,18,32'; // table title line -- inherited --c-ink #0B1220
+$colortexttitlelink = '11,18,32'; // its links inherit the same
 $colortext = '11,18,32'; // --c-ink
 $colortextlink = '67,56,202'; // --c-accent-ink
 // rem, not em: these tokens are emitted into ~30 rules, several of which

@@ -1115,6 +1115,46 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/select2.inc.php'; ?>
 <?php include DOL_DOCUMENT_ROOT.'/core/thriveshell/modern.inc.php'; ?>
 
+<?php if (!empty($tschosencolors) && in_array(true, $tschosencolors, true)) { ?>
+/* Setup > Display lets an administrator colour the parts of a page. The theme
+   reads those values already, but painted from its own palette instead, so
+   choosing a colour changed nothing. Each one is applied here to whatever the
+   theme actually paints with it, and only when it has been chosen -- an
+   untouched setting leaves the theme's own rule to stand, which keeps dark
+   mode following its palette rather than a light colour baked in. */
+<?php if ($tschosencolors['backbody']) { ?>
+body { background: rgb(<?php echo $colorbackbody; ?>); }
+<?php } if ($tschosencolors['backtitle1']) { ?>
+tr.liste_titre, .liste_titre,
+tr.liste_titre th, tr.liste_titre td,
+th.liste_titre, td.liste_titre { background: rgb(<?php echo $colorbacktitle1; ?>); }
+<?php } if ($tschosencolors['texttitle']) { ?>
+/* Matched against the same selectors that set a header's colour !important,
+   and declared after them, so the chosen colour is the one that lands. */
+tr.liste_titre th, tr.liste_titre td, th.liste_titre, td.liste_titre,
+table.liste tr.liste_titre > th, table.liste tr.liste_titre > td,
+table.tagtable tr.liste_titre > th, table.tagtable tr.liste_titre > td,
+table.noborder tr.liste_titre > th, table.noborder tr.liste_titre > td { color: rgb(<?php echo $colortexttitle; ?>) !important; }
+<?php } if ($tschosencolors['texttitlelink']) { ?>
+tr.liste_titre th a, .liste_titre a,
+table.liste tr.liste_titre > th > a, table.liste tr.liste_titre > td > a,
+table.tagtable tr.liste_titre > th > a, table.tagtable tr.liste_titre > td > a,
+table.noborder tr.liste_titre > th > a, table.noborder tr.liste_titre > td > a { color: rgb(<?php echo $colortexttitlelink; ?>) !important; }
+<?php } if ($tschosencolors['texttitlenotab']) { ?>
+.titre, div.titre { color: rgb(<?php echo $colortexttitlenotab; ?>); }
+<?php } if ($tschosencolors['textlink']) { ?>
+a { color: rgb(<?php echo $colortextlink; ?>); }
+<?php } if ($tschosencolors['lineimpair1']) { ?>
+tr.oddeven, tr.impair, tr.pair { background: rgb(<?php echo $colorbacklineimpair1; ?>); }
+<?php } if ($tschosencolors['linepair1']) { ?>
+tr.oddeven:nth-of-type(even), tr.pair { background: rgb(<?php echo $colorbacklinepair1; ?>); }
+<?php } if ($tschosencolors['hover']) { ?>
+tr.oddeven:hover, tr.impair:hover, tr.pair:hover { background: rgb(<?php echo $colorbacklinepairhover; ?>); }
+<?php } if ($tschosencolors['checked']) { ?>
+tr.highlight, tr.selected { background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; }
+<?php } ?>
+<?php } ?>
+
 <?php if (!empty($topmenucolorchosen)) {
 	$tsbarrgb = array_map('intval', array_pad(explode(',', (string) $colorbackhmenu1), 3, 0));
 	/* Relative luminance decides what has to be legible on top of the chosen

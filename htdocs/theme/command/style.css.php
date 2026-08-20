@@ -244,12 +244,25 @@ $borderwidth = 1;
    unset, after which the two are indistinguishable -- so the answer is taken
    first. COMMAND puts its own surface behind the bar and only departs from it
    when someone has asked for a colour. */
-$topmenucolorchosen = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)
-	? (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') !== '')
-	: !empty($user->conf->THEME_ELDY_TOPMENU_BACK1);
-$vermenucolorchosen = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)
-	? (getDolGlobalString('THEME_ELDY_VERMENU_BACK1') !== '')
-	: !empty($user->conf->THEME_ELDY_VERMENU_BACK1);
+$tscolorchosen = function ($name) use ($user) {
+	return empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)
+		? (getDolGlobalString($name) !== '')
+		: !empty($user->conf->{$name});
+};
+$topmenucolorchosen = $tscolorchosen('THEME_ELDY_TOPMENU_BACK1');
+$vermenucolorchosen = $tscolorchosen('THEME_ELDY_VERMENU_BACK1');
+$tschosencolors = array(
+	'backbody' => $tscolorchosen('THEME_ELDY_BACKBODY'),
+	'backtitle1' => $tscolorchosen('THEME_ELDY_BACKTITLE1'),
+	'texttitle' => $tscolorchosen('THEME_ELDY_TEXTTITLE'),
+	'texttitlelink' => $tscolorchosen('THEME_ELDY_TEXTTITLELINK'),
+	'texttitlenotab' => $tscolorchosen('THEME_ELDY_TEXTTITLENOTAB'),
+	'textlink' => $tscolorchosen('THEME_ELDY_TEXTLINK'),
+	'lineimpair1' => $tscolorchosen('THEME_ELDY_LINEIMPAIR1'),
+	'linepair1' => $tscolorchosen('THEME_ELDY_LINEPAIR1'),
+	'hover' => $tscolorchosen('THEME_ELDY_USE_HOVER'),
+	'checked' => $tscolorchosen('THEME_ELDY_USE_CHECKED'),
+);
 
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
