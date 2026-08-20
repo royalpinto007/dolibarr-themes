@@ -1125,7 +1125,23 @@
 					empty.className = 'ts-emptybox';
 					empty.innerHTML = '<span class="far fa-file-alt" aria-hidden="true"></span><strong>No files linked</strong><span>Files attached to this third party will appear here.</span>';
 					var responsive = none.closest('.div-table-responsive') || none.closest('table');
-					if (responsive) { responsive.classList.add('ts-native-empty-source'); responsive.insertAdjacentElement('afterend', empty); }
+					if (responsive) {
+						/* A documents table is not only a list of documents: its header
+						   row carries the controls that generate one. Hiding the table
+						   whole -- because the list underneath it is empty -- took the
+						   model select and the Generate button with it, so a record
+						   with no document yet offered no way to produce one. Where
+						   the table holds controls, only the row saying it is empty
+						   stands down. */
+						var emptyRow = none.closest('tr');
+						var holdsControls = responsive.querySelector('input:not([type="hidden"]), select, button');
+						if (emptyRow && responsive.contains(emptyRow) && holdsControls) {
+							emptyRow.classList.add('ts-native-empty-source');
+						} else {
+							responsive.classList.add('ts-native-empty-source');
+						}
+						responsive.insertAdjacentElement('afterend', empty);
+					}
 				}
 			}
 			if (kind === 'events') {

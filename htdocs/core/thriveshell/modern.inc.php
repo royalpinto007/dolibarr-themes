@@ -690,6 +690,14 @@ div.fichecenter div.fichehalfright .div-table-responsive { box-shadow: none; bor
 }
 .ts-record-section-card .ts-section-icon { color: var(--c-accent); }
 .ts-record-section-files .ts-native-empty-source { display: none; }
+/* The toolbar that generates a document sits in the header of the documents
+   table, so it only became visible once that table stopped being hidden whole.
+   Its template select is sized for a wider column than the section gives it,
+   and truncated the model name to a couple of characters. */
+.ts-record-section-files table.formdoc select,
+.ts-record-section-files table.formdoc .select2-container {
+	min-width: 160px !important;
+}
 .ts-record-section-card .ts-emptybox {
 	min-height: 150px;
 	display: flex;
