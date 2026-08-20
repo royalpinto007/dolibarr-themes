@@ -325,6 +325,7 @@ header.cmd-bar {
 header.cmd-bar { display: none; }
 <?php } ?>
 
+.cmd-nav-open { display: none; }
 .cmd-brand {
 	display: inline-flex;
 	align-items: center;
@@ -867,7 +868,8 @@ aside.cmd-nav {
 	align-items: center;
 	gap: var(--sp-3);
 	width: 100%;
-	padding: var(--sp-3) var(--sp-4);
+	/* Clear of the home indicator and the browser's own bottom bar. */
+	padding: var(--sp-3) var(--sp-4) calc(var(--sp-3) + env(safe-area-inset-bottom, 0px));
 	background: transparent;
 	border: 0;
 	border-top: 1px solid var(--c-hairline);
@@ -1095,6 +1097,37 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 	.cmd-nav-label, .cmd-nav-sub, .cmd-nav-toggle-label { display: none; }
 	.cmd-nav-scroll { padding: var(--sp-2) var(--sp-1); }
 	.cmd-nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
+
+	/* The bar carries the way in, where a thumb can reach it. */
+	.cmd-nav-open {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 40px;
+		height: 40px;
+		margin-<?php echo $right; ?>: calc(var(--sp-2) * -1);
+		padding: 0;
+		border: 0;
+		border-radius: var(--r);
+		background: transparent;
+		color: var(--c-ink-2);
+		cursor: pointer;
+	}
+	.cmd-nav-open:hover, body.cmd-nav-open .cmd-nav-open { background: var(--c-sunken); }
+	.cmd-nav-open-bars,
+	.cmd-nav-open-bars::before,
+	.cmd-nav-open-bars::after {
+		display: block;
+		width: 18px;
+		height: 2px;
+		border-radius: 2px;
+		background: currentColor;
+	}
+	.cmd-nav-open-bars { position: relative; }
+	.cmd-nav-open-bars::before, .cmd-nav-open-bars::after { content: ""; position: absolute; left: 0; }
+	.cmd-nav-open-bars::before { top: -6px; }
+	.cmd-nav-open-bars::after { top: 6px; }
 
 	/* An icon rail has room for the modules but not for their sub-entries, and
 	   those sub-entries are how most of the app is reached: with them dropped,

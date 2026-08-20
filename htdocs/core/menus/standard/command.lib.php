@@ -379,6 +379,13 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 
 	print '<header id="cmd-bar" class="cmd-bar">'."\n";
 
+	// Opens the navigation on a narrow screen. The control at the foot of the
+	// nav sits on the very bottom edge, which on a phone is where the browser
+	// keeps its own bar -- reachable in theory, under something else in practice.
+	print '<button type="button" class="cmd-nav-open" id="cmd-nav-open" aria-label="'.dol_escape_htmltag($langs->trans('Menu')).'" aria-expanded="false">';
+	print '<span class="cmd-nav-open-bars" aria-hidden="true"></span>';
+	print '</button>';
+
 	// Brand
 	print '<a class="cmd-brand" href="'.dol_escape_htmltag($home).'">';
 	print '<span class="cmd-brand-mark" aria-hidden="true">'.dol_escape_htmltag(dol_substr($brand, 0, 1)).'</span>';

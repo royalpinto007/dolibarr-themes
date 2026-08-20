@@ -100,8 +100,18 @@
 			return;
 		}
 		var narrow = window.matchMedia('(max-width: 992px)');
+		var opener = document.getElementById('cmd-nav-open');
+		function setExpanded(on) {
+			if (opener) { opener.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+		}
 		function closeDrawer() {
 			document.body.classList.remove('cmd-nav-open');
+			setExpanded(false);
+		}
+		if (opener) {
+			opener.addEventListener('click', function () {
+				setExpanded(document.body.classList.toggle('cmd-nav-open'));
+			});
 		}
 		toggle.addEventListener('click', function () {
 			/* A narrow viewport already renders the nav as an icon rail with its
@@ -109,7 +119,7 @@
 			   nothing left to act on. There this control opens the nav over the
 			   page instead, which is the only way back to the sub-entries. */
 			if (narrow.matches) {
-				document.body.classList.toggle('cmd-nav-open');
+				setExpanded(document.body.classList.toggle('cmd-nav-open'));
 				return;
 			}
 			var on = document.body.classList.toggle('cmd-nav-collapsed');
@@ -123,6 +133,7 @@
 		document.addEventListener('click', function (ev) {
 			if (!document.body.classList.contains('cmd-nav-open')) { return; }
 			if (!ev.target.closest) { return; }
+			if (ev.target.closest('#cmd-nav-open')) { return; }
 			if (!ev.target.closest('aside.cmd-nav')) { closeDrawer(); return; }
 			if (ev.target.closest('a[href]')) { closeDrawer(); }
 		});
