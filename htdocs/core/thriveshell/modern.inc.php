@@ -4755,36 +4755,50 @@ body.ts-command-dashboard .ts-dash-section-title {
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
 }
-/* Columns are chosen from the narrowest card that still reads well, rather than
-   fixed per breakpoint: the browser fits as many as the width allows and drops
-   one when it cannot, which is the same rule at every size. */
+/* Three columns, laid out as a grid so the cards line up in rows the way they
+   do while customising -- rather than being packed by height, which fits more
+   cards in but leaves each column ending at a different place. The count is
+   fixed rather than derived from the width: at a desk-sized window the old
+   rule reached four columns and the cards became too narrow to read. */
 body.ts-command-dashboard .ts-dash-section-body {
-	column-width: 330px;
-	column-gap: 16px;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	align-items: stretch;
+}
+/* Cards in a row share its height, so a row reads as a row rather than as
+   three cards that happen to start level. */
+body.ts-command-dashboard .ts-dash-section-body > .ts-dashboard-widget {
+	height: 100%;
 }
 .ts-dashboard-widget {
 	break-inside: avoid;
 	page-break-inside: avoid;
+	min-width: 0;
 }
 /* A section holding one or two widgets should not spread them thinly across
    three columns, and a lone card should not run the width of the page. */
 body.ts-command-dashboard .ts-dash-section-body[data-ts-count="1"] {
-	column-count: 1;
+	grid-template-columns: minmax(0, 1fr);
 	max-width: 540px;
 }
 body.ts-command-dashboard .ts-dash-section-body[data-ts-count="2"] {
-	column-count: 2;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 /* Charts carry two plots side by side and need the width to stay readable. */
 body.ts-command-dashboard .ts-dash-section[data-ts-section="analytics"] .ts-dash-section-body {
-	column-count: 2;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 1200px) {
+	body.ts-command-dashboard .ts-dash-section-body {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 @media (max-width: 900px) {
 	body.ts-command-dashboard .ts-dash-section-body,
 	body.ts-command-dashboard .ts-dash-section-body[data-ts-count="2"],
 	body.ts-command-dashboard .ts-dash-section[data-ts-section="analytics"] .ts-dash-section-body {
-		column-count: 1;
-		column-width: auto;
+		grid-template-columns: minmax(0, 1fr);
 	}
 	body.ts-command-dashboard .ts-dash-section-body[data-ts-count="1"] { max-width: none; }
 }
