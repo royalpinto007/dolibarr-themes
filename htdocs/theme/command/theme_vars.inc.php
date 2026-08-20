@@ -48,28 +48,31 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php
 $theme_bgcolor = array(hexdec('F4'), hexdec('F4'), hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 
-// Colors
-$colorbackbody = '255,255,255';
-$colorbackhmenu1 = '38,60,92'; // topmenu
-//$colorbackvmenu1 = '250,250,250'; // vmenu
-$colorbackvmenu1 = '248,248,248'; // vmenu
-$colortopbordertitle1 = '215,215,215'; // top border of title
-$colorbacktitle1 = '241,241,243'; // title of tables,list
-$colorbacktabcard1 = '255,255,255'; // card
-$colorbacktabactive = '234,234,234';
-$colorbacklineimpair1 = '255,255,255'; // line impair
-$colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '255,255,255'; // line pair
-$colorbacklinepair2 = '255,255,255'; // line pair
-$colorbacklinepairhover = '240,242,249'; // line hover
-$colorbacklinepairchecked = '240,242,249'; // line checked
-$colorbacklinebreak = '248,247,244'; // line break
-$colortexttitlenotab = '0,135,160'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
-$colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
-$colortexttitle = '40, 40, 60';
-$colortexttitlelink = '10, 20, 100';
-$colortext = '0,0,0';
-$colortextlink = '10, 20, 100';
+/* Colors. These are the values Setup > Display shows as this theme's defaults,
+   and the form persists whatever it shows -- so they are COMMAND's own palette
+   rather than the eldy values the file started from. Each one is the colour the
+   matching --color* variable already resolves to in command.inc.php, so opening
+   the page and saving it changes nothing. */
+$colorbackbody = '247,248,250'; // --c-canvas #F7F8FA
+$colorbackhmenu1 = '255,255,255'; // topmenu -- --c-surface #FFFFFF
+$colorbackvmenu1 = '255,255,255'; // vmenu -- --c-surface #FFFFFF
+$colortopbordertitle1 = '79,70,229'; // top border of title -- --c-accent #4F46E5
+$colorbacktitle1 = '241,244,248'; // title of tables,list -- --c-sunken #F1F4F8
+$colorbacktabcard1 = '255,255,255'; // card -- --c-surface
+$colorbacktabactive = '238,240,254'; // --c-accent-soft #EEF0FE
+$colorbacklineimpair1 = '255,255,255'; // line impair -- --c-surface
+$colorbacklineimpair2 = '255,255,255'; // line impair -- --c-surface
+$colorbacklinepair1 = '255,255,255'; // line pair -- --c-surface
+$colorbacklinepair2 = '255,255,255'; // line pair -- --c-surface
+$colorbacklinepairhover = '241,244,248'; // line hover -- --c-sunken
+$colorbacklinepairchecked = '238,240,254'; // line checked -- --c-accent-soft
+$colorbacklinebreak = '241,244,248'; // line break -- --c-sunken
+$colortexttitlenotab = '11,18,32'; // --c-ink #0B1220
+$colortexttitlenotab2 = '67,56,202'; // --c-accent-ink #4338CA
+$colortexttitle = '11,18,32'; // --c-ink
+$colortexttitlelink = '67,56,202'; // --c-accent-ink
+$colortext = '11,18,32'; // --c-ink
+$colortextlink = '67,56,202'; // --c-accent-ink
 // rem, not em: these tokens are emitted into ~30 rules, several of which
 // sit inside enlarged blocks (the record banner, for one). An em value
 // compounds against whatever it lands in; rem always resolves to root.
@@ -78,8 +81,8 @@ $fontsizesmaller = '0.8125rem';
 $topMenuFontSize = '0.6875rem';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
-$butactionbg = '116, 96, 170';
-$textbutaction = '255, 255, 255';
+$butactionbg = '79,70,229'; // --c-btn-action #4F46E5
+$textbutaction = '255,255,255';
 
 // text color
 $textSuccess   = '#28a745';

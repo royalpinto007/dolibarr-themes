@@ -247,6 +247,9 @@ $borderwidth = 1;
 $topmenucolorchosen = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)
 	? (getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') !== '')
 	: !empty($user->conf->THEME_ELDY_TOPMENU_BACK1);
+$vermenucolorchosen = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)
+	? (getDolGlobalString('THEME_ELDY_VERMENU_BACK1') !== '')
+	: !empty($user->conf->THEME_ELDY_VERMENU_BACK1);
 
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {

@@ -1176,6 +1176,38 @@ header.cmd-bar .cmd-brand-mark {
 }
 <?php } ?>
 
+<?php if (!empty($vermenucolorchosen)) {
+	$tsnavrgb = array_map('intval', array_pad(explode(',', (string) $colorbackvmenu1), 3, 0));
+	$tsnavlum = (0.2126 * $tsnavrgb[0] + 0.7152 * $tsnavrgb[1] + 0.0722 * $tsnavrgb[2]) / 255;
+	$tsnavdark = ($tsnavlum < 0.55);
+?>
+/* The same for the left menu, which Setup > Display colours separately. The
+   navigation draws entirely from tokens -- no rule inside it names a colour --
+   so redefining them on the aside is the whole change. */
+aside.cmd-nav {
+	--c-surface: rgb(<?php echo $colorbackvmenu1; ?>);
+	--c-canvas: rgb(<?php echo $colorbackvmenu1; ?>);
+<?php if ($tsnavdark) { ?>
+	--c-ink: #ffffff;
+	--c-ink-2: rgba(255, 255, 255, 0.9);
+	--c-muted: rgba(255, 255, 255, 0.76);
+	--c-faint: rgba(255, 255, 255, 0.62);
+	--c-sunken: rgba(255, 255, 255, 0.14);
+	--c-border: rgba(255, 255, 255, 0.28);
+	--c-border-strong: rgba(255, 255, 255, 0.44);
+	--c-hairline: rgba(255, 255, 255, 0.22);
+	--c-accent: #ffffff;
+	--c-accent-ink: #ffffff;
+	--c-accent-soft: rgba(255, 255, 255, 0.18);
+<?php } else { ?>
+	--c-sunken: rgba(0, 0, 0, 0.05);
+	--c-hairline: rgba(0, 0, 0, 0.12);
+<?php } ?>
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
+	color: var(--c-ink);
+}
+<?php } ?>
+
 <?php
 /* Icon and flag maps carried from eldy: menu-key -> glyph and country flag
    sprite. Data, not styling. */
