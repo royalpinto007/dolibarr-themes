@@ -100,6 +100,9 @@
 			return;
 		}
 		var narrow = window.matchMedia('(max-width: 992px)');
+		/* The bar's menu button is bound in modern.js, which carries a version
+		   taken from its contents and so reaches a browser holding an older
+		   copy. This file cannot: Dolibarr versions it by release alone. */
 		var opener = document.getElementById('cmd-nav-open');
 		function setExpanded(on) {
 			if (opener) { opener.setAttribute('aria-expanded', on ? 'true' : 'false'); }
@@ -107,11 +110,6 @@
 		function closeDrawer() {
 			document.body.classList.remove('cmd-nav-open');
 			setExpanded(false);
-		}
-		if (opener) {
-			opener.addEventListener('click', function () {
-				setExpanded(document.body.classList.toggle('cmd-nav-open'));
-			});
 		}
 		toggle.addEventListener('click', function () {
 			/* A narrow viewport already renders the nav as an icon rail with its

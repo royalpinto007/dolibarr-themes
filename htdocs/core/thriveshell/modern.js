@@ -320,6 +320,47 @@
 		});
 	}
 
+	/* The bar's menu button opens the navigation on a narrow screen.
+
+	   This lives here rather than in command.js because Dolibarr versions theme
+	   JavaScript by its own release alone: command.js keeps one URL across
+	   deployments, so a browser that cached it before a change goes on running
+	   the old file indefinitely -- which is why the drawer opened everywhere it
+	   was tested and nowhere it was used. This file is loaded with a version
+	   taken from its contents, so a change to it reaches a browser that already
+	   has the previous one.
+
+	   The button is only ever bound here, and the control at the foot of the
+	   rail only ever in command.js, so a cached copy of either cannot bind the
+	   same control twice and toggle the drawer open and shut in one press. */
+	function bindNavDrawer() {
+		var opener = document.getElementById('cmd-nav-open');
+		if (!opener || opener.dataset.tsBound === '1') { return; }
+		opener.dataset.tsBound = '1';
+		var narrow = window.matchMedia('(max-width: 992px)');
+		function close() {
+			document.body.classList.remove('cmd-nav-open');
+			opener.setAttribute('aria-expanded', 'false');
+		}
+		opener.addEventListener('click', function (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			var on = document.body.classList.toggle('cmd-nav-open');
+			opener.setAttribute('aria-expanded', on ? 'true' : 'false');
+		});
+		document.addEventListener('click', function (ev) {
+			if (!document.body.classList.contains('cmd-nav-open')) { return; }
+			if (!ev.target.closest) { return; }
+			if (ev.target.closest('#cmd-nav-open')) { return; }
+			if (!ev.target.closest('aside.cmd-nav')) { close(); return; }
+			if (ev.target.closest('a[href]')) { close(); }
+		});
+		document.addEventListener('keydown', function (ev) {
+			if (ev.key === 'Escape' || ev.keyCode === 27) { close(); }
+		});
+		if (narrow.addEventListener) { narrow.addEventListener('change', close); }
+	}
+
 	/* Secondary record pages often use the same banner and tabs but swap the
 	   overview content for a native form/table. Mark only that content boundary so
 	   it receives the same surface language without changing module semantics. */
@@ -4929,6 +4970,7 @@
 		try { groupRecordActions(); } catch (e) { /* retain the original action row */ }
 		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
+		try { bindNavDrawer(); } catch (e) { /* the rail's own control still opens it */ }
 		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
 		try { placeVCardDownload(); } catch (e) { /* leave the vcard link where Dolibarr put it */ }
 		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
