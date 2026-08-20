@@ -70,6 +70,10 @@ $barheight = 60;
 	/* Neutrals: a cool slate ramp. */
 	--c-ink: #0B1220;
 	--c-ink-2: #263244;
+	/* The quiet weight a data-table header is written against. It was named by
+	   that rule and never defined, so the declaration was dropped and headers
+	   fell back to full ink -- the loudest thing in the table. */
+	--c-ink-subtle: #5B6B82;
 	--c-muted: #5B6B82;
 	--c-faint: #8C9AAE;
 	--c-hairline: #EEF0F3;
@@ -192,6 +196,7 @@ $barheight = 60;
 	color-scheme: dark;
 	--c-ink: #E6EAF2;
 	--c-ink-2: #C2CBD9;
+	--c-ink-subtle: #94A0B4;
 	--c-muted: #94A0B4;
 	--c-faint: #6C7A8E;
 	--c-hairline: #1E2632;
@@ -267,6 +272,11 @@ h1, h2, h3, h4 {
 h1 { font-size: 1.75rem; } h2 { font-size: 1.375rem; }
 h3 { font-size: 1.125rem; } h4 { font-size: 1rem; }
 p { margin: 0 0 var(--sp-3) 0; }
+/* Spacing between paragraphs, not after the last one. A trailing margin inside
+   a box that is sized to its content pushes that content off centre -- the
+   login message sat 12px high in its own plate for exactly this reason -- and
+   it is never what the last paragraph in a container wants. */
+p:last-child { margin-bottom: 0; }
 hr { border: 0; border-top: 1px solid var(--c-hairline); margin: var(--sp-4) 0; }
 img { border: 0; vertical-align: middle; }
 code, pre, kbd { font-family: var(--c-mono); font-size: 0.9em; }
