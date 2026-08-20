@@ -1170,9 +1170,12 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 <?php if ($tschosencolors['backbody']) { ?>
 body { background: rgb(<?php echo $colorbackbody; ?>); }
 <?php } if ($tschosencolors['backtitle1']) { ?>
-tr.liste_titre, .liste_titre,
-tr.liste_titre th, tr.liste_titre td,
-th.liste_titre, td.liste_titre { background: rgb(<?php echo $colorbacktitle1; ?>); }
+/* The title row is painted from a longer selector than the one that names it,
+   so this has to be !important to land. Dolibarr also puts "liste_titre" on the
+   search toolbar and its buttons, which are not title rows and keep the theme's
+   own treatment -- hence rows and cells only, not the bare class. */
+tr.liste_titre, tr.liste_titre > th, tr.liste_titre > td,
+th.liste_titre, td.liste_titre { background: rgb(<?php echo $colorbacktitle1; ?>) !important; }
 <?php } if ($tschosencolors['texttitle']) { ?>
 /* Matched against the same selectors that set a header's colour !important,
    and declared after them, so the chosen colour is the one that lands. */
