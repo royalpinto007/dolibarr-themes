@@ -9816,6 +9816,40 @@ body.page-card_note .ts-member-note-card .ts-member-note-body .clearboth { heigh
 body.page-card_note .ts-member-note-card .ts-member-note-body input[type="submit"] + input[type="submit"] {
 	margin-left: var(--sp-2);
 }
+/* A note reads as a labelled field: the label names it and the note itself
+   belongs beside that label, not on a line of its own underneath. The card is
+   laid out in two columns so the two stay on one line. */
+body.page-card_note .ts-member-note-card {
+	display: grid !important;
+	grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+	align-items: stretch;
+}
+body.page-card_note .ts-member-note-card > tbody {
+	min-width: 0;
+	border-right: 1px solid #edf0f4;
+}
+body.page-card_note .ts-member-note-card > tbody > tr {
+	height: 100%;
+	border-bottom: 0;
+}
+body.page-card_note .ts-member-note-card > .ts-member-note-body,
+body.page-card_note .ts-member-note-card > .ts-member-note-empty {
+	display: flex;
+	align-items: center;
+	min-height: 54px;
+	align-self: stretch;
+}
+/* While the note is being edited the editor is the tall one, so it and the
+   label it belongs to both start at the top of the card rather than floating
+   in the middle of it. */
+body.page-card_note .ts-member-note-card > .ts-member-note-body:has(form) {
+	display: block;
+}
+body.page-card_note .ts-member-note-card:has(> .ts-member-note-body form) > tbody > tr {
+	align-items: flex-start;
+	padding-top: 17px;
+}
+
 body.page-card_note .ts-member-note-empty {
 	display: flex;
 	align-items: center;
