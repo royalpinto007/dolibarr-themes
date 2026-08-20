@@ -1470,6 +1470,15 @@ body.ts-command-stats form td:first-child {
 	white-space: nowrap;
 	padding-right: var(--sp-4);
 }
+/* The gutter has to be reserved, not merely offered. A statistics page is also a
+   secondary record tab, and that tab's own cell padding is set from a longer
+   selector, so the gutter collapsed to 12px and the icon -- which sits at the
+   gutter's left edge -- ended up underneath the field. Match that selector's
+   reach so the gutter holds. */
+body.ts-command-stats form.ts-record-tab-native-surface td + td,
+body.ts-command-stats form td + td {
+	padding-left: 40px !important;
+}
 /* Give the icon a gutter of its own so the fields line up in one column whether
    a row has an icon or not. Previously a row without one started its field where
    the icon would have been, and the form read as two ragged columns.
@@ -1964,6 +1973,31 @@ body.ts-command-record-page .fichecenter + .clearboth + .fichecenter {
 	body.ts-command-record-page .fichecenter:has(> .fichehalfright) {
 		grid-template-columns: minmax(0, 1fr);
 	}
+}
+
+/* The submit row of a statistics filter sits after the table rather than inside
+   it, so it landed on the card's bottom edge with the border running through the
+   button. Give it room of its own. */
+body.ts-command-stats form > div.center,
+body.ts-command-stats form div.center:has(> input[type="submit"]) {
+	margin-top: var(--sp-4);
+}
+
+/* A statistics table heads each block with a title and, in a cell of its own, the
+   control that recalculates it. That cell is already right aligned, but the title
+   beside it is only as wide as its text, so the control came to rest in the
+   middle of the card. Let the title take the width and the control keeps to the
+   edge. */
+body.ts-command-stats table.noborder > tbody > tr.liste_titre > td:first-child:not(:last-child),
+body.ts-command-stats table.liste > tbody > tr.liste_titre > td:first-child:not(:last-child) {
+	width: calc(100% - 52px) !important;
+}
+body.ts-command-stats table.noborder > tbody > tr.liste_titre > td:last-child:not(:first-child),
+body.ts-command-stats table.liste > tbody > tr.liste_titre > td:last-child:not(:first-child) {
+	width: 52px !important;
+	padding-left: 0 !important;
+	white-space: nowrap;
+	text-align: right;
 }
 
 .ts-column-filters { position: relative; flex: 0 0 auto; }
