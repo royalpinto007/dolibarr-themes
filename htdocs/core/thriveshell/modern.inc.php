@@ -6443,6 +6443,35 @@ body.ts-command-module-index .ts-module-index-data-card { table-layout: fixed !i
    lets the colspan heading influence the column algorithm and collapses each
    cell to a few pixels. */
 body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 { table-layout: auto !important; }
+/* Those three-column widgets size from their content, and a cell that will not
+   break a line is as wide as its longest value -- so one long name made the
+   table wider than the card holding it and it spilled over the column beside
+   it. Giving every cell the same preferred width shares the card between the
+   three columns instead of letting the longest value dictate: a reference, an
+   amount or a date is comfortably inside its share, and a long name ends in an
+   ellipsis. A cap alone is not enough -- with nothing to hold it open, the
+   column that can shrink collapses to the ellipsis and nothing else. */
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 {
+	max-width: 100%;
+}
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 > tbody > tr:not(.liste_titre) > td {
+	width: 190px !important;
+	max-width: 190px !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+/* The cell truncates its own line. Its contents are left inline so that they
+   form one line for it to truncate -- as inline-blocks each would be measured
+   and clipped separately, and a cell holding a picto beside a name ended up
+   showing the picto and an ellipsis with the name nowhere. */
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 > tbody > tr:not(.liste_titre) > td > a,
+body.ts-command-module-index .ts-module-index-data-card.ts-module-index-cols-3 > tbody > tr:not(.liste_titre) > td > span {
+	display: inline !important;
+	max-width: none !important;
+	overflow: visible !important;
+}
+
 /* Scoped to the card's own rows. A reference cell holds a nested table of its
    own -- Dolibarr's picto-and-ref layout -- whose row is not a heading row, so an
    unscoped rule reached into it and applied the zero max-width meant for the
