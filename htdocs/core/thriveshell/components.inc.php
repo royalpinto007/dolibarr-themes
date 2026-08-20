@@ -510,6 +510,15 @@ span.info-box-weight, span.info-box-number {
 .fa-weather-level2:before { content: "\f743"; color: var(--c-warning); }
 .fa-weather-level3:before { content: "\f740"; color: var(--c-danger); }
 .fa-weather-level4:before { content: "\f0e7"; color: var(--c-danger); }
+/* Those levels colour the glyph by severity, which reads on a list or in a
+   tooltip. On the dashboard the same glyph sits on a summary card's tile
+   alongside every other module's icon, all of them white -- and the tile does
+   not change with the level, so the lone coloured glyph read as a mistake
+   rather than as a signal. There it takes the tile's own colour. */
+.ts-dashboard-summary-card .info-box-icon [class*="fa-weather-level"]:before,
+.ts-dashboard-summary-card .info-box-icon[class*="fa-weather-level"]:before {
+	color: inherit;
+}
 .info-box-weather .info-box-icon { background: var(--c-sunken) !important; }
 .infobox-action { color: #6366F1; }
 .infobox-propal, .infobox-facture, .infobox-commande { color: #4F46E5; }
