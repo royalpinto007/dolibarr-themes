@@ -353,6 +353,30 @@ div.arearef.ts-has-actions .refid {
 	column-gap: var(--sp-2);
 	row-gap: var(--sp-1);
 }
+div.arearef .refidno > a.ts-vcard-download,
+div.arearef a.ts-vcard-download {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	width: 26px !important;
+	height: 26px;
+	margin: 0 0 0 var(--sp-1) !important;
+	border-radius: 7px;
+	color: var(--c-muted) !important;
+	font-size: 13px !important;
+	font-weight: 400 !important;
+	vertical-align: middle;
+}
+div.arearef a.ts-vcard-download:hover,
+div.arearef a.ts-vcard-download:focus-visible {
+	background: var(--c-accent-soft);
+	color: var(--c-accent) !important;
+}
+div.arearef a.ts-vcard-download > span {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: inherit !important;
+}
 div.arearef.ts-has-actions .refid .refidno { grid-column: 1 / -1; grid-row: 2; }
 div.arearef.ts-has-actions .refid .statusref { grid-column: 3; grid-row: 1; display: inline-flex; margin: 0 0 0 var(--sp-2); }
 div.arearef.ts-has-actions .divphotoref {
@@ -1720,8 +1744,7 @@ body.ts-command-stats .ts-stats-empty-icon {
 	justify-content: center;
 	width: 42px;
 	height: 42px;
-	border-radius: 10px;
-	background: #f4f1ff;
+	background: none;
 	color: var(--c-primary);
 	font-size: 18px;
 }
@@ -3577,7 +3600,7 @@ body.ts-category-dialog-page .ts-category-dialog-list #iddivjstree .noborderonca
 body.ts-category-dialog-page .ts-category-dialog-list #iddivjstree .noborderoncategories > a .paddingright { padding: 0 !important; color: var(--c-accent); }
 body.ts-category-dialog-page td.ts-category-dialog-empty { height: 138px; padding: 18px 24px !important; text-align: center; }
 body.ts-category-dialog-page td.ts-category-dialog-empty > table { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: auto; }
-body.ts-category-dialog-page .ts-category-empty-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: var(--c-accent-soft); color: var(--c-accent); font-size: 1rem; }
+body.ts-category-dialog-page .ts-category-empty-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: none; color: var(--c-accent); font-size: 1rem; }
 body.ts-category-dialog-page .ts-category-empty-row .ts-category-empty-icon { margin: 0 auto 10px; }
 body.ts-category-dialog-page .ts-category-empty-row .opacitymedium { display: block; }
 body.ts-category-dialog-page .ts-category-empty-content tbody,
@@ -4246,6 +4269,12 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > 
 	grid-row: 1;
 }
 
+/* An "add" action trailing a control sat flush against it, reading as part of
+   the field rather than as its own button. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value > a.reposition[class*="button_"] {
+	margin-left: var(--sp-2) !important;
+}
+
 /* Help belongs to the control, not to the value track's far boundary. Only
    cells that actually contain help use this five-track composition. The row
    axes and the universal leading-adornment column remain unchanged. */
@@ -4257,6 +4286,13 @@ body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-ha
 }
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help.ts-form-width-large {
 	grid-template-columns: var(--tsf-adorn) minmax(0, 820px) 8px 16px minmax(0, 1fr);
+}
+/* An enum control is sized to its own options rather than to its width class,
+   so the class's track left the help icon stranded at the cell's far edge.
+   Where that real width is known, the track uses it. Declared after the width
+   classes so it refines them. */
+body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help.ts-form-control-measured {
+	grid-template-columns: var(--tsf-adorn) minmax(0, var(--tsf-ctrl-w)) 8px 16px minmax(0, 1fr);
 }
 body#mainbody form.ts-modern-form table.ts-modern-form-table td.ts-form-value-has-help > .ts-form-help {
 	grid-column: 4;
@@ -6792,8 +6828,7 @@ td.ts-command-empty-state::before {
 	align-items: center;
 	justify-content: center;
 	transform: translateX(-50%);
-	border-radius: 10px;
-	background: var(--c-accent-soft);
+	background: none;
 	color: var(--c-accent);
 	font-family: "Font Awesome 5 Free", "Font Awesome 6 Free", FontAwesome;
 	font-size: 16px;

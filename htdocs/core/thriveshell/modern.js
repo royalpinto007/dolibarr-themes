@@ -299,6 +299,27 @@
 		return true;
 	}
 
+	/* Dolibarr gives the vCard download the same "refid" class as the record's
+	   own name, so it inherited the identity treatment: a 24px grid item, which
+	   the identity grid then auto-placed onto a row of its own, stranded under
+	   the address. It belongs with the contact details it downloads, so move it
+	   into that line and let it read as the small action it is. A page that
+	   deliberately hides the link keeps it hidden. */
+	function placeVCardDownload() {
+		var links = document.querySelectorAll('div.tabBar.ts-entity-card a.refid[href*="vcard.php"], div.arearef a.refid[href*="vcard.php"]');
+		Array.prototype.forEach.call(links, function (link) {
+			if (link.dataset.tsVcard === '1') { return; }
+			if (getComputedStyle(link).display === 'none') { return; }
+			/* The link carries "refid" itself, so the identity block is the one
+			   above it, not the nearest match. */
+			var identity = link.parentElement ? link.parentElement.closest('.refid') : null;
+			var details = identity ? identity.querySelector('.refidno') : null;
+			link.classList.add('ts-vcard-download');
+			link.dataset.tsVcard = '1';
+			if (details) { details.appendChild(link); }
+		});
+	}
+
 	/* Secondary record pages often use the same banner and tabs but swap the
 	   overview content for a native form/table. Mark only that content boundary so
 	   it receives the same surface language without changing module semantics. */
@@ -2412,6 +2433,12 @@
 					var compactWidth = Math.min(340, Math.max(180, longest * 7 + 76));
 					container.style.setProperty('width', 'min(100%, ' + compactWidth + 'px)', 'important');
 					container.style.setProperty('max-width', compactWidth + 'px', 'important');
+					/* The cell's help track is sized from the field's width class, but
+					   this control is deliberately narrower than that class. Record the
+					   width it actually takes so the help icon stays beside the field
+					   instead of stranded at the cell's far edge. */
+					valueCell.style.setProperty('--tsf-ctrl-w', compactWidth + 'px');
+					valueCell.classList.add('ts-form-control-measured');
 				}
 				var selected = select.options[select.selectedIndex];
 				var rendered = container.querySelector('.select2-selection__rendered');
@@ -4875,6 +4902,7 @@
 		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
+		try { placeVCardDownload(); } catch (e) { /* leave the vcard link where Dolibarr put it */ }
 		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
 		try { composeAdminToolPage(); } catch (e) { /* retain native admin tool content */ }
 		try { polishShipmentStatistics(); } catch (e) { /* retain the native shipment statistics */ }
