@@ -5843,6 +5843,21 @@ body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .div
 	background: #f0edff;
 	color: #5846e8;
 }
+/* A record with no photo of its own shows a placeholder, which carries its own
+   tile: a sunken fill and a dashed border marking the empty slot. In a banner
+   that slot is already a tile, so the two stacked -- a pale box sitting on the
+   card's own -- and the placeholder's 80px outgrew the 56px tile it sat in.
+   Here the placeholder is only its glyph. */
+body.ts-command-record-page div.tabBar.ts-entity-card .divphotoref img[src*="user_anonymous"],
+body.ts-command-record-page div.tabBar.ts-entity-card .divphotoref img[src*="user_man"],
+body.ts-command-record-page div.tabBar.ts-entity-card .divphotoref img[src*="user_woman"] {
+	width: 34px !important;
+	height: 34px !important;
+	background: none !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+}
+
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearef .refid,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnobottom .refid,
 body.ts-command-record-page div.tabBar.ts-entity-card > div.arearefnoborder .refid {
@@ -6694,6 +6709,52 @@ body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > 
 body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > a:has(.fa-plus):hover {
 	background: var(--c-accent-soft);
 }
+/* Dolibarr writes an assignee or resource as one line of controls -- a picto,
+   the select, and the button that adds it -- and relies on them staying inline.
+   The shared select treatment lays a select out as a block, which broke that
+   line into three: the picto stranded above the field and the Add button
+   below it. Lay the group out as a row and keep the list of people already
+   assigned on a line of its own above it. */
+body.ts-command-form-page .ts-command-form-fields .assignedtouser,
+body.ts-command-form-page .ts-command-form-fields .assignedtoresource {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sp-2);
+}
+body.ts-command-form-page .ts-command-form-fields .assignedtouser > ul.attendees {
+	flex: 1 0 100%;
+	margin: 0;
+	padding: 0;
+}
+body.ts-command-form-page .ts-command-form-fields .assignedtouser > .select2-container,
+body.ts-command-form-page .ts-command-form-fields .assignedtoresource > .select2-container {
+	display: inline-block;
+}
+body.ts-command-form-page .ts-command-form-fields .assignedtouser > br,
+body.ts-command-form-page .ts-command-form-fields .assignedtoresource > br { display: none; }
+
+/* A row is as tall as its tallest control, and a label centred against a group
+   of stacked controls floats into the middle of them, reading as though it
+   belongs to none. Labels on those rows sit with the first control instead. */
+body.ts-command-form-page .ts-command-form-fields > tbody > tr:has(.assignedtouser) > td:first-child,
+body.ts-command-form-page .ts-command-form-fields > tbody > tr:has(.assignedtoresource) > td:first-child,
+body.ts-command-form-page .ts-command-form-fields > tbody > tr:has(textarea) > td:first-child,
+body.ts-command-form-page .ts-command-form-fields > tbody > tr:has(.cke) > td:first-child {
+	vertical-align: top;
+	padding-top: 20px !important;
+}
+
+/* The "new" action is placed at the end of the value cell, so it follows the
+   width of the wrapper around the select rather than the select itself. Where
+   the select does not fill its wrapper the button ended up hundreds of pixels
+   from the field it belongs to. */
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > span:has(> .select2-container) > .select2-container,
+body.ts-command-form-page .ts-command-form-fields td:has(> a .fa-plus-circle, > a .fa-plus) > div:has(> .select2-container) > .select2-container {
+	width: 100% !important;
+	max-width: none !important;
+}
+
 body.ts-command-form-page .ts-command-form-fields > tbody > tr > td:first-child,
 body.ts-command-form-page .ts-command-form-fields .titlefield,
 body.ts-command-form-page .ts-command-form-fields .titlefieldcreate,
@@ -6704,6 +6765,23 @@ body.ts-command-form-page .ts-command-form-fields .titlefieldmiddle {
 	font-size: 13px;
 	font-weight: 600;
 }
+/* A table laid out automatically treats a cell's width as a hint and hands the
+   label column whatever the value column does not claim -- so two field tables
+   in one form settled on different label widths (266px and 148px here) and
+   their controls started at different places. Letting the value column claim
+   the row, and giving the label column a floor of its own, settles both on the
+   same width without moving the table to a fixed layout, which a row with a
+   colspan would not survive. */
+body.ts-command-form-page .ts-command-form-fields > tbody > tr > td:first-child::after {
+	content: "";
+	display: block;
+	width: 230px;
+	height: 0;
+}
+body.ts-command-form-page .ts-command-form-fields > tbody > tr:not(:has(> td:nth-child(3))) > td:first-child + td {
+	width: 100%;
+}
+
 body.ts-command-form-page .ts-command-control,
 body.ts-command-form-page .ts-command-form input[type="text"],
 body.ts-command-form-page .ts-command-form input[type="email"],

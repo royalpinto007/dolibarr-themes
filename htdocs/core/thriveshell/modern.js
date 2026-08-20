@@ -1579,10 +1579,17 @@
 		document.body.classList.add('ts-command-form-page');
 		form.classList.add('ts-command-form');
 		form.setAttribute('data-ts-shared-form', '1');
-		var fieldTable = Array.from(form.querySelectorAll('table.tableforfield, table.border')).find(function (table) {
-			return table.querySelectorAll('input, select, textarea').length >= 2;
+		/* A form is often written as a sequence of field tables rather than one --
+		   an event keeps its own fields in the first and the records it relates to
+		   in the second. Marking only the first left everything after it with none
+		   of the form's layout: its own label column, its own row rhythm, and the
+		   inline treatment for a control's adjacent actions. Nested tables are
+		   skipped; they are part of a field, not a list of them. */
+		Array.from(form.querySelectorAll('table.tableforfield, table.border')).forEach(function (table) {
+			if (table.parentElement && table.parentElement.closest('table')) { return; }
+			if (table.querySelectorAll('input, select, textarea').length < 2) { return; }
+			table.classList.add('ts-command-form-fields');
 		});
-		if (fieldTable) { fieldTable.classList.add('ts-command-form-fields'); }
 		form.querySelectorAll('input[type="text"], input[type="email"], input[type="url"], input[type="number"], input[type="password"], textarea').forEach(function (control) {
 			control.classList.add('ts-command-control');
 		});
