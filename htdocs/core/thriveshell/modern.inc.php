@@ -377,7 +377,11 @@ div.arearef a.ts-vcard-download > span {
 	padding: 0 !important;
 	font-size: inherit !important;
 }
-div.arearef.ts-has-actions .refid .refidno { grid-column: 1 / -1; grid-row: 2; }
+/* A record can print more than one line under its name -- a contact shows both
+   its third-party link and its address block -- and pinning them all to row 2
+   stacked them in the same cell, one printed over the other. They span the full
+   width and take the next row each. */
+div.arearef.ts-has-actions .refid .refidno { grid-column: 1 / -1; }
 div.arearef.ts-has-actions .refid .statusref { grid-column: 3; grid-row: 1; display: inline-flex; margin: 0 0 0 var(--sp-2); }
 div.arearef.ts-has-actions .divphotoref {
 	display: inline-flex;
@@ -7658,6 +7662,22 @@ body.ts-thirdparty-events .ts-events-entry-author {
 	font-size: 13px;
 }
 body.ts-thirdparty-events .ts-events-entry-author .userimg img { width: 24px !important; height: 24px !important; }
+/* A contact or user photo in a list is an identifying mark beside a name, not a
+   portrait. Nothing sized these, so the source image set the row height -- a
+   related contact stood 80px tall and pushed its row past 120px. */
+table.liste td .userimg img,
+table.noborder td .userimg img,
+table.liste td img.photocontact,
+table.noborder td img.photocontact,
+table.liste td img.userphotosmall,
+table.noborder td img.userphotosmall {
+	width: 24px !important;
+	height: 24px !important;
+	min-width: 0 !important;
+	border-radius: 50%;
+	object-fit: cover;
+	vertical-align: middle;
+}
 body.ts-thirdparty-events .ts-events-entry-reference,
 body.ts-thirdparty-events .ts-events-entry-time,
 body.ts-thirdparty-events .ts-events-entry-status {
@@ -9945,6 +9965,15 @@ body.ts-member-documents-page table.ts-member-files-details > tbody > tr > td {
 	border-width: 0 !important;
 	border-style: none !important;
 	box-shadow: none !important;
+}
+/* The row is a grid, so its cells take their width from the tracks it defines.
+   A core rule pins the first cell of a field table to 14%, which here is much
+   narrower than the track it sits in: the labels wrapped over two and three
+   lines while the space beside them stayed empty. */
+body.ts-member-documents-page table.ts-member-files-details > tbody > tr > td:first-child,
+body.ts-member-documents-page table.ts-member-files-details > tbody > tr > td:nth-child(n+2) {
+	width: auto !important;
+	min-width: 0;
 }
 body.ts-member-documents-page .ts-member-files-details td:first-child { color:#526581; font-weight:650; }
 body.ts-member-documents-page .ts-member-files-details td.valeur, body.ts-member-documents-page .ts-member-files-details td[colspan] { color:#24324a; }
