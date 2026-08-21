@@ -3001,6 +3001,37 @@ div.arearef.ts-has-actions .paginationref { opacity: .58; margin-<?php echo $lef
 @media only screen and (max-width: 992px) {
 	.fiche { padding: var(--sp-5) var(--sp-4) var(--sp-7); }
 }
+/* The tab strip scrolls sideways when the tabs do not fit, and the "... (n)" tab
+   that holds the rest is its last item -- so the one control that reaches the
+   collapsed tabs was the first thing to go off the edge. Pinned to the end of the
+   strip it stays put while the tabs scroll under it. */
+div.tabs.ts-tabs-has-overflow > .ts-tabs-overflow {
+	position: sticky;
+	right: 0;
+	z-index: 3;
+	background: var(--c-surface);
+	box-shadow: -12px 0 12px -8px rgba(15, 23, 42, .16);
+}
+[id^="moretabsList"].ts-tabs-more-open {
+	border: 1px solid var(--c-border);
+	border-radius: var(--r-lg);
+	background: var(--c-surface);
+	box-shadow: 0 12px 28px rgba(15, 23, 42, .16);
+	padding: 6px !important;
+}
+[id^="moretabsList"].ts-tabs-more-open .popuptab > a {
+	display: block;
+	padding: 10px 12px;
+	border-radius: var(--r);
+	color: var(--c-ink-2);
+	font-size: .875rem;
+	text-decoration: none;
+}
+[id^="moretabsList"].ts-tabs-more-open .popuptab > a:hover,
+[id^="moretabsList"].ts-tabs-more-open .popuptab > a:focus-visible {
+	background: var(--c-accent-soft);
+	color: var(--c-accent);
+}
 @media only screen and (max-width: 640px) {
 	.fiche { padding: var(--sp-4) var(--sp-3) var(--sp-6); }
 	.ts-pagehead-title div.titre, div.titre { font-size: 1.375rem; }
@@ -7532,6 +7563,62 @@ body.ts-thirdparty-overview .ts-overview-redundant-event-action { display: none 
 		margin-inline: 16px !important;
 	}
 	body.ts-thirdparty-overview .ts-tabs-more-menu { right: auto; left: 0; }
+	/* A phone leaves a field card about 300px wide, and a 48% label column gives a
+	   label like "Business entity type" 110px to sit in. Every other label wrapped
+	   to a second line while its row was still held at 31px, so the wrap ran into
+	   the label below it and the whole card read as one column of collided text.
+	   Stacked, each label has the full width and needs one line; the value follows
+	   underneath, and a rule between fields says where one ends and the next
+	   begins. */
+	.ts-field-group table.tableforfield:not(.liste) > tbody > tr,
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1fr) !important;
+		align-items: start !important;
+		row-gap: 2px;
+		padding: 11px 0 !important;
+	}
+	.ts-field-group table.tableforfield:not(.liste) > tbody > tr + tr,
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr + tr {
+		border-top: 1px solid var(--c-hairline) !important;
+	}
+	.ts-field-group table.tableforfield:not(.liste) > tbody > tr > td,
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td {
+		height: auto !important;
+		min-height: 0 !important;
+		padding: 0 !important;
+		width: auto !important;
+	}
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td:first-child {
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--c-ink-subtle);
+	}
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td:last-child {
+		font-size: 13.5px;
+		color: var(--c-ink-2);
+	}
+	/* Dolibarr wraps some labels in a table of their own to hang an edit link on
+	   the end of the line. Those labels then keep the table's own type -- larger
+	   and darker than the labels beside them -- and hold a 32px row whether the
+	   link is there or not, so four fields in the card looked like headings and
+	   broke the spacing. The nested table is made to carry the same label type as
+	   the rest and to take only the height its text needs. */
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td table.nobordernopadding {
+		width: 100% !important;
+		margin: 0 !important;
+	}
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td table.nobordernopadding td {
+		height: auto !important;
+		padding: 0 !important;
+		font-size: 12px !important;
+		font-weight: 600 !important;
+		color: var(--c-ink-subtle) !important;
+		line-height: 1.4 !important;
+	}
+	body.ts-thirdparty-overview .ts-field-group > table.tableforfield > tbody > tr > td table.nobordernopadding td.right:empty {
+		display: none !important;
+	}
 }
 /* On a phone the banner has no room to seat the identity beside the actions.
    Laid out as a row, its tallest item -- the stack of buttons -- set the height

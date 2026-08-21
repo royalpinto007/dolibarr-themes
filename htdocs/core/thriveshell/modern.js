@@ -1004,6 +1004,84 @@
 	/* The companion module publishes translated labels and canonical field keys as
 	   JSON. Annotation is the only label-aware step; layout below consumes stable
 	   data-field/data-group attributes and never guesses from visible text. */
+	/* Dolibarr collapses the tabs that do not fit into a "... (n)" tab holding the
+	   rest, and opens that list on mouseenter, closing it on mouseleave. There is
+	   no click handler, so on a touch device -- where neither event exists -- the
+	   collapsed tabs cannot be reached at all: a record with sixteen tabs offers
+	   three. The trigger is also the last item in a strip that scrolls sideways,
+	   so it sits off the edge of a phone screen before it is even tapped.
+
+	   A tap opens and closes it where hover is unavailable, and the list is placed
+	   against the viewport rather than the strip, since the strip scrolls its
+	   overflow and would otherwise cut the list off. Dolibarr's own handlers are
+	   left in place and keep working on a pointer device. */
+	function bindTabOverflowMenu() {
+		var strip = document.querySelector('div.tabs');
+		if (!strip) { return; }
+		var holder = strip.querySelector('[id^="moretabs"]:not([id^="moretabsList"])');
+		var list = strip.querySelector('[id^="moretabsList"]');
+		if (!holder || !list) { return; }
+		holder.classList.add('ts-tabs-overflow');
+		strip.classList.add('ts-tabs-has-overflow');
+		var trigger = holder.querySelector('a.moretab') || holder.querySelector('a');
+		if (!trigger || trigger.dataset.tsTabsBound) { return; }
+		trigger.dataset.tsTabsBound = '1';
+
+		/* Only where there is no hover to open it with. On a mouse the native
+		   behaviour is already correct, and binding a second one would fight it. */
+		var hoverless = window.matchMedia('(hover: none), (pointer: coarse)');
+		var open = false;
+
+		function place() {
+			var r = trigger.getBoundingClientRect();
+			var width = list.offsetWidth || 240;
+			var left = Math.min(Math.max(8, r.right - width), window.innerWidth - width - 8);
+			list.style.position = 'fixed';
+			list.style.left = Math.max(8, left) + 'px';
+			list.style.right = 'auto';
+			list.style.top = Math.round(r.bottom + 6) + 'px';
+			list.style.maxHeight = 'calc(100vh - ' + Math.round(r.bottom + 24) + 'px)';
+			list.style.overflowY = 'auto';
+			list.style.zIndex = '1200';
+		}
+		function show() {
+			open = true;
+			place();
+			list.classList.add('ts-tabs-more-open');
+			trigger.setAttribute('aria-expanded', 'true');
+		}
+		function hide() {
+			open = false;
+			list.classList.remove('ts-tabs-more-open');
+			list.style.position = '';
+			list.style.left = '-999em';
+			list.style.right = '';
+			list.style.top = '';
+			list.style.maxHeight = '';
+			list.style.overflowY = '';
+			list.style.zIndex = '';
+			trigger.setAttribute('aria-expanded', 'false');
+		}
+
+		trigger.setAttribute('aria-expanded', 'false');
+		trigger.addEventListener('click', function (ev) {
+			if (!hoverless.matches) { return; }
+			ev.preventDefault();
+			ev.stopPropagation();
+			open ? hide() : show();
+		});
+		document.addEventListener('click', function (ev) {
+			if (!open) { return; }
+			if (list.contains(ev.target) || holder.contains(ev.target)) { return; }
+			hide();
+		});
+		document.addEventListener('keydown', function (ev) {
+			if (open && ev.key === 'Escape') { hide(); }
+		});
+		window.addEventListener('resize', function () { if (open) { hide(); } });
+		window.addEventListener('scroll', function () { if (open) { place(); } }, true);
+	}
+
 	function applyThirdPartyFieldSchema() {
 		var source = document.getElementById('ts-thirdparty-field-schema');
 		var card = document.querySelector('div.tabBar.ts-entity-card');
@@ -1014,20 +1092,52 @@
 		if (!center) { return false; }
 
 		function normalized(value) { return (value || '').replace(/\s+/g, ' ').trim(); }
+		/* Dolibarr does not render one label per field. A professional id is
+		   "Prof Id 1 (USt.-IdNr)" with room and "Prof. id 1" without it, and the
+		   parenthetical is whatever the company's country calls that register --
+		   SIREN in France, VAT number elsewhere. Matching the string as written
+		   therefore fails on a phone, and on any install outside the country the
+		   schema was read from. Both forms reduce to the same loose key: the
+		   punctuation and the country's name for the register are dropped, and
+		   what identifies the field -- which numbered id it is -- is kept. */
+		function looseKey(value) {
+			var t = normalized(value).toLowerCase().replace(/\s*\([^)]*\)\s*$/, '');
+			var pid = t.match(/^prof(?:essional)?\.?\s*id\.?\s*(\d+)$/);
+			if (pid) { return 'profid ' + pid[1]; }
+			return t.replace(/[.:]/g, '').replace(/\s+/g, ' ').trim();
+		}
 		var labels = {};
+		var loose = {};
 		Object.keys(schema.groups).forEach(function (groupKey) {
 			var group = schema.groups[groupKey];
 			Object.keys(group.fields || {}).forEach(function (fieldKey) {
 				(group.fields[fieldKey] || []).forEach(function (label) {
 					labels[normalized(label)] = {field: fieldKey, group: groupKey};
+					loose[looseKey(label)] = {field: fieldKey, group: groupKey};
 				});
 			});
 		});
 
 		var rows = Array.from(center.querySelectorAll('div.fichehalfleft > table.tableforfield > tbody > tr, div.fichehalfright > table.tableforfield > tbody > tr'));
 		if (!rows.length) { return false; }
+		/* A numbered professional id belongs to the same group whichever register
+		   it names, so one can be placed from its number alone when neither the
+		   label as written nor its loose form is listed -- an install may show a
+		   sixth id the schema was never told about. */
+		var PROFID_GROUP = 'business';
+		function matchRow(raw) {
+			var exact = labels[normalized(raw)];
+			if (exact) { return exact; }
+			var key = looseKey(raw);
+			if (loose[key]) { return loose[key]; }
+			var pid = key.match(/^profid (\d+)$/);
+			if (pid && schema.groups[PROFID_GROUP]) {
+				return {field: 'professional-id-' + pid[1], group: PROFID_GROUP};
+			}
+			return null;
+		}
 		rows.forEach(function (row) {
-			var match = labels[normalized(row.cells[0] && row.cells[0].innerText)];
+			var match = matchRow(row.cells[0] && row.cells[0].innerText);
 			if (!match) { return; }
 			row.setAttribute('data-field', match.field);
 			row.setAttribute('data-group', match.group);
@@ -4991,6 +5101,7 @@
 		try { polishEntityHeader(); } catch (e) { /* retain the native identity layout */ }
 		try { placeTabsBelowHeader(); } catch (e) { /* retain Dolibarr's tab placement */ }
 		try { bindNavDrawer(); } catch (e) { /* the rail's own control still opens it */ }
+		try { bindTabOverflowMenu(); } catch (e) { /* hover still opens it on a mouse */ }
 		try { polishSharedRecordTabContent(); } catch (e) { /* retain the tab's native content */ }
 		try { placeVCardDownload(); } catch (e) { /* leave the vcard link where Dolibarr put it */ }
 		try { polishSharedModuleIndex(); } catch (e) { /* retain the native module index */ }
