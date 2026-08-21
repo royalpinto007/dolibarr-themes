@@ -3489,6 +3489,18 @@
 			lower.appendChild(right);
 			[left, right].forEach(function (column) {
 				column.querySelectorAll(':scope > .box').forEach(function (widget) {
+					/* Dolibarr closes each column with an empty box -- boxto_A and
+					   boxto_B -- holding nothing but a line break. They are the drop
+					   targets that let a widget be dragged to the end of a column, not
+					   widgets themselves, and dressing them as cards put two blank
+					   cards on the dashboard. Mark them for what they are and leave
+					   them be; the stylesheet keeps them out of sight until the
+					   dashboard is being rearranged, which is the only time a drop
+					   target means anything. */
+					if (!widget.querySelector('table.boxtable')) {
+						widget.classList.add('ts-dashboard-droptarget');
+						return;
+					}
 					widget.classList.add('ts-dashboard-widget');
 					var heading = widget.querySelector('.box_titre');
 					var label = heading ? (heading.textContent || '').trim() : '';
@@ -3680,9 +3692,17 @@
 
 	function classifyDashboardWidget(widget) {
 		if (widget.getAttribute('data-ts-widget')) { return widget.getAttribute('data-ts-widget'); }
+		/* Only rows that are actually shown count. Dolibarr ships rows it keeps
+		   hidden until a condition holds -- the open-tasks widget carries a
+		   "no filter" row that appears only once a project filter is set -- and
+		   counting one of those made a widget look as though it had a body to
+		   lay out when all it has is a heading. */
 		var rows = Array.prototype.filter.call(
 			widget.querySelectorAll('table.boxtable > tbody > tr'),
-			function (row) { return !row.classList.contains('box_titre'); });
+			function (row) {
+				if (row.classList.contains('box_titre')) { return false; }
+				return row.getClientRects().length > 0;
+			});
 		var text = rows.map(function (r) { return r.textContent || ''; }).join(' ').replace(/\s+/g, ' ').trim();
 		var links = widget.querySelectorAll('table.boxtable > tbody > tr:not(.box_titre) a[href]').length;
 		var cells = widget.querySelectorAll('table.boxtable > tbody > tr:not(.box_titre) td').length;

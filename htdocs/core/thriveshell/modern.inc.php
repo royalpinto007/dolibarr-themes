@@ -5080,6 +5080,45 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 .ts-dashboard-widget tr.oddeven:hover > td {
 	background: #fafbff !important;
 }
+/* The column drop targets Dolibarr appends are only meaningful while widgets are
+   being dragged, so they stay out of the layout until then -- otherwise each one
+   holds an empty grid cell and pushes the widgets around it out of line. While
+   the dashboard is being rearranged they show as the dashed landing strip they
+   are. */
+.ts-dashboard-droptarget {
+	display: none;
+}
+body.ts-dashboard-customizing .ts-dashboard-droptarget {
+	display: block;
+	min-height: 48px;
+	margin: 0 0 16px;
+	border: 1px dashed #c3cbdb;
+	border-radius: 11px;
+	background: rgba(99, 112, 140, .03);
+}
+/* Widgets in a row are stretched to a common height, but a table keeps its own
+   natural height inside that card, so a one-line "nothing to show" sat just
+   under the heading with the rest of the card empty below it -- centred across,
+   but not in the middle of the space it was given. Let the body fill the card
+   and put the line in the middle of it, which is the only way the text reads as
+   placed rather than stranded. */
+.ts-dashboard-widget.ts-widget--empty > table.boxtable,
+.ts-dashboard-widget.ts-widget--info > table.boxtable {
+	height: 100% !important;
+}
+/* A row given a height in a stretched table still takes a share of the slack, so
+   the heading band grew along with the body. Claiming the full height for the
+   body row leaves the band at its own 44px and hands the rest to the one thing
+   that should absorb it. */
+.ts-dashboard-widget.ts-widget--empty table.boxtable > tbody > tr:not(.box_titre),
+.ts-dashboard-widget.ts-widget--info table.boxtable > tbody > tr:not(.box_titre) {
+	height: 100% !important;
+}
+.ts-dashboard-widget.ts-widget--empty table.boxtable > tbody > tr:not(.box_titre) > td,
+.ts-dashboard-widget.ts-widget--info table.boxtable > tbody > tr:not(.box_titre) > td {
+	height: auto !important;
+	vertical-align: middle !important;
+}
 /* Shown only while arranging the dashboard. Quiet at rest -- a muted glyph with
    no box of its own, since a pair of bordered buttons on every heading turns the
    band into a row of chrome -- and each takes its meaning on hover: neutral for
