@@ -373,6 +373,34 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 	}
 	$home = DOL_URL_ROOT.'/index.php?mainmenu=home';
 
+	/* The company logo set in Home - Setup - Company/Organization. Dolibarr keeps
+	   several renderings of the same upload and generates the thumbs at upload
+	   time, so the smallest that is actually on disk is the one to ask for -- a
+	   constant can name a file a later upload replaced. The squarred variants come
+	   first because this is a 32px tile.
+
+	   MAIN_SHOW_LOGO is deliberately not consulted. It governs whether eldy adds a
+	   logo entry of its own to the menu bar; here the brand mark is always drawn,
+	   and the only question is whether it shows the logo or the initial. Reading
+	   that setting would hide the logo on every install that never set it. */
+	$brandlogo = '';
+	$logodir = $conf->mycompany->dir_output.'/logos/';
+	foreach (array(
+		'MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI' => 'thumbs/',
+		'MAIN_INFO_SOCIETE_LOGO_MINI' => 'thumbs/',
+		'MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL' => 'thumbs/',
+		'MAIN_INFO_SOCIETE_LOGO_SMALL' => 'thumbs/',
+		'MAIN_INFO_SOCIETE_LOGO_SQUARRED' => '',
+		'MAIN_INFO_SOCIETE_LOGO' => '',
+	) as $constname => $subdir) {
+		$file = getDolGlobalString($constname);
+		if ($file === '' || !is_readable($logodir.$subdir.$file)) {
+			continue;
+		}
+		$brandlogo = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/'.$subdir.$file);
+		break;
+	}
+
 	// Apply the stored collapse state before first paint so the rail does not
 	// visibly jump from expanded to collapsed on every page load.
 	print '<script nonce="'.getNonce().'">(function(){try{if(localStorage.getItem("cmdNavCollapsed")==="1"){document.body.classList.add("cmd-nav-collapsed");}}catch(e){}})();</script>'."\n";
@@ -388,7 +416,13 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 
 	// Brand
 	print '<a class="cmd-brand" href="'.dol_escape_htmltag($home).'">';
-	print '<span class="cmd-brand-mark" aria-hidden="true">'.dol_escape_htmltag(dol_substr($brand, 0, 1)).'</span>';
+	if ($brandlogo !== '') {
+		print '<span class="cmd-brand-mark cmd-brand-mark-logo" aria-hidden="true">';
+		print '<img src="'.dol_escape_htmltag($brandlogo).'" alt="">';
+		print '</span>';
+	} else {
+		print '<span class="cmd-brand-mark" aria-hidden="true">'.dol_escape_htmltag(dol_substr($brand, 0, 1)).'</span>';
+	}
 	print '<span class="cmd-brand-text">'.dol_escape_htmltag($brand).'</span>';
 	print '</a>';
 

@@ -348,6 +348,20 @@ header.cmd-bar { display: none; }
 	font-size: 0.8125rem;
 	font-weight: 700;
 }
+/* Showing the company logo, the tile is the logo's frame and nothing else: the
+   accent fill behind an initial would tint a logo that brought its own colours,
+   and a logo with a transparent background would pick up the accent as if it
+   were part of the mark. */
+.cmd-brand-mark-logo {
+	background: transparent;
+	overflow: hidden;
+}
+.cmd-brand-mark-logo > img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border-radius: inherit;
+}
 .cmd-brand-text { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
 
 .cmd-crumbs { display: none; }
@@ -1295,6 +1309,7 @@ header.cmd-bar .cmd-brand-mark {
 	background: var(--c-accent-soft);
 	color: var(--c-ink);
 }
+header.cmd-bar .cmd-brand-mark-logo { background: transparent; }
 <?php } ?>
 
 <?php if (!empty($vermenucolorchosen)) {
