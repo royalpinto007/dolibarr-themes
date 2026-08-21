@@ -5033,11 +5033,19 @@ body.ts-command-dashboard .ts-dashboard-lower-grid > #boxhalfright {
 	box-shadow: 0 3px 12px rgba(15, 23, 42, .035) !important;
 	overflow: hidden;
 }
-.ts-dashboard-widget > table.boxtable {
+/* A boxtable is a card in its own right everywhere else in Dolibarr, but inside a
+   widget the surrounding div is already the card. Left alone the table paints a
+   second white surface with its own radius and shadow just inside the first one,
+   which reads as a stray layer behind every widget. Flatten it: no fill, no
+   corners, no shadow -- the rows and the heading band supply the colour. */
+.ts-dashboard-widget > table.boxtable,
+.ts-dashboard-widget > div.boxtable {
 	margin: 0 !important;
 	border: 0 !important;
 	border-collapse: collapse !important;
-	background: #fff !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
 }
 /* The widget heading sits on a band of its own rather than on the card's white,
    which is what separates one widget from the next when several are stacked in a
