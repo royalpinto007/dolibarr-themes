@@ -4887,12 +4887,65 @@ body.ts-command-dashboard .ts-dash-section[data-ts-section="analytics"] .ts-dash
 	}
 	body.ts-command-dashboard .ts-dash-section-body[data-ts-count="1"] { max-width: none; }
 }
-/* While sorting, Dolibarr's own two columns are back and carry the widgets. */
+/* While sorting, Dolibarr's own two columns are back and carry the widgets --
+   they have to, because every save Dolibarr makes reads the order out of those
+   two elements, the close and add-widget paths included.
+
+   Laid out as two side-by-side columns, though, arranging the dashboard looked
+   like a different page from the one being arranged: cards half again as wide,
+   two columns instead of three, and no headings. So the columns stack, and each
+   lays its own widgets out on the same three-across grid with the same gap as a
+   section -- same card size, same rhythm, one page. Each column says which it
+   is, since which column a widget sits in is the thing being decided here. */
 body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 16px;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 22px;
 	align-items: start;
+}
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfleft,
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfright {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	align-items: stretch;
+}
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfleft > .ts-dashboard-widget,
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfright > .ts-dashboard-widget {
+	height: 100%;
+	margin: 0 !important;
+}
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfleft::before,
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfright::before {
+	grid-column: 1 / -1;
+	margin: 0 0 -4px;
+	color: var(--c-muted);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfleft::before {
+	content: "First column";
+}
+body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfright::before {
+	content: "Second column";
+}
+/* The landing strip belongs to the whole column, not to one cell of its grid. */
+body.ts-dashboard-customizing .ts-dashboard-droptarget {
+	grid-column: 1 / -1;
+}
+@media (max-width: 1200px) {
+	body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfleft,
+	body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfright {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+@media (max-width: 900px) {
+	body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfleft,
+	body.ts-command-dashboard.ts-dashboard-customizing .ts-dashboard-lower-grid > #boxhalfright {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 /* Widget titles are sized for a full-width card and overran a column card, so

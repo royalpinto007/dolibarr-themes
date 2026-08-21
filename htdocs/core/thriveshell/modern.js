@@ -3778,7 +3778,13 @@
 		});
 		widgets.forEach(function (w) {
 			var home = document.getElementById(w.getAttribute('data-ts-home') || '');
-			if (home) { home.appendChild(w); }
+			if (!home) { return; }
+			/* Dolibarr ends each column with its drop target, and the order it saves
+			   is read straight off these children -- so appending past that target
+			   both puts the landing strip above the cards and writes the target's own
+			   id at the head of the saved order. Widgets go back in front of it. */
+			var landing = home.querySelector(':scope > .ts-dashboard-droptarget');
+			if (landing) { home.insertBefore(w, landing); } else { home.appendChild(w); }
 		});
 		sections.forEach(function (sec) { sec.remove(); });
 	}
