@@ -325,7 +325,11 @@ header.cmd-bar {
 header.cmd-bar { display: none; }
 <?php } ?>
 
-.cmd-nav-open { display: none; }
+/* Qualified by the element, because the body carries a class of the same name
+   while the drawer is open -- the state and the control that sets it were
+   named alike. Unqualified, this button's own box became the body's: a page
+   40px wide, the size of the button, every time the nav was opened. */
+button.cmd-nav-open { display: none; }
 .cmd-brand {
 	display: inline-flex;
 	align-items: center;
@@ -1113,7 +1117,7 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 	.cmd-nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
 
 	/* The bar carries the way in, where a thumb can reach it. */
-	.cmd-nav-open {
+	button.cmd-nav-open {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -1128,7 +1132,7 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 		color: var(--c-ink-2);
 		cursor: pointer;
 	}
-	.cmd-nav-open:hover, body.cmd-nav-open .cmd-nav-open { background: var(--c-sunken); }
+	button.cmd-nav-open:hover, body.cmd-nav-open button.cmd-nav-open { background: var(--c-sunken); }
 	.cmd-nav-open-bars,
 	.cmd-nav-open-bars::before,
 	.cmd-nav-open-bars::after {
@@ -1193,6 +1197,32 @@ header.cmd-bar #topmenu-login-dropdown .atoploginusername {
 	header.cmd-bar #cmd-bar-tools .login_block_tools { gap: 6px; }
 	header.cmd-bar #cmd-bar-tools .login_block_other .login_block_elem:has(.aversion) { display: none; }
 	.cmd-palette-panel { margin-top: var(--sp-4); }
+
+	/* On a phone the icon rail costs 68px of a 390px screen -- a sixth of the
+	   width, spent on a strip that cannot show a module's sub-entries anyway,
+	   which is what the drawer is for. So the nav takes no width at all until it
+	   is asked for: the page runs edge to edge, and the button in the bar opens
+	   the nav over it.
+
+	   The width comes from --nav-w, which the body's padding also reads, so
+	   zeroing it both closes the rail and gives the page the space in one move.
+	   The drawer then opens on its own width without the page reflowing behind
+	   it. Hidden means hidden: with only zero width the links would still be
+	   painted outside the nav and still be reachable by tab. */
+	:root { --nav-w: 0px; }
+	aside.cmd-nav {
+		overflow: hidden;
+		border-<?php echo $right; ?>: 0;
+		visibility: hidden;
+	}
+	body.cmd-nav-open aside.cmd-nav {
+		overflow: visible;
+		border-<?php echo $right; ?>: 1px solid var(--c-hairline);
+		visibility: visible;
+	}
+	/* The rail's own collapse control belongs to a rail that is no longer there;
+	   the drawer is closed by the button in the bar, the backdrop or Escape. */
+	body.cmd-nav-open .cmd-nav-toggle { display: none; }
 }
 @media print {
 	header.cmd-bar, .cmd-palette, div.tabsAction, .noprint { display: none !important; }
