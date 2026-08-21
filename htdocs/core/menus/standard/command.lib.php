@@ -414,16 +414,32 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 	// server -- stays on screen throughout, so the page never looks empty.
 	//
 	// The gate is only ever raised by script, so a browser without JavaScript
-	// sees the native page as before. It comes down when modern.js says it is
-	// done, and failing that on DOMContentLoaded, and failing that on a timer:
-	// no error in the theme's own JavaScript can leave a page hidden.
+	// sees the native page as before. modern.js takes it down once the page has
+	// settled; failing that this script takes it down a moment after load, and
+	// failing even that on a long stop, so no failure in the theme's own
+	// JavaScript can leave a page hidden.
+	//
+	// The backstop follows load rather than a fixed delay because a guessed delay
+	// races the thing it is insuring: a heavy dashboard settles at about 1.4s, so
+	// a 1.5s timer sometimes fired first and revealed the page mid-settle -- the
+	// jump this is meant to prevent, on the page most in need of it.
+	//
+	// Deliberately not on a window error event. A resource that 404s reports its
+	// failure there too, so a single missing image on a page -- Dolibarr's module
+	// list has one -- would take the gate down before anything was composed,
+	// which is to say on exactly the pages that need it most.
+	//
+	// Nor on DOMContentLoaded, which is earlier than the page is finished:
+	// Dolibarr builds its Select2 controls from jQuery ready handlers, and those
+	// replace a plain select with a wider one, moving whatever shares its row.
+	// Revealing at that point traded a rebuild of the page for a rebuild of every
+	// filter bar on it.
 	print '<script nonce="'.getNonce().'">(function(){var d=document,r=d.documentElement;'
 		.'try{if(localStorage.getItem("cmdNavCollapsed")==="1"){d.body.classList.add("cmd-nav-collapsed");}}catch(e){}'
 		.'function show(){r.classList.remove("ts-shell-pending");}'
 		.'r.classList.add("ts-shell-pending");'
-		.'d.addEventListener("DOMContentLoaded",show,{once:true});'
-		.'window.addEventListener("error",show);'
-		.'window.setTimeout(show,2000);'
+		.'window.addEventListener("load",function(){window.setTimeout(show,250);});'
+		.'window.setTimeout(show,4000);'
 		.'})();</script>'."\n";
 
 	print '<header id="cmd-bar" class="cmd-bar">'."\n";

@@ -5184,6 +5184,15 @@
 			try {
 				document.querySelectorAll('.ts-module-index-data-card').forEach(sizeModuleIndexColumns);
 			} catch (e) { /* leave the even split */ }
+			/* The page is composed and the controls that arrive late -- Dolibarr's
+			   Select2 among them -- have been measured, so this is the first moment
+			   the layout is the one the reader will keep. Shown a frame later, so
+			   the measurements above are applied in the same paint. The timer in
+			   command.lib.php shows the page anyway, so nothing here can hide it
+			   for good. */
+			requestAnimationFrame(function () {
+				document.documentElement.classList.remove('ts-shell-pending');
+			});
 			window.setTimeout(function () {
 				try { markPairedSelectCells(document); } catch (e) { /* leave the select full width */ }
 				try { reserveTableSelectCells(document); } catch (e) { /* retain native table allocation */ }
@@ -5202,10 +5211,5 @@
 		try { polishWarehouseLogPage(); } catch (e) { /* retain the native warehouse activity log */ }
 		try { polishProductPricePage(); } catch (e) { /* retain native product price tab layout */ }
 		try { compactMonthAgendaEvents(); } catch (e) { /* retain the native agenda density */ }
-		/* Everything that rearranges the page has now run, so the content can be
-		   shown. Last in the block on purpose, and the page is shown again on
-		   DOMContentLoaded and on a timer regardless, so an exception above here
-		   costs the composition of one page -- never its visibility. */
-		document.documentElement.classList.remove('ts-shell-pending');
 	});
 })();
