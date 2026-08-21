@@ -5202,5 +5202,10 @@
 		try { polishWarehouseLogPage(); } catch (e) { /* retain the native warehouse activity log */ }
 		try { polishProductPricePage(); } catch (e) { /* retain native product price tab layout */ }
 		try { compactMonthAgendaEvents(); } catch (e) { /* retain the native agenda density */ }
+		/* Everything that rearranges the page has now run, so the content can be
+		   shown. Last in the block on purpose, and the page is shown again on
+		   DOMContentLoaded and on a timer regardless, so an exception above here
+		   costs the composition of one page -- never its visibility. */
+		document.documentElement.classList.remove('ts-shell-pending');
 	});
 })();

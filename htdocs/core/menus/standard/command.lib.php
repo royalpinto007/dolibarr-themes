@@ -403,7 +403,28 @@ function print_command_shell($db, &$tabMenu, $atarget, $type_user)
 
 	// Apply the stored collapse state before first paint so the rail does not
 	// visibly jump from expanded to collapsed on every page load.
-	print '<script nonce="'.getNonce().'">(function(){try{if(localStorage.getItem("cmdNavCollapsed")==="1"){document.body.classList.add("cmd-nav-collapsed");}}catch(e){}})();</script>'."\n";
+	//
+	// The same script holds the content back until the theme has composed it.
+	// Dolibarr's own markup is what the browser paints first -- the stylesheets
+	// are all in the head and arrive early, but modern.js is deferred, so the
+	// native tables and columns are on screen for a few hundred milliseconds
+	// before they are rearranged into cards and sections. Hiding the content
+	// area until that pass has run replaces a visible rebuild with a short wait,
+	// and the chrome around it -- the bar and the nav, both built here on the
+	// server -- stays on screen throughout, so the page never looks empty.
+	//
+	// The gate is only ever raised by script, so a browser without JavaScript
+	// sees the native page as before. It comes down when modern.js says it is
+	// done, and failing that on DOMContentLoaded, and failing that on a timer:
+	// no error in the theme's own JavaScript can leave a page hidden.
+	print '<script nonce="'.getNonce().'">(function(){var d=document,r=d.documentElement;'
+		.'try{if(localStorage.getItem("cmdNavCollapsed")==="1"){d.body.classList.add("cmd-nav-collapsed");}}catch(e){}'
+		.'function show(){r.classList.remove("ts-shell-pending");}'
+		.'r.classList.add("ts-shell-pending");'
+		.'d.addEventListener("DOMContentLoaded",show,{once:true});'
+		.'window.addEventListener("error",show);'
+		.'window.setTimeout(show,2000);'
+		.'})();</script>'."\n";
 
 	print '<header id="cmd-bar" class="cmd-bar">'."\n";
 

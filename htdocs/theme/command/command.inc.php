@@ -501,6 +501,24 @@ body {
 }
 body.bodylogin { padding: 0; }		/* the login page has no chrome */
 
+/* Held back until the theme has composed the page -- see the script in
+   command.lib.php, which is also what takes this off again. Only the content
+   area waits; the bar and the nav are server-rendered and paint immediately, so
+   what is on screen is the application, not a blank page. Kept out of the
+   printed page and off the login screen, neither of which is composed. */
+html.ts-shell-pending #id-right,
+html.ts-shell-pending .fiche {
+	visibility: hidden;
+}
+html.ts-shell-pending body.bodylogin #id-right,
+html.ts-shell-pending body.bodylogin .fiche {
+	visibility: visible;
+}
+@media print {
+	html.ts-shell-pending #id-right,
+	html.ts-shell-pending .fiche { visibility: visible; }
+}
+
 /* ==========================================================================
    Authentication surface
 
